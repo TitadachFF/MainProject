@@ -37,7 +37,7 @@ const Modal = ({ name }) => {
       >
         <div className="modal-box">
           <div className="modal-action mt-0 flex flex-col justify-center">
-            <h3 className="font-bold text-lg text-center ">Please Login</h3>
+            <h3 className="font-bold text-lg text-center ">โปรดเข้าสู่ระบบ</h3>
 
             <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
               <div className="form-control">
@@ -46,7 +46,7 @@ const Modal = ({ name }) => {
                 </label>
                 <input
                   type="username"
-                  placeholder="username"
+                  placeholder="Username"
                   className="input input-bordered"
                   required
                   {...register("username")}
@@ -58,7 +58,7 @@ const Modal = ({ name }) => {
                 </label>
                 <input
                   type="password"
-                  placeholder="password"
+                  placeholder="Password"
                   className="input input-bordered"
                   required
                   {...register("password")}
@@ -72,7 +72,7 @@ const Modal = ({ name }) => {
               <div className="form-control mt-6">
                 <input
                   type="submit"
-                  value="Login"
+                  value="เข้าสู่ระบบ"
                   className="btn bg-red text-white "
                 />
               </div>
@@ -86,7 +86,7 @@ const Modal = ({ name }) => {
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="w-6 h-6"
+                  className="w-6 h-6 text-red"
                 >
                   <path
                     fillRule="evenodd"

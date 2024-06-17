@@ -46,8 +46,8 @@ const Navbar = () => {
           </ul>
         </div>
         <a
-          href=""
-          className="text-5xl text-red pr-2 font-semibold hover:underline hover:text-red"
+          href="/"
+          className="text-5xl text-red pr-2  font-serif  "
         >
           SE
         </a>
@@ -66,7 +66,7 @@ const Navbar = () => {
           </li>
           <li>
             <details>
-              <summary>Parent</summary>
+              <summary>Parent Dropdown</summary>
               <ul className="p-2">
                 <li>
                   <a>Submenu 1</a>
