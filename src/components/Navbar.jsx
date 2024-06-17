@@ -1,5 +1,5 @@
 import React from "react";
-
+import Modal from "./Modal";
 
 const Navbar = () => {
   return (
@@ -84,7 +84,10 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-end">
-        <a className=" btn rounded-full p-2 pr-5 pl-5 bg-red text-white cursor-pointer  ">
+        <a
+          className=" btn rounded-full p-2 pr-5 pl-5 bg-red text-white cursor-pointer  "
+          onClick={() => document.getElementById("login").showModal()}
+        >
           เข้าสู่ระบบ
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -99,9 +102,8 @@ const Navbar = () => {
             />
           </svg>
         </a>
-        
+        <Modal name="login" />
       </div>
-  
     </div>
   );
 };
