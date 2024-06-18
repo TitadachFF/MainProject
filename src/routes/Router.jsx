@@ -5,8 +5,15 @@ import Main from "../layout/Main";
 import StudentMenu from "../Student/StudentMenu";
 import AdminMenu from "../Admin/AdminMenu";
 import StudentInfo from "../Student/StudentInfo";
+import AdviceMenu from "../Advice/AdviceMenu";
+import CourseMenu from "../Course/CourseMenu";
+import AddStudent from "../Advice/AddStudent";
+import AdviceInfo from "../Advice/AdviceInfo";
+import AllStudent from "../Advice/AllStudent";
+import AddCourse from "../Course/AddCourse";
+import CourseInfo from "../Course/CourseInfo";
 
-const Router = createBrowserRouter ([
+const Router = createBrowserRouter([
   {
     path: "/",
     element: <Main />,
@@ -26,6 +33,34 @@ const Router = createBrowserRouter ([
       {
         path: "/admin",
         element: <AdminMenu />,
+      },
+      {
+        path: "/advice",
+        element: <AdviceMenu />,
+      },
+      {
+        path: "/course",
+        element: <CourseMenu />,
+      },
+      {
+        path: "/addstudent",
+        element: <AddStudent />,
+      },
+      {
+        path: "/addviceinfo",
+        element: <AdviceInfo />,
+      },
+      {
+        path: "/allstudent",
+        element: <AllStudent />,
+      },
+      {
+        path: "/addcourse",
+        element: <AddCourse />,
+      },
+      {
+        path: "/courseinfo",
+        element: <CourseInfo />,
       },
     ],
   },
