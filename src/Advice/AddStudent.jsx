@@ -2,7 +2,7 @@ import React from 'react'
 
 const AddStudent = () => {
   return (
-    <div className=" min-h-screen flex justify-center p-6 bg-gray-100">
+    <div className=" min-h-screen flex justify-center p-6 bg-gray-100 pt-32">
       <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[700px]">
         <h2 className="text-2xl font-bold mb-6 text-red-600">เพิ่มนักศึกษา</h2>
         <form>

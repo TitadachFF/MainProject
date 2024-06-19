@@ -3,7 +3,7 @@ import Modal from "./Modal";
 
 const Navbar = () => {
   return (
-    <div className="navbar bg-base-100 py-5  shadow-md">
+    <div className="navbar bg-base-100 py-5 shadow-md fixed">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -49,7 +49,7 @@ const Navbar = () => {
           href="/"
           className="text-5xl text-red pr-2  font-serif  "
         >
-          SE
+          Grade-System
         </a>
         <div className="border-l-4">
           <p className="pl-2 text-sm  pt-1">

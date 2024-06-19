@@ -12,6 +12,7 @@ import AdviceInfo from "../Advice/AdviceInfo";
 import AllStudent from "../Advice/AllStudent";
 import AddCourse from "../Course/AddCourse";
 import CourseInfo from "../Course/CourseInfo";
+import Fillgrade from "../Student/Fillgrade";
 
 const Router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const Router = createBrowserRouter([
       {
         path: "/student",
         element: <StudentMenu />,
+      },
+      {
+        path: "/fillgrade",
+        element: <Fillgrade />,
       },
       {
         path: "/studentinfo",
