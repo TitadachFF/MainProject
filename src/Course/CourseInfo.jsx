@@ -3,7 +3,7 @@ import React from 'react'
 const CourseInfo = () => {
   return (
     <div className=" min-h-screen flex justify-center p-6 bg-gray-100">
-      <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[700px]">
+      <div className="container mx-auto w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[700px]">
         <h2 className="text-2xl font-bold mb-6 text-red-600">ข้อมูลส่วนตัว</h2>
         <form>
           <div className="grid grid-cols-1 gap-6">
