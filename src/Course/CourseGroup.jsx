@@ -1,12 +1,33 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AddCourse = () => {
-  const navigate = useNavigate();
+const CourseGroup = () => {
+     const navigate = useNavigate();
+  const [groups, setgroups] = useState([
+    { id: 1, name: "หมวดวิชาศึกษาทั่วไป", },
+    { id: 2, name: "หมวดวิชาแกน", },
+  ]);
 
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [instructorName, setInstructorName] = useState("");
 
+  const handleCourseChange = (e) => {
+    setSelectedCourse(e.target.value);
+  };
+
+  const handleInstructorNameChange = (e) => {
+    setInstructorName(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log(
+      `Selected Course: ${selectedCourse}, Instructor Name: ${instructorName}`
+    );
+  };
   return (
-    <div className=" bg-gray-100">
+    <div className="bg-gray-100">
       <div className="px-2 text-gray-400 text-sm flex items-center pt-28">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
@@ -18,7 +39,7 @@ const AddCourse = () => {
         <span className="mx-1">&gt;</span>
         <p>เพิ่มหลักสูตร</p>
       </div>
-      <div className=" min-h-screen flex justify-center p-6">
+      <div className="min-h-screen flex justify-center p-6">
         <div className="container mx-auto flex justify-center items-center h-screen">
           <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[700px]">
             <h1 className="text-2xl text-red font-bold mb-6 text-red-600">
@@ -27,10 +48,7 @@ const AddCourse = () => {
             <div className="border-m mb-6 pb-3">
               <ul className="flex">
                 <li className="mr-4">
-                  <a
-                    href="#"
-                    className="text-red-600 border-b-2 border-red-600"
-                  >
+                  <a href="#" className="text-gray-600">
                     ชื่อหลักสูตร
                   </a>
                 </li>
@@ -45,7 +63,10 @@ const AddCourse = () => {
                   </a>
                 </li>
                 <li className="mr-4">
-                  <a href="#" className="text-gray-600">
+                  <a
+                    href="#"
+                    className="text-red-600 border-b-2 border-red-600"
+                  >
                     เพิ่มกลุ่มวิชา
                   </a>
                 </li>
@@ -56,38 +77,30 @@ const AddCourse = () => {
                 </li>
               </ul>
             </div>
-
-            <form>
-              <div className="grid grid-cols-1 gap-4 mb-4">
-                <div className="flex flex-col">
-                  <label className="mb-2">ชื่อหลักสูตร(ภาษาไทย)</label>
-                  <input
-                    type="text"
-                    className="border rounded-full px-2 py-2"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="mb-2">ชื่อหลักสูตร(ภาษาอังกฤษ)</label>
-                  <input
-                    type="text"
-                    className="border rounded-full px-2 py-2"
-                  />
-                </div>
+            <form onSubmit={handleSubmit}>
+              <div className="relative mb-6">
+                <select
+                  id="class"
+                  className="dropdown appearance-none w-30 mt-1 bg-white border border-gray-300 rounded-full py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
+                  value={selectedCourse}
+                  onChange={handleCourseChange}
+                >
+                  <option value="">เลือกหมวดวิชา</option>
+                  {groups.map((course) => (
+                    <option key={course.id} value={course.id}>
+                      {course.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-
               <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="flex flex-col">
-                  <label className="mb-2">รหัสหลักสูตร</label>
+                <div className="flex flex-col col-span-2">
+                  <label className="mb-2">ชื่อกลุ่มวิชา</label>
                   <input
                     type="text"
                     className="border rounded-full px-2 py-2"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="mb-2">หลักสูตรปี</label>
-                  <input
-                    type="text"
-                    className="border rounded-full px-2 py-2"
+                    value={instructorName}
+                    onChange={handleInstructorNameChange}
                   />
                 </div>
                 <div className="flex flex-col">
@@ -107,9 +120,9 @@ const AddCourse = () => {
                   ย้อนกลับ
                 </button>
                 <button
-                  type="button"
+                  type="submit"
                   className="px-8 py-2 bg-red border border-red-600 text-white rounded"
-                  onClick={() => navigate("/advicecourse")}
+                  onClick={() => navigate("/coursesincourses")}
                 >
                   บันทึก
                 </button>
@@ -122,4 +135,4 @@ const AddCourse = () => {
   );
 };
 
-export default AddCourse;
+export default CourseGroup;

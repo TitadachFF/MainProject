@@ -1,12 +1,35 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AddCourse = () => {
-  const navigate = useNavigate();
+const AddvicetoCourse = () => {
+    const navigate = useNavigate();
+  const [courses, setCourses] = useState([
+    { id: 1, name: "วิศวกรรมซอฟต์แวร์", code: "644259009" },
+    { id: 2, name: "วิศวกรรมคอมพิวเตอร์", code: "644259010" },
+    { id: 3, name: "วิศวกรรมไฟฟ้า", code: "644259011" },
+  ]);
 
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [instructorName, setInstructorName] = useState("");
+
+  const handleCourseChange = (e) => {
+    setSelectedCourse(e.target.value);
+  };
+
+  const handleInstructorNameChange = (e) => {
+    setInstructorName(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log(
+      `Selected Course: ${selectedCourse}, Instructor Name: ${instructorName}`
+    );
+  };
 
   return (
-    <div className=" bg-gray-100">
+    <div className="bg-gray-100">
       <div className="px-2 text-gray-400 text-sm flex items-center pt-28">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
@@ -18,7 +41,7 @@ const AddCourse = () => {
         <span className="mx-1">&gt;</span>
         <p>เพิ่มหลักสูตร</p>
       </div>
-      <div className=" min-h-screen flex justify-center p-6">
+      <div className="min-h-screen flex justify-center p-6">
         <div className="container mx-auto flex justify-center items-center h-screen">
           <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[700px]">
             <h1 className="text-2xl text-red font-bold mb-6 text-red-600">
@@ -27,15 +50,15 @@ const AddCourse = () => {
             <div className="border-m mb-6 pb-3">
               <ul className="flex">
                 <li className="mr-4">
-                  <a
-                    href="#"
-                    className="text-red-600 border-b-2 border-red-600"
-                  >
+                  <a href="#" className="text-gray-600">
                     ชื่อหลักสูตร
                   </a>
                 </li>
                 <li className="mr-4">
-                  <a href="#" className="text-gray-600">
+                  <a
+                    href="#"
+                    className="text-red-600 border-b-2 border-red-600"
+                  >
                     เพิ่มอาจารย์
                   </a>
                 </li>
@@ -56,49 +79,33 @@ const AddCourse = () => {
                 </li>
               </ul>
             </div>
-
-            <form>
+            <form onSubmit={handleSubmit}>
+              <div className="relative mb-6">
+                <select
+                  id="class"
+                  className="dropdown appearance-none w-30 mt-1 bg-white border border-gray-300 rounded-full py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
+                  value={selectedCourse}
+                  onChange={handleCourseChange}
+                >
+                  <option value="">เลือกหลักสูตร</option>
+                  {courses.map((course) => (
+                    <option key={course.id} value={course.id}>
+                      {course.name} ({course.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="grid grid-cols-1 gap-4 mb-4">
                 <div className="flex flex-col">
-                  <label className="mb-2">ชื่อหลักสูตร(ภาษาไทย)</label>
+                  <label className="mb-2">ชื่ออาจารย์ผู้รับผิดชอบ</label>
                   <input
                     type="text"
-                    className="border rounded-full px-2 py-2"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="mb-2">ชื่อหลักสูตร(ภาษาอังกฤษ)</label>
-                  <input
-                    type="text"
-                    className="border rounded-full px-2 py-2"
+                    className="border rounded-full px-2 py-2 "
+                    value={instructorName}
+                    onChange={handleInstructorNameChange}
                   />
                 </div>
               </div>
-
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="flex flex-col">
-                  <label className="mb-2">รหัสหลักสูตร</label>
-                  <input
-                    type="text"
-                    className="border rounded-full px-2 py-2"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="mb-2">หลักสูตรปี</label>
-                  <input
-                    type="text"
-                    className="border rounded-full px-2 py-2"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="mb-2">จำนวนหน่วยกิต</label>
-                  <input
-                    type="number"
-                    className="border rounded-full px-2 py-2"
-                  />
-                </div>
-              </div>
-
               <div className="mt-6 flex justify-between">
                 <button
                   type="button"
@@ -107,9 +114,9 @@ const AddCourse = () => {
                   ย้อนกลับ
                 </button>
                 <button
-                  type="button"
+                  type="submit"
                   className="px-8 py-2 bg-red border border-red-600 text-white rounded"
-                  onClick={() => navigate("/advicecourse")}
+                  onClick={() => navigate("/coursecategory")}
                 >
                   บันทึก
                 </button>
@@ -122,4 +129,4 @@ const AddCourse = () => {
   );
 };
 
-export default AddCourse;
+export default AddvicetoCourse;

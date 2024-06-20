@@ -17,6 +17,15 @@ import Documents from "../Student/Documents";
 import Documentres from "../Student/Documentres";
 import Adduser from "../Admin/Adduser";
 import Alluser from "../Admin/Alluser";
+import AllCourse from "../Course/AllCourse";
+import Course from "../Course/Course";
+import AddvicetoCourse from "../Course/AddvicetoCourse";
+import CourseCategory from "../Course/CourseCategory";
+import CourseGroup from "../Course/CourseGroup";
+import AddCoursestocourse from "../Course/AddCoursestocourse";
+import DocumentStudent from "../Advice/DocumentStudent";
+import StudentPlan from "../Advice/StudentPlan";
+import AddStudentplan from "../Advice/AddStudentplan";
 
 const Router = createBrowserRouter([
   {
@@ -73,7 +82,7 @@ const Router = createBrowserRouter([
         element: <AddStudent />,
       },
       {
-        path: "/addviceinfo",
+        path: "/adviceinfo",
         element: <AdviceInfo />,
       },
       {
@@ -87,6 +96,42 @@ const Router = createBrowserRouter([
       {
         path: "/courseinfo",
         element: <CourseInfo />,
+      },
+      {
+        path: "/allcourse",
+        element: <AllCourse />,
+      },
+      {
+        path: "/editcourse",
+        element: <Course />,
+      },
+      {
+        path: "/advicecourse",
+        element: <AddvicetoCourse />,
+      },
+      {
+        path: "/coursecategory",
+        element: <CourseCategory />,
+      },
+      {
+        path: "/coursegroup",
+        element: <CourseGroup />,
+      },
+      {
+        path: "/coursesincourses",
+        element: <AddCoursestocourse />,
+      },
+      {
+        path: "/documentstudent",
+        element: <DocumentStudent />,
+      },
+      {
+        path: "/studentplan",
+        element: <StudentPlan />,
+      },
+      {
+        path: "/addstudentplan",
+        element: <AddStudentplan/>,
       },
     ],
   },

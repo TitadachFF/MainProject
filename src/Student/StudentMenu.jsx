@@ -15,7 +15,7 @@ const StudentMenu = () => {
       </div>
 
       <div className="py-20 flex flex-wrap justify-center gap-4 p-4">
-        <div
+        <div  
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/fillgrade")}
         >
