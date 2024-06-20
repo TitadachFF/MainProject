@@ -5,15 +5,14 @@ const StudentMenu = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="pb-[156px]">
+    <div className="pb-36">
       <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28">
-  <p className="cursor-pointer" onClick={() => navigate("/")}>
-    หน้าแรก
-  </p>
-  <span className="mx-1">&gt;</span>
-  <p>เมนูนักศึกษา</p>
-
-</div>
+        <p className="cursor-pointer" onClick={() => navigate("/")}>
+          หน้าแรก
+        </p>
+        <span className="mx-1">&gt;</span>
+        <p>เมนูนักศึกษา</p>
+      </div>
 
       <div className="py-20 flex flex-wrap justify-center gap-4 p-4">
         <div

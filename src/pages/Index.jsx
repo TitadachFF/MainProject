@@ -2,7 +2,7 @@ import React from "react";
 
 const Index = () => {
   return (
-    <div className="container mx-auto pb-[103px] pt-28">
+    <div className="container mx-auto pb-[71px] pt-28">
       {/* Title */}
       <p className="font-normal text-5xl text-start py-10 text-gray-600">
         ยินดีต้อนรับ{" "}

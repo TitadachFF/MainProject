@@ -13,6 +13,10 @@ import AllStudent from "../Advice/AllStudent";
 import AddCourse from "../Course/AddCourse";
 import CourseInfo from "../Course/CourseInfo";
 import Fillgrade from "../Student/Fillgrade";
+import Documents from "../Student/Documents";
+import Documentres from "../Student/Documentres";
+import Adduser from "../Admin/Adduser";
+import Alluser from "../Admin/Alluser";
 
 const Router = createBrowserRouter([
   {
@@ -28,6 +32,15 @@ const Router = createBrowserRouter([
         element: <StudentMenu />,
       },
       {
+        path: "/documents",
+        element: <Documents />,
+      },
+      {
+        path: "/documentresponse",
+        element: <Documentres />,
+      },
+
+      {
         path: "/fillgrade",
         element: <Fillgrade />,
       },
@@ -38,6 +51,14 @@ const Router = createBrowserRouter([
       {
         path: "/admin",
         element: <AdminMenu />,
+      },
+      {
+        path: "/alluser",
+        element: <Alluser />,
+      },
+      {
+        path: "/adduser",
+        element: <Adduser />,
       },
       {
         path: "/advice",

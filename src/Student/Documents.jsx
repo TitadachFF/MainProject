@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const StudentInfo = () => {
+const Documents = () => {
   const navigate = useNavigate();
   return (
     <div className=" bg-gray-100">
@@ -14,16 +14,18 @@ const StudentInfo = () => {
           เมนูนักศึกษา
         </p>
         <span className="mx-1">&gt;</span>
-        <p>ข้อมูลส่วนตัว</p>
+        <p>เอกสาร</p>
       </div>
       <div className=" min-h-screen flex justify-center bg-gray-100 ">
-        <div className="container mx-auto w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-full ">
-          <h2 className="text-2xl font-bold mb-6 text-red">ข้อมูลส่วนตัว</h2>
+        <div className="container mx-auto w-full max-w-3xl h-full  bg-white rounded-lg shadow-lg p-6 ">
+          <h2 className="text-2xl font-bold mb-6 text-red">
+            เอกสาร
+          </h2>
           <div className="border-b mb-6 pb-3">
             <ul className="flex">
               <li className="mr-4">
                 <a href="#" className="text-red-600 border-b-2 border-red">
-                  ข้อมูลทั่วไป
+                  คำร้องแจ้งความประสงค์
                 </a>
               </li>
               <li>
@@ -58,7 +60,6 @@ const StudentInfo = () => {
                   className="w-20 mt-1 border border-gray-300 rounded p-2"
                   placeholder="XX/XX"
                 />
-                
               </div>
               <div>
                 <label className="block text-gray-700">รหัสผ่าน</label>
@@ -100,4 +101,4 @@ const StudentInfo = () => {
   );
 };
 
-export default StudentInfo;
+export default Documents;
