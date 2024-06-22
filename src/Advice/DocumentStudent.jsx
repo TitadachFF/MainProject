@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { UserIcon } from "@heroicons/react/16/solid";
+import { useNavigate } from "react-router-dom";
 
 const DocumentStudent = () => {
+  const navigate = useNavigate();
   const [students, setStudents] = useState([
     { id: 1, name: "นายกิตติพงษ์ เดชจิต", class: "64/46" },
     { id: 2, name: "นายศพล นิลเพรช", class: "64/46" },
@@ -29,7 +31,6 @@ const DocumentStudent = () => {
   });
 
   const handleStudentClick = (studentId) => {
-
     console.log(`Clicked on student with ID: ${studentId}`);
   };
 
@@ -47,12 +48,11 @@ const DocumentStudent = () => {
         <p>เพิ่มนักศึกษา</p>
       </div>
       <div className="min-h-screen flex justify-center p-6 bg-gray-100">
-        <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
+        <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[700px]">
           <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
             เอกสารคำร้องขอ
           </h2>
-          <div className="mb-3 flex">
-          </div>
+          <div className="mb-3 flex"></div>
           <div className="overflow-y-auto max-h-96">
             <ul className="divide-y divide-gray-200">
               <div className="border-m mb-6 pb-3">
@@ -104,6 +104,16 @@ const DocumentStudent = () => {
               ))}
             </ul>
           </div>
+          <div className="mt-6 flex justify-between  py-12">
+              <button
+                type="button"
+                className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                onClick={() => navigate("/advice")}
+              >
+                ย้อนกลับ
+              </button>
+         
+            </div>
         </div>
       </div>
     </div>

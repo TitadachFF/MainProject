@@ -1,21 +1,21 @@
-import React from 'react'
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const AdviceMenu = () => {
   const navigate = useNavigate();
   return (
-    <div className="pb-[120px]">
+    <div className="pb-36">
       <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
         </p>
         <span className="mx-1">&gt;</span>
-        <p>เมนูอาจารย์</p>
+        <p >เมนูอาจารย์</p>
       </div>
       <div className=" py-20 flex flex-wrap justify-center gap-4 p-4 ">
         {/* Card 1 */}
         <div
-          className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
+          className="card w-80 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
           onClick={() => navigate("/addstudent")}
         >
           <figure>
@@ -43,7 +43,7 @@ const AdviceMenu = () => {
 
         {/* Card 2 */}
         <div
-          className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
+          className="card w-80 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
           onClick={() => navigate("/allstudent")}
         >
           <figure>
@@ -70,9 +70,10 @@ const AdviceMenu = () => {
         </div>
         {/* Card3 */}
 
-        <div className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
-        onClick={() => navigate("/studentplan")}
-        >      
+        <div
+          className="card w-80 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
+          onClick={() => navigate("/studentplan")}
+        >
           <figure>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +99,7 @@ const AdviceMenu = () => {
 
         {/* Card 4 */}
         <div
-          className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
+          className="card w-80 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/adviceinfo")}
         >
           <figure>
@@ -128,7 +129,7 @@ const AdviceMenu = () => {
 
         {/* Card 5 */}
         <div
-          className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
+          className="card w-80 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/documentstudent")}
         >
           <figure>
@@ -156,6 +157,6 @@ const AdviceMenu = () => {
       </div>
     </div>
   );
-}
+};
 
-export default AdviceMenu
+export default AdviceMenu;

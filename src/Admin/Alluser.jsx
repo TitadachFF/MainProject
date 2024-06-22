@@ -143,6 +143,21 @@ const Alluser = () => {
                 ))}
               </ul>
             </div>
+            <div className="mt-6 flex justify-between">
+            <button
+              type="button"
+              className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+              onClick={() => navigate("/admin")}
+            >
+              ย้อนกลับ
+            </button>
+            <button
+              type="button"
+              className="px-8 py-2 bg-red  border border-red-600 text-white rounded"
+            >
+              บันทึก
+            </button>
+          </div>
           </div>
         </div>
       </div>

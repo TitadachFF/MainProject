@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { UserIcon } from "@heroicons/react/16/solid";
+import { useNavigate } from "react-router-dom";
 
 const AddCourse = () => {
+  const navigate = useNavigate();
   // student data
   const [students, setStudents] = useState([
-    { id: 1, name: "นายกิตติพงษ์ เดชจิต", class: "64/46" },
-    { id: 2, name: "นายศพล นิลเพรช", class: "64/46" },
-    { id: 3, name: "นายธิทเดท สระทองอุ่น", class: "64/46" },
-    { id: 4, name: "นายณภัทร สายทองสุข", class: "64/46" },
-    { id: 5, name: "นายก นามสกุล", class: "64/45" },
+    { id: 1, name: "นาย กิตติพงษ์ เดชจิต", class: "64/46" },
+    { id: 2, name: "นาย ทศพล นิลเพรช", class: "64/46" },
+    { id: 3, name: "นาย ธิทเดช สระทองอุ่น", class: "64/46" },
+    { id: 4, name: "นาย ณภัทร สายทองสุข", class: "64/46" },
+    { id: 5, name: "นาย อุ้ม นามสกุล", class: "64/45" },
   ]);
 
   const classOptions = ["64/46", "64/45"];
@@ -38,15 +40,15 @@ const AddCourse = () => {
           หน้าแรก
         </p>
         <span className="mx-1">&gt;</span>
-        <p className="cursor-pointer" onClick={() => navigate("/advicemenu")}>
+        <p className="cursor-pointer" onClick={() => navigate("/advice")}>
           เมนูอาจารย์
         </p>
         <span className="mx-1">&gt;</span>
-        <p>เพิ่มนักศึกษา</p>
+        <p>รายชื่อนักศึกษา</p>
       </div>
       <div className="min-h-screen flex justify-center p-6 bg-gray-100">
-        <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
+        <div className="w-full h-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-2xl text-red font-bold mb-6">
             รายชื่อนักศึกษา
           </h2>
           <div className="mb-3 flex">
@@ -104,6 +106,20 @@ const AddCourse = () => {
               ))}
             </ul>
           </div>
+          <div className="mt-6 flex justify-between">
+              <button
+                type="button"
+                className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                onClick={() => navigate("/advice")} >
+                ย้อนกลับ
+              </button>
+              <button
+                type="button"
+                className="px-8 py-2 bg-red  border border-red-600 text-white rounded"
+              >
+                บันทึก
+              </button>
+            </div>
         </div>
       </div>
     </div>

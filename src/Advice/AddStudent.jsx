@@ -1,6 +1,8 @@
-import React from 'react'
+import React from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const AddStudent = () => {
+  const navigate = useNavigate();
   return (
     <div className=" bg-gray-100">
       <div className="px-2 text-gray-400 text-sm flex items-center pt-28">
@@ -8,13 +10,13 @@ const AddStudent = () => {
           หน้าแรก
         </p>
         <span className="mx-1">&gt;</span>
-        <p className="cursor-pointer" onClick={() => navigate("/advicemenu")}>
+        <p className="cursor-pointer" onClick={() => navigate("/advice")}>
           เมนูอาจารย์
         </p>
         <span className="mx-1">&gt;</span>
         <p>เพิ่มนักศึกษา</p>
       </div>
-      <div className=" min-h-screen flex justify-center p-6 bg-gray-100 pt-32">
+      <div className=" min-h-screen flex justify-center p-6 bg-gray-100">
         <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[700px]">
           <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
             เพิ่มนักศึกษา
@@ -85,7 +87,7 @@ const AddStudent = () => {
               <button
                 type="button"
                 className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
-              >
+                onClick={() => navigate("/advice")} >
                 ย้อนกลับ
               </button>
               <button
@@ -100,6 +102,6 @@ const AddStudent = () => {
       </div>
     </div>
   );
-}
+};
 
-export default AddStudent
+export default AddStudent;
