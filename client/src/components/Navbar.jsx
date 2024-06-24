@@ -45,13 +45,13 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <a href="/" className="text-5xl text-red pr-2  font-serif  ">
-          Grade-System
+        <a href="/" className="pl-4 text-5xl text-red pr-2  font-serif  ">
+          GS
         </a>
         <div className="border-l-4">
           <p className="pl-2 text-sm  pt-1">
-            ระบบกรอกแบบฟอร์มคำร้องขอสำเร็จการศึกษา <br />
-            สาขาวิศวกรรมซอฟต์เเวร์
+            Graduated System <br />
+            ระบบกรอกแบบฟอร์มคำร้องขอสำเร็จการศึกษา
           </p>
         </div>
       </div>
@@ -80,9 +80,9 @@ const Navbar = () => {
         </ul>
       </div>
 
-      <div className="navbar-end">
+      <div className="navbar-end pr-4">
         <a
-          className=" btn rounded-full p-2 pr-5 pl-5 bg-red text-white cursor-pointer  "
+          className=" btn rounded-full p-2 pr-5 pl-5 bg-red text-white cursor-pointer"
           onClick={() => document.getElementById("login").showModal()}
         >
           เข้าสู่ระบบ

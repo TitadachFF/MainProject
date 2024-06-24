@@ -41,88 +41,82 @@ const AddvicetoCourse = () => {
         <span className="mx-1">&gt;</span>
         <p>เพิ่มหลักสูตร</p>
       </div>
-      <div className="min-h-screen flex justify-center p-6">
-        <div className="container mx-auto flex justify-center items-center h-screen">
-          <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[700px]">
-            <h1 className="text-2xl text-red font-bold mb-6 text-red-600">
-              เพิ่มหลักสูตร
-            </h1>
-            <div className="border-m mb-6 pb-3">
-              <ul className="flex">
-                <li className="mr-4">
-                  <a href="#" className="text-gray-600">
-                    ชื่อหลักสูตร
-                  </a>
-                </li>
-                <li className="mr-4">
-                  <a
-                    href="#"
-                    className="text-red-600 border-b-2 border-red-600"
-                  >
-                    เพิ่มอาจารย์
-                  </a>
-                </li>
-                <li className="mr-4">
-                  <a href="#" className="text-gray-600">
-                    เพิ่มหมวดวิชา
-                  </a>
-                </li>
-                <li className="mr-4">
-                  <a href="#" className="text-gray-600">
-                    เพิ่มกลุ่มวิชา
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-600">
-                    เพิ่มรายวิชา
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div className="relative mb-6">
-                <select
-                  id="class"
-                  className="dropdown appearance-none w-30 mt-1 bg-white border border-gray-300 rounded-full py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
-                  value={selectedCourse}
-                  onChange={handleCourseChange}
-                >
-                  <option value="">เลือกหลักสูตร</option>
-                  {courses.map((course) => (
-                    <option key={course.id} value={course.id}>
-                      {course.name} ({course.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="grid grid-cols-1 gap-4 mb-4">
-                <div className="flex flex-col">
-                  <label className="mb-2">ชื่ออาจารย์ผู้รับผิดชอบ</label>
-                  <input
-                    type="text"
-                    className="border rounded-full px-2 py-2 "
-                    value={instructorName}
-                    onChange={handleInstructorNameChange}
-                  />
-                </div>
-              </div>
-              <div className="mt-6 flex justify-between">
-                <button
-                  type="button"
-                  className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
-                >
-                  ย้อนกลับ
-                </button>
-                <button
-                  type="submit"
-                  className="px-8 py-2 bg-red border border-red-600 text-white rounded"
-                  onClick={() => navigate("/coursecategory")}
-                >
-                  บันทึก
-                </button>
-              </div>
-            </form>
+      <div className=" min-h-screen flex justify-center p-6 bg-gray-100">
+        <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-full ">
+          <h1 className="text-2xl text-red font-bold mb-6 ">เพิ่มหลักสูตร</h1>
+          <div className="border-m mb-6 pb-3 ">
+            <ul className="flex">
+              <li className="mr-4" onClick={() => navigate("/addcourse")}>
+                <a href="#" className=" border-b-2 border-red-600">
+                  ชื่อหลักสูตร
+                </a>
+              </li>
+              <li className="mr-4" onClick={() => navigate("/advicecourse")}>
+                <a href="#" className="text-gray-600">
+                  เพิ่มอาจารย์
+                </a>
+              </li>
+              <li className="mr-4" onClick={() => navigate("/coursecategory")}>
+                <a href="#" className="text-gray-600">
+                  เพิ่มหมวดวิชา
+                </a>
+              </li>
+              <li className="mr-4" onClick={() => navigate("/coursegroup")}>
+                <a href="#" className="text-gray-600">
+                  เพิ่มกลุ่มวิชา
+                </a>
+              </li>
+              <li onClick={() => navigate("/coursesincourses")}>
+                <a href="#" className="text-gray-600">
+                  เพิ่มรายวิชา
+                </a>
+              </li>
+            </ul>
           </div>
+          <form onSubmit={handleSubmit}>
+            <div className="relative mb-6">
+              <select
+                id="class"
+                className="dropdown appearance-none w-30 mt-1 bg-white border border-gray-300 rounded-full py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
+                value={selectedCourse}
+                onChange={handleCourseChange}
+              >
+                <option value="">เลือกหลักสูตร</option>
+                {courses.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.name} ({course.code})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="grid grid-cols-1 gap-4 mb-4">
+              <div className="flex flex-col">
+                <label className="mb-2">ชื่ออาจารย์ผู้รับผิดชอบ</label>
+                <input
+                  type="text"
+                  className="border rounded-full px-2 py-2 "
+                  value={instructorName}
+                  onChange={handleInstructorNameChange}
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-between">
+              <button
+                type="button"
+                className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                onClick={() => navigate("/addcourse")}
+              >
+                ย้อนกลับ
+              </button>
+              <button
+                type="submit"
+                className="px-8 py-2 bg-red border border-red-600 text-white rounded"
+                onClick={() => navigate("/coursecategory")}
+              >
+                บันทึก
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ const CourseInfo = () => {
         <p>ข้อมูลส่วนตัว</p>
       </div>
       <div className=" min-h-screen flex justify-center p-6 bg-gray-100">
-        <div className="container mx-auto w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[700px]">
+        <div className="container mx-auto w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-full">
           <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
             ข้อมูลส่วนตัว
           </h2>
@@ -71,6 +71,7 @@ const CourseInfo = () => {
               <button
                 type="button"
                 className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                onClick={() => navigate("/course")}
               >
                 ย้อนกลับ
               </button>

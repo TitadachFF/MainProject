@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const CourseMenu = () => {
@@ -43,7 +43,10 @@ const CourseMenu = () => {
         </div>
 
         {/* Card 2 */}
-        <div className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer ">
+        <div
+          className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
+          onClick={() => navigate("/allcourse")}
+        >
           <figure>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +63,7 @@ const CourseMenu = () => {
               />
             </svg>
           </figure>
-          <div className="card-body text-center" onClick={() => navigate("/allcourse")}>
+          <div className="card-body text-center">
             <h2 className="font-semibold">ดูหลักสูตร</h2>
             <p className="border-t py-2">ตรวจสอบหลักสูตร</p>
             <div className="card-actions justify-end"></div>
@@ -99,6 +102,6 @@ const CourseMenu = () => {
       </div>
     </div>
   );
-}
+};
 
-export default CourseMenu
+export default CourseMenu;

@@ -22,27 +22,27 @@ const AddCourse = () => {
           <h1 className="text-2xl text-red font-bold mb-6 ">เพิ่มหลักสูตร</h1>
           <div className="border-m mb-6 pb-3 ">
             <ul className="flex">
-              <li className="mr-4">
+              <li className="mr-4" onClick={() => navigate("/addcourse")}>
                 <a href="#" className=" border-b-2 border-red-600">
                   ชื่อหลักสูตร
                 </a>
               </li>
-              <li className="mr-4">
+              <li className="mr-4" onClick={() => navigate("/advicecourse")}>
                 <a href="#" className="text-gray-600">
                   เพิ่มอาจารย์
                 </a>
               </li>
-              <li className="mr-4">
+              <li className="mr-4" onClick={() => navigate("/coursecategory")}>
                 <a href="#" className="text-gray-600">
                   เพิ่มหมวดวิชา
                 </a>
               </li>
-              <li className="mr-4">
+              <li className="mr-4" onClick={() => navigate("/coursegroup")}>
                 <a href="#" className="text-gray-600">
                   เพิ่มกลุ่มวิชา
                 </a>
               </li>
-              <li>
+              <li onClick={() => navigate("/coursesincourses")}>
                 <a href="#" className="text-gray-600">
                   เพิ่มรายวิชา
                 </a>
@@ -84,6 +84,7 @@ const AddCourse = () => {
               <button
                 type="button"
                 className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                onClick={() => navigate("/course")}
               >
                 ย้อนกลับ
               </button>
