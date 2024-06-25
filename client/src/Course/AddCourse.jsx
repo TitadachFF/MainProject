@@ -45,15 +45,12 @@ const AddCourse = () => {
     );
   };
 
-  // Helper function to get query string value
   const getQueryStringValue = (key) => {
     return new URLSearchParams(location.search).get(key);
   };
 
-  // Get the current form from the query string
   const currentForm = getQueryStringValue("form") || "addCourse";
 
-  // Function to update the query string
   const updateQueryString = (form) => {
     navigate(`?form=${form}`);
   };
