@@ -69,6 +69,7 @@ const Documents = () => {
               </li>
             </ul>
           </div>
+          {/* คำร้อง */}
           {currentForm === "documents" && (
             <form>
               <div className="grid grid-cols-1 gap-6">
@@ -139,6 +140,8 @@ const Documents = () => {
               </div>
             </form>
           )}
+
+          {/* แบบบันทึกผลการเรียน */}
           {currentForm === "documentinfo" && (
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 gap-6">no content</div>

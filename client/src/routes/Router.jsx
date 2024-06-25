@@ -10,7 +10,13 @@ import CourseMenu from "../Course/CourseMenu";
 import AddStudent from "../Advice/AddStudent";
 import AdviceInfo from "../Advice/AdviceInfo";
 import AllStudent from "../Advice/AllStudent";
+
+// Course Import
 import AddCourse from "../Course/AddCourse";
+import AddCourseCategory from "../Course/AddCourseCategory";
+import AddCourseGroup from "../Course/AddCourseGroup";
+import AddTeacher from "../Course/AddTeacher";
+
 import CourseInfo from "../Course/CourseInfo";
 import Fillgrade from "../Student/Fillgrade";
 import Documents from "../Student/Documents";
@@ -18,11 +24,11 @@ import Documentres from "../Student/Documentres";
 import Adduser from "../Admin/Adduser";
 import Alluser from "../Admin/Alluser";
 import AllCourse from "../Course/AllCourse";
-import Course from "../Course/Course";
-import AddvicetoCourse from "../Course/AddvicetoCourse";
+import Course from "../Course/EditCourse";
+
 import CourseCategory from "../Course/CourseCategory";
-import CourseGroup from "../Course/CourseGroup";
-import AddCoursestocourse from "../Course/AddCoursestocourse";
+
+
 import DocumentStudent from "../Advice/DocumentStudent";
 import StudentPlan from "../Advice/StudentPlan";
 import AddStudentplan from "../Advice/AddStudentplan";
@@ -106,21 +112,9 @@ const Router = createBrowserRouter([
         element: <Course />,
       },
       {
-        path: "/advicecourse",
-        element: <AddvicetoCourse />,
-      },
-      {
         path: "/coursecategory",
         element: <CourseCategory />,
-      },
-      {
-        path: "/coursegroup",
-        element: <CourseGroup />,
-      },
-      {
-        path: "/coursesincourses",
-        element: <AddCoursestocourse />,
-      },
+      },     
       {
         path: "/documentstudent",
         element: <DocumentStudent />,

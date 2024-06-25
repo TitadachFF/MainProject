@@ -1,7 +1,9 @@
 import React from "react";
 import Modal from "./Modal";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
     <div className="navbar bg-base-100 py-5 shadow-md fixed top-0 left-0 w-full z-50">
       <div className="navbar-start">
@@ -46,7 +48,7 @@ const Navbar = () => {
           </ul>
         </div>
         <a href="/" className="pl-4 text-5xl text-red pr-2  font-serif  ">
-      SE
+          SE
         </a>
         <div className="border-l-4">
           <p className="pl-2 text-sm  pt-1">
@@ -59,7 +61,19 @@ const Navbar = () => {
       <div className="navbar-center hidden lg:flex ">
         <ul className="menu menu-horizontal px-1  ">
           <li>
-            <a className="font-semibold hover:underline">หน้าแรก</a>
+            <a className="font-semibold hover:underline"  onClick={() => navigate("/")}>หน้าแรก</a>
+          </li>
+          <li>
+            <a className="font-semibold hover:underline"  onClick={() => navigate("/student")}>StudentMenu</a>
+          </li>
+          <li>
+            <a className="font-semibold hover:underline"  onClick={() => navigate("/course")}>CourseManagerMenu</a>
+          </li>
+          <li>
+            <a className="font-semibold hover:underline"  onClick={() => navigate("/advice")}>AdviceMenu</a>
+          </li>
+          <li>
+            <a className="font-semibold hover:underline"  onClick={() => navigate("/admin")}>AdminMenu</a>
           </li>
           <li>
             <details>
