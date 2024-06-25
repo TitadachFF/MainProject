@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const AddCoursestocourse = () => {
   const navigate = useNavigate();
@@ -25,16 +26,21 @@ const AddCoursestocourse = () => {
     setSelectedGroup(e.target.value);
   };
 
-  const handleInstructorNameChange = (e) => {
-    setInstructorName(e.target.value);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(
       `Selected Category: ${selectedCategory}, Selected Group: ${selectedGroup}, Instructor Name: ${instructorName}`
     );
   };
+
+  const handleSave = (e) => {
+    Swal.fire({
+      icon: "success",
+      title: "บันทึกข้อมูลสำเร็จ",
+      timer: 1500,
+    });
+    navigate("/allcourse");
+  }
 
   return (
     <div className="bg-gray-100">
@@ -54,27 +60,30 @@ const AddCoursestocourse = () => {
           <h1 className="text-2xl text-red font-bold mb-6 ">เพิ่มหลักสูตร</h1>
           <div className="border-m mb-6 pb-3 ">
             <ul className="flex">
-              <li className="mr-4">
+              <li className="mr-4" onClick={() => navigate("/addcourse")}>
                 <a href="#" className="text-gray-600">
                   ชื่อหลักสูตร
                 </a>
               </li>
-              <li className="mr-4">
+              <li className="mr-4" onClick={() => navigate("/advicecourse")}>
                 <a href="#" className="text-gray-600">
                   เพิ่มอาจารย์
                 </a>
               </li>
-              <li className="mr-4">
+              <li className="mr-4" onClick={() => navigate("/coursecategory")}>
                 <a href="#" className="text-gray-600">
                   เพิ่มหมวดวิชา
                 </a>
               </li>
-              <li className="mr-4">
+              <li className="mr-4" onClick={() => navigate("/coursegroup")}>
                 <a href="#" className="text-gray-600">
                   เพิ่มกลุ่มวิชา
                 </a>
               </li>
-              <li>
+              <li
+                className="mr-4"
+                onClick={() => navigate("/coursesincourses")}
+              >
                 <a href="#" className="text-red-600 border-b-2 border-red-600">
                   เพิ่มรายวิชา
                 </a>
@@ -114,20 +123,30 @@ const AddCoursestocourse = () => {
                 </select>
               </div>
               <div className="flex flex-col col-span-2">
-                <label className="mb-2">ชื่อกลุ่มวิชา</label>
+                <label className="mb-2">รหัสวิชา</label>
                 <input
                   type="text"
                   className="border rounded-full px-2 py-2 w-full"
-                  value={instructorName}
-                  onChange={handleInstructorNameChange}
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="mb-2">ชื่อกลุ่มวิชา(ภาษาไทย)</label>
+                <input type="text" className="border rounded-full px-2 py-2" />
+              </div>
+              <div className="flex flex-col ">
+                <label className="mb-2">ชื่อกลุ่มวิชา(ภาษาอังกฤษ)</label>
+                <input
+                  type="text"
+                  className="border rounded-full px-2 py-2 w-full"
                 />
               </div>
               <div className="flex flex-col">
                 <label className="mb-2">จำนวนหน่วยกิต</label>
-                <input
-                  type="number"
-                  className="border rounded-full px-2 py-2"
-                />
+                <input type="text" className="border rounded-full px-2 py-2" />
+              </div>
+              <div className="flex flex-col">
+                <label className="mb-2">ท-ป-ค</label>
+                <input type="text" className="border rounded-full px-2 py-2" />
               </div>
             </div>
 
@@ -135,13 +154,14 @@ const AddCoursestocourse = () => {
               <button
                 type="button"
                 className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
-                onClick={() => navigate("/addcourse")}
+                onClick={() => navigate("/coursegroup")}
               >
                 ย้อนกลับ
               </button>
               <button
                 type="submit"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
+                onClick={handleSave}
               >
                 บันทึก
               </button>

@@ -45,7 +45,7 @@ const CourseGroup = () => {
           <div className="border-m mb-6 pb-3 ">
             <ul className="flex">
               <li className="mr-4" onClick={() => navigate("/addcourse")}>
-                <a href="#" className=" border-b-2 border-red-600">
+                <a href="#" className=" text-gray-600">
                   ชื่อหลักสูตร
                 </a>
               </li>
@@ -60,7 +60,7 @@ const CourseGroup = () => {
                 </a>
               </li>
               <li className="mr-4" onClick={() => navigate("/coursegroup")}>
-                <a href="#" className="text-gray-600">
+                <a href="#" className="border-b-2 border-red-600">
                   เพิ่มกลุ่มวิชา
                 </a>
               </li>
@@ -110,6 +110,7 @@ const CourseGroup = () => {
               <button
                 type="button"
                 className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                onClick={() => navigate("/coursecategory")}
               >
                 ย้อนกลับ
               </button>

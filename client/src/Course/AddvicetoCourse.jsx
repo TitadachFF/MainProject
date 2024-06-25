@@ -47,12 +47,12 @@ const AddvicetoCourse = () => {
           <div className="border-m mb-6 pb-3 ">
             <ul className="flex">
               <li className="mr-4" onClick={() => navigate("/addcourse")}>
-                <a href="#" className=" border-b-2 border-red-600">
+                <a href="#" className=" text-gray-600">
                   ชื่อหลักสูตร
                 </a>
               </li>
               <li className="mr-4" onClick={() => navigate("/advicecourse")}>
-                <a href="#" className="text-gray-600">
+                <a href="#" className="border-b-2 border-red-600">
                   เพิ่มอาจารย์
                 </a>
               </li>

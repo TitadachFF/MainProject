@@ -34,7 +34,10 @@ const AllCourse = () => {
           </h1>
           <div className="mt-8">
             {courses.length > 0 ? (
-              <table className="w-full rounded-lg border bg-red h-20 text-white cursor-pointer">
+              <table
+                className="w-full rounded-lg border bg-red h-20 text-white cursor-pointer"
+                onClick={() => navigate("/editcourse")}
+              >
                 <tbody>
                   {courses.map((course) => (
                     <tr key={course.id} className="border-t">

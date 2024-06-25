@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Course = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([
     {
       id: 1,
@@ -121,6 +123,7 @@ const Course = () => {
                 <button
                   type="button"
                   className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                  onClick={() => navigate("/course")}
                 >
                   ย้อนกลับ
                 </button>

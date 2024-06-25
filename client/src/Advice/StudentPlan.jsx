@@ -77,7 +77,7 @@ const StudentPlan = () => {
           <button
             type="button"
             className="px-8 py-2 bg-red border border-red-600 text-white rounded"
-            onClick={() => navigate("/addcourse")}
+            onClick={() => navigate("/addstudentplan")}
           >
             เพิ่มแผนการเรียน
           </button>
