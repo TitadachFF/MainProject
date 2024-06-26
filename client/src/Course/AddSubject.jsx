@@ -78,8 +78,15 @@ const AddSubject = () => {
               ))}
             </select>
           </div>
+
+<br />
+          <div className="flex flex-col">
+            <label className="mb-2">รหัสวิชา</label>
+            <input type="number" className="border rounded-lg px-2 py-2" />
+          </div>
+          
           <div className="flex flex-col col-span-2">
-            <label className="mb-2">ชื่อกลุ่มวิชา</label>
+            <label className="mb-2">ชื่อกลุ่มวิชา(ภาษาไทย)</label>
             <input
               type="text"
               className="border rounded-lg px-2 py-2 w-full"
@@ -87,12 +94,31 @@ const AddSubject = () => {
               onChange={handleInstructorNameChange}
             />
           </div>
+
+        </div>
+        <div className="flex flex-col mb-4">
+            <label className="mb-2">ชื่อหลักสูตร(ภาษาอังกฤษ)</label>
+            <input type="text" className="border rounded-lg px-2 py-2" />
+          </div>
+
+          <div className="grid grid-cols-6 gap-4 mb-4">
           <div className="flex flex-col">
             <label className="mb-2">จำนวนหน่วยกิต</label>
-            <input type="number" className="border rounded-lg px-2 py-2" />
+            <select className="select select-bordered w-full max-w-xs">
+  <option disabled selected>หน่วยกิต</option>
+  <option>4</option>
+  <option>3</option>
+  <option>2</option>
+  <option>1</option>
+</select>
           </div>
+          <div className="flex flex-col">
+            <label className="mb-2 ">(ท ป ค)</label>
+            <input type="text" className="border rounded-lg px-2 py-2 h-12" />
+          </div>
+         
         </div>
-
+        
         <div className="mt-6 flex justify-between">
           <button
             type="button"

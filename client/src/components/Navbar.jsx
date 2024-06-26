@@ -61,19 +61,44 @@ const Navbar = () => {
       <div className="navbar-center hidden lg:flex ">
         <ul className="menu menu-horizontal px-1  ">
           <li>
-            <a className="font-semibold hover:underline"  onClick={() => navigate("/")}>หน้าแรก</a>
+            <a
+              className="font-semibold hover:underline"
+              onClick={() => navigate("/")}
+            >
+              หน้าแรก
+            </a>
           </li>
           <li>
-            <a className="font-semibold hover:underline"  onClick={() => navigate("/student")}>StudentMenu</a>
+            <a
+              className="font-semibold hover:underline"
+              onClick={() => navigate("/student")}
+            >
+              StudentMenu
+            </a>
           </li>
           <li>
-            <a className="font-semibold hover:underline"  onClick={() => navigate("/course")}>CourseManagerMenu</a>
+            <a
+              className="font-semibold hover:underline"
+              onClick={() => navigate("/course")}
+            >
+              CourseManagerMenu
+            </a>
           </li>
           <li>
-            <a className="font-semibold hover:underline"  onClick={() => navigate("/advice")}>AdviceMenu</a>
+            <a
+              className="font-semibold hover:underline"
+              onClick={() => navigate("/advice")}
+            >
+              AdviceMenu
+            </a>
           </li>
           <li>
-            <a className="font-semibold hover:underline"  onClick={() => navigate("/admin")}>AdminMenu</a>
+            <a
+              className="font-semibold hover:underline"
+              onClick={() => navigate("/admin")}
+            >
+              AdminMenu
+            </a>
           </li>
           <li>
             <details>

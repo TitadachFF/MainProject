@@ -41,7 +41,7 @@ const AddCourseName = () => {
             <input type="text" className="border rounded-lg px-2 py-2" />
           </div>
           <div className="flex flex-col">
-            <label className="mb-2">หลักสูตรปี</label>
+            <label className="mb-2">หลักสูตร ปี</label>
             <input type="text" className="border rounded-lg px-2 py-2" />
           </div>
           <div className="flex flex-col">
