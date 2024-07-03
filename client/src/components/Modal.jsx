@@ -1,9 +1,9 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 
-const Modal = ({ name }) => {
+const Modal = ({ name, onLogin }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const from = location?.state?.from?.pathname || "/";
@@ -14,16 +14,15 @@ const Modal = ({ name }) => {
       const response = await axios.post("http://localhost:3000/api/login", {
         username: data.username,
         password: data.password,
-        role: data.role
+        role: data.role,
       });
 
       const token = response.data.token;
-      
+
       localStorage.setItem("token", token);
-      console.log(data)
-      console.log(token)
-      console.log(role)
+
       document.getElementById(name).close();
+      onLogin(); // เรียกฟังก์ชัน handleLogin เมื่อเข้าสู่ระบบสำเร็จ
       navigate(from, { replace: true });
       alert("Login Successful");
     } catch (error) {
@@ -34,7 +33,10 @@ const Modal = ({ name }) => {
 
   return (
     <div>
-      <dialog id={name} className="modal modal-bottom sm:modal-middle text-black">
+      <dialog
+        id={name}
+        className="modal modal-bottom sm:modal-middle text-black"
+      >
         <div className="modal-box">
           <div className="modal-action mt-0 flex flex-col justify-center">
             <h3 className="font-bold text-lg text-center">โปรดเข้าสู่ระบบ</h3>
@@ -63,7 +65,9 @@ const Modal = ({ name }) => {
                   {...register("password")}
                 />
                 <label className="label">
-                  <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
+                  <a href="#" className="label-text-alt link link-hover">
+                    Forgot password?
+                  </a>
                 </label>
               </div>
               <div className="form-control mt-6">
