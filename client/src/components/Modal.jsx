@@ -14,14 +14,15 @@ const Modal = ({ name }) => {
       const response = await axios.post("http://localhost:3000/api/login", {
         username: data.username,
         password: data.password,
-        role: "ADMIN" 
-        ////tsdfgw
+        role: data.role
       });
 
       const token = response.data.token;
-
+      
       localStorage.setItem("token", token);
-
+      console.log(data)
+      console.log(token)
+      console.log(role)
       document.getElementById(name).close();
       navigate(from, { replace: true });
       alert("Login Successful");
