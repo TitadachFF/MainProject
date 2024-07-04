@@ -47,6 +47,25 @@ model User {
       studentsId Int   @unique
  }
 
+
+// model Admin {
+//   id       Int      @id @default(autoincrement())
+//   name     String
+//   username String   @unique
+//   password String   
+//   role      Role    
+// }
+
+
+// model Advisor {
+//   id       Int      @id @default(autoincrement())
+//   name     String
+//   username String   @unique
+//   password String   
+//   role     Role     
+// }
+
+
 model CourseInstructor {
   id       Int        @id @default(autoincrement())
   name     String
