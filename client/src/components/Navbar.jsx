@@ -2,11 +2,13 @@ import React, { useContext, useState } from "react";
 import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
+// import { useAuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const { user, setUser } = useContext(AuthContext);
+  // const { user } = useAuthContext;
   console.log(user);
 
   const navigate = useNavigate();
@@ -80,38 +82,46 @@ const Navbar = () => {
               หน้าแรก
             </a>
           </li>
-          <li>
-            <a
-              className="font-semibold hover:underline"
-              onClick={() => navigate("/student")}
-            >
-              StudentMenu
-            </a>
-          </li>
-          <li>
-            <a
-              className="font-semibold hover:underline"
-              onClick={() => navigate("/course")}
-            >
-              CourseManagerMenu
-            </a>
-          </li>
-          <li>
-            <a
-              className="font-semibold hover:underline"
-              onClick={() => navigate("/advice")}
-            >
-              AdviceMenu
-            </a>
-          </li>
-          <li>
-            <a
-              className="font-semibold hover:underline"
-              onClick={() => navigate("/admin")}
-            >
-              AdminMenu
-            </a>
-          </li>
+          {/* {user.role === "STUDENT" && (
+            <li>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/student")}
+              >
+                StudentMenu
+              </a>
+            </li>
+          )}
+          {user.role === "COURSE_INSTRUCTOR" && (
+            <li>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/course")}
+              >
+                CourseManagerMenu
+              </a>
+            </li>
+          )}
+          {user.role === "ADVISOR" && (
+            <li>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/advice")}
+              >
+                AdviceMenu
+              </a>
+            </li>
+           )} */}
+          {user?.role === "ADMIN" && (
+            <li>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/admin")}
+              >
+                AdminMenu
+              </a>
+            </li>
+          )}
           <li>
             <details>
               <summary>Parent Dropdown</summary>

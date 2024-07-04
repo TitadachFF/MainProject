@@ -36,6 +36,108 @@ exports.createUser = async (req, res) => {
   }
 };
 
+// UserController
+///getAllUser
+exports.getallUser = async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error.message);
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Get All Users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error.message);
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Get Roles 
+exports.getRole = async (req, res) => {
+  const { role } = req.params;
+
+  try {
+      const users = await prisma.user.findMany({
+          where: {
+              role: role.toUpperCase() // ตรวจสอบให้แน่ใจว่าบทบาทถูกแปลงเป็นตัวพิมพ์ใหญ่เพื่อให้ตรงกับฐานข้อมูล
+          }
+      });
+
+      res.status(200).json(users);
+  } catch (error) {
+      console.error("Error fetching users by role:", error);
+      res.status(400).json({ error: "Error fetching users by role:" });
+  }
+};
+
+
+// Update User   Error fetching users by role:
+exports.updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { name, username, password } = req.body;
+
+  try {
+    // Check if the user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!existingUser) {
+      return res.status(404).json({ message: `User with ID ${id} not found` });
+    }
+
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+
+    const updatedUser = await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: {
+        name,
+        username,
+        password: hashedPassword,
+      },
+    });
+
+    res.status(200).json({ message: `User with ID ${id} has been updated successfully` });
+  } catch (error) {
+    console.error("Error updating user:", error.message);
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
+
+// Delete User
+exports.deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Check if the user exists before deleting
+    const existingUser = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!existingUser) {
+      return res.status(404).json({ message: `User with ID ${id} not found` });
+    }
+
+    await prisma.user.delete({
+      where: { id: parseInt(id) },
+    });
+
+    res.status(200).json({ message: `User with ID ${id} has been deleted successfully` });
+  } catch (error) {
+    console.error("Error deleting user:", error.message);
+    res.status(400).json({ error: error.message });
+  }
+};
+
 
 
 ///---------------------------------------------------------------------------------------------------------------------------///

@@ -1,45 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserIcon } from "@heroicons/react/16/solid";
 
 const Alluser = () => {
   const navigate = useNavigate();
-  //   User Data
-  const [user, setUser] = useState([
-    { id: 1, name: "นายกิตติพงษ์ เดชจิต", class: "64/46", role: "Student" },
-    { id: 2, name: "นายศพล นิลเพรช", class: "64/46", role: "Student" },
-    { id: 3, name: "นายธิทเดท สระทองอุ่น", class: "64/46", role: "Student" },
-    { id: 4, name: "นายณภัทร สายทองสุข", class: "64/46", role: "Student" },
-    { id: 5, name: "นายก นามสกุล", class: "64/45", role: "Student" },
-    { id: 6, name: "นายก นามสกุล", class: "64/47", role: "Student" },
-    { id: 7, name: "นายก นามสกุล", class: "64/47", role: "Student" },
-    { id: 8, name: "นาย อาจารย์ ที่ปรึกษา", role: "Advisor" },
-    { id: 9, name: "นาย อาจารย์ ที่ปรึกษา", role: "Advisor" },
-    { id: 10, name: "นาย อาจารย์ ที่ปรึกษา", role: "Advisor" },
-  ]);
-  // Dropdown
-  const classOptions = ["64/46", "64/45"];
+  // State for user data
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [selectedClass, setSelectedClass] = useState("");
+  // Fetch user data from backend
+  // qwewqe
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/getallUser"); 
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  // Dropdown options
+  const roleOptions = [
+    { value: "ทั้งหมด", label: "ทั้งหมด" },
+    { value: "STUDENT", label: "นักศึกษา" },
+    { value: "ADVISOR", label: "ที่ปรึกษา" },
+    { value: "COURSE_INSTRUCTOR", label: "ตัวแทนหลักสูตร" }
+  ];
+
+  const [selectedRole, setSelectedRole] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filtereduser = user.filter((user) => {
+  const filteredUsers = users.filter((user) => {
     return (
-      (selectedClass === "" || user.class === selectedClass) &&
+      (selectedRole === "ทั้งหมด" || selectedRole === "" || user.role === selectedRole) &&
       user.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
 
-  const handleClassChange = (e) => {
-    setSelectedClass(e.target.value);
+  const handleRoleChange = (e) => {
+    setSelectedRole(e.target.value);
   };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
-    <div className=" bg-gray-100">
+    <div className="bg-gray-100">
       <div className="px-2 text-gray-400 text-sm flex items-center pt-28">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
@@ -51,57 +78,25 @@ const Alluser = () => {
         <span className="mx-1">&gt;</span>
         <p>ดูรายชื่อผู้ใช้</p>
       </div>
-      <div className=" min-h-screen flex justify-center p-6 h-full">
-        <div className="container mx-auto w-full max-w-3xl bg-white h-full  rounded-lg shadow-lg p-6 ">
+      <div className="min-h-screen flex justify-center p-6 h-full">
+        <div className="container mx-auto w-full max-w-3xl bg-white h-full rounded-lg shadow-lg p-6">
           <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
             ดูรายชื่อผู้ใช้
           </h2>
-          {/* From */}
-
-          <div className="grid grid-cols-1 gap-6 ">
+          {/* Form */}
+          <div className="grid grid-cols-1 gap-6">
             <div className="mb-3 flex">
               <div className="flex space-x-4">
                 <div className="relative w-40">
                   <select
-                    id="class1"
+                    id="role"
                     className="appearance-none w-full mt-1 bg-white border border-gray-300 rounded-full py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
-                    value={selectedClass}
-                    onChange={handleClassChange}
+                    value={selectedRole}
+                    onChange={handleRoleChange}
                   >
-                    <option value="">ตำแหน่ง</option>
-                    {classOptions.map((option, index) => (
-                      <option key={index} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-700">
-                    <svg
-                      className="fill-current h-4 w-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M4.293 5.293a1 1 0 011.414 0L10 10.586l4.293-4.293a1 1 0 111.414 1.414l-5 5a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="relative w-40">
-                  <select
-                    id="class2"
-                    className="appearance-none w-full mt-1 bg-white border border-gray-300 rounded-full py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
-                    value={selectedClass}
-                    onChange={handleClassChange}
-                  >
-                    <option value="">หมู่เรียน</option>
-                    {classOptions.map((option, index) => (
-                      <option key={index} value={option}>
-                        {option}
+                    {roleOptions.map((option, index) => (
+                      <option key={index} value={option.value}>
+                        {option.label}
                       </option>
                     ))}
                   </select>
@@ -135,13 +130,15 @@ const Alluser = () => {
             </div>
             <div className="overflow-y-auto h-full">
               <ul className="divide-y divide-gray-200">
-                {filtereduser.map((user) => (
+                {filteredUsers.map((user) => (
                   <li key={user.id} className="py-2 flex items-center">
                     <UserIcon className="h-6 w-6 mr-2 text-gray-500" />
                     <div>
                       <div className="flex">
                         <p className="text-lg pr-2">{user.name}</p>{" "}
-                        <p className="text-sm badge text">{user.role}</p>
+                        <p className="text-sm badge text">
+                          {roleOptions.find((option) => option.value === user.role)?.label}
+                        </p>
                       </div>
                       <p className="text-sm text-gray-500">{user.class}</p>
                     </div>

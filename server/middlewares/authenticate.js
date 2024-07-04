@@ -19,6 +19,9 @@ const authenticate = async (req, res, next) => {
     if (!user) {
       throw new Error();
     }
+    req.decoded = decoded;
+
+
 
     req.user = user; // Add user to the request object
     next();

@@ -1,15 +1,16 @@
-import { useState } from "react";
-import "./App.css";
-import Main from "./layout/Main";
+import React from 'react';
+import { AuthProvider } from './context/AuthProvider';
+import Navbar from './components/Navbar';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-function App() {
-  const [count, setCount] = useState(0);
-
+const App = () => {
   return (
-    <>
-      <Main />
-    </>
+    <AuthProvider>
+      <Router>
+        <Navbar />
+      </Router>
+    </AuthProvider>
   );
-}
+};
 
 export default App;

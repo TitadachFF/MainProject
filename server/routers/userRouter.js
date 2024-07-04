@@ -9,14 +9,24 @@ const {
   createCourseInstructor,
   updateCourseInstructor,
   deleteCourseInstructor,
-  getAllCourseInstructors
+  getAllCourseInstructors,
+  getallUser,
+  getRole,
+  updateUser,
+  deleteUser
 } = require("../controllers/userController");
 const checkRole = require("../middlewares/checkRole");
 //const authenticate = require("../middlewares/authenticate");
 //router.use(authenticate); // Ensure all routes are authenticated
 
-///admin sone
+///admin zone
 router.post("/createUser", createUser);
+
+router.get("/getallUser", getallUser);
+router.get("/getRole/:role", getRole);
+router.put("/updateUser/:id", checkRole(['ADMIN']), updateUser);
+router.delete("/deleteUser/:id", checkRole(['ADMIN']), deleteUser);
+
 router.post("/createAdvisor", checkRole(['ADMIN']), createAdvisor);
 router.get("/getAllAdvisors", checkRole(['ADMIN']), getAllAdvisors);
 router.put("/updateAdvisor/:id", checkRole(['ADMIN']), updateAdvisor);
