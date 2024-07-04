@@ -6,6 +6,7 @@ const {
   deleteCourse
 } = require("../controllers/courseController");
 const checkRole = require("../middlewares/checkRole");
+
 const router = express.Router();
 
 router.post("/courses", checkRole(['COURSE_INSTRUCTOR']), createCourse);

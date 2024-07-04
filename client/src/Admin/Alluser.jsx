@@ -5,14 +5,17 @@ import { UserIcon } from "@heroicons/react/16/solid";
 const Alluser = () => {
   const navigate = useNavigate();
   //   User Data
-  const [students, setStudents] = useState([
-    { id: 1, name: "นายกิตติพงษ์ เดชจิต", class: "64/46" },
-    { id: 2, name: "นายศพล นิลเพรช", class: "64/46" },
-    { id: 3, name: "นายธิทเดท สระทองอุ่น", class: "64/46" },
-    { id: 4, name: "นายณภัทร สายทองสุข", class: "64/46" },
-    { id: 5, name: "นายก นามสกุล", class: "64/45" },
-    { id: 6, name: "นายก นามสกุล", class: "64/47" },
-    { id: 7, name: "นายก นามสกุล", class: "64/47" },
+  const [user, setUser] = useState([
+    { id: 1, name: "นายกิตติพงษ์ เดชจิต", class: "64/46", role: "Student" },
+    { id: 2, name: "นายศพล นิลเพรช", class: "64/46", role: "Student" },
+    { id: 3, name: "นายธิทเดท สระทองอุ่น", class: "64/46", role: "Student" },
+    { id: 4, name: "นายณภัทร สายทองสุข", class: "64/46", role: "Student" },
+    { id: 5, name: "นายก นามสกุล", class: "64/45", role: "Student" },
+    { id: 6, name: "นายก นามสกุล", class: "64/47", role: "Student" },
+    { id: 7, name: "นายก นามสกุล", class: "64/47", role: "Student" },
+    { id: 8, name: "นาย อาจารย์ ที่ปรึกษา", role: "Advisor" },
+    { id: 9, name: "นาย อาจารย์ ที่ปรึกษา", role: "Advisor" },
+    { id: 10, name: "นาย อาจารย์ ที่ปรึกษา", role: "Advisor" },
   ]);
   // Dropdown
   const classOptions = ["64/46", "64/45"];
@@ -20,10 +23,10 @@ const Alluser = () => {
   const [selectedClass, setSelectedClass] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredStudents = students.filter((student) => {
+  const filtereduser = user.filter((user) => {
     return (
-      (selectedClass === "" || student.class === selectedClass) &&
-      student.name.toLowerCase().includes(searchTerm.toLowerCase())
+      (selectedClass === "" || user.class === selectedClass) &&
+      user.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
 
@@ -132,32 +135,35 @@ const Alluser = () => {
             </div>
             <div className="overflow-y-auto h-full">
               <ul className="divide-y divide-gray-200">
-                {filteredStudents.map((student) => (
-                  <li key={student.id} className="py-2 flex items-center">
+                {filtereduser.map((user) => (
+                  <li key={user.id} className="py-2 flex items-center">
                     <UserIcon className="h-6 w-6 mr-2 text-gray-500" />
                     <div>
-                      <p className="text-lg">{student.name}</p>
-                      <p className="text-sm text-gray-500">{student.class}</p>
+                      <div className="flex">
+                        <p className="text-lg pr-2">{user.name}</p>{" "}
+                        <p className="text-sm badge text">{user.role}</p>
+                      </div>
+                      <p className="text-sm text-gray-500">{user.class}</p>
                     </div>
                   </li>
                 ))}
               </ul>
             </div>
             <div className="mt-6 flex justify-between">
-            <button
-              type="button"
-              className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
-              onClick={() => navigate("/admin")}
-            >
-              ย้อนกลับ
-            </button>
-            <button
-              type="button"
-              className="px-8 py-2 bg-red  border border-red-600 text-white rounded"
-            >
-              บันทึก
-            </button>
-          </div>
+              <button
+                type="button"
+                className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                onClick={() => navigate("/admin")}
+              >
+                ย้อนกลับ
+              </button>
+              <button
+                type="button"
+                className="px-8 py-2 bg-red  border border-red-600 text-white rounded"
+              >
+                บันทึก
+              </button>
+            </div>
           </div>
         </div>
       </div>

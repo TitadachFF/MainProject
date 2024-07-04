@@ -1,14 +1,11 @@
-// controllers/authController.js
-
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const prisma = require("../models/prisma");
 
 exports.login = async (req, res) => {
-  const { username, password } = req.body; // ไม่ต้องใช้ role
+  const { username, password } = req.body;
 
   try {
-    // ค้นหาผู้ใช้โดย username เท่านั้น
     const user = await prisma.user.findUnique({ where: { username } });
 
     if (!user) {
@@ -21,8 +18,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Invalid username or password" });
     }
 
-    // สร้าง token โดยใช้ id และ role ของผู้ใช้
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.id, role: user.role, name:user.name }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 

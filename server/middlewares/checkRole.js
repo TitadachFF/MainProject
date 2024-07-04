@@ -9,14 +9,10 @@ const checkRole = (roles) => {
         return res.status(401).json({ message: "Authorization header is missing" });
       }
 
-      // แยก token ออกจาก header โดยการแทนที่ "Bearer " ด้วยสตริงว่าง
       const token = authHeader.replace("Bearer ", "");
-      // ตรวจสอบและถอดรหัส token โดยใช้ secret key ที่เก็บไว้ใน env
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       let user;
-      // ค้นหาผู้ใช้ในฐานข้อมูลตามบทบาท (role) ที่ถอดรหัสได้จาก token
-      /// ขาดSTUDENT
       switch (decoded.role) {
         case 'ADMIN':
           user = await prisma.admin.findUnique({ where: { id: decoded.id } });

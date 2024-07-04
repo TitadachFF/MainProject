@@ -1,19 +1,21 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthProvider";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
+  const { user, setUser } = useContext(AuthContext);
+  console.log(user);
+
+  const navigate = useNavigate();
 
   const handleLogin = (userData) => {
     setIsLoggedIn(true);
     setUser(userData);
   };
 
-  
   return (
     <div className="navbar bg-base-100 py-5 shadow-md fixed top-0 left-0 w-full z-50">
       <div className="navbar-start">
@@ -128,7 +130,6 @@ const Navbar = () => {
           </li>
         </ul>
       </div>
-
       <div className="navbar-end pr-4">
         {isLoggedIn ? (
           <div className="dropdown dropdown-end">
@@ -156,13 +157,19 @@ const Navbar = () => {
             >
               <li>
                 <div className="justify-between">
-                  <span>{user?.username}</span>
+                  <span>{user?.name}</span>
                   <span className="badge">{user?.role}</span>
                 </div>
               </li>
-              <li><a>Profile</a></li>
-              <li><a>Settings</a></li>
-              <li><a onClick={() => setIsLoggedIn(false)}>Logout</a></li>
+              <li>
+                <a>Profile</a>
+              </li>
+              <li>
+                <a>Settings</a>
+              </li>
+              <li>
+                <a onClick={() => setIsLoggedIn(false)}>Logout</a>
+              </li>
             </ul>
           </div>
         ) : (
