@@ -18,6 +18,14 @@ const Navbar = () => {
     setUser(userData);
   };
 
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate("/");
+  };
+
   return (
     <div className="navbar bg-base-100 py-5 shadow-md fixed top-0 left-0 w-full z-50">
       <div className="navbar-start">
@@ -178,7 +186,7 @@ const Navbar = () => {
                 <a>Settings</a>
               </li>
               <li>
-                <a onClick={() => setIsLoggedIn(false)}>Logout</a>
+                <a onClick={handleLogout}>Logout</a>
               </li>
             </ul>
           </div>

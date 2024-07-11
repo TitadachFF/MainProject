@@ -52,7 +52,7 @@ const StudentInfo = () => {
                       : "text-gray-600"
                   }`}
                 >
-                  ขอมูลทั่วไป
+                  ข้อมูลทั่วไป
                 </a>
               </li>
               <li

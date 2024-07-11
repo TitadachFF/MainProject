@@ -14,13 +14,10 @@ const Modal = ({ name, onLogin }) => {
       const response = await axios.post("http://localhost:3000/api/login", {
         username: data.username,
         password: data.password,
-        role: data.role,
       });
 
       const token = response.data.token;
-
       localStorage.setItem("token", token);
-
       document.getElementById(name).close();
       onLogin(); // เรียกฟังก์ชัน handleLogin เมื่อเข้าสู่ระบบสำเร็จ
       navigate(from, { replace: true });
