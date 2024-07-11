@@ -10,12 +10,12 @@ const Alluser = () => {
   const [error, setError] = useState(null);
 
   // Fetch user data from backend
-  // qwewqe
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/getallUser"); 
-        
+        const response = await fetch("http://localhost:3000/api/getallUser");
+
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }
@@ -30,13 +30,13 @@ const Alluser = () => {
 
     fetchUsers();
   }, []);
-
   // Dropdown options
   const roleOptions = [
     { value: "ทั้งหมด", label: "ทั้งหมด" },
     { value: "STUDENT", label: "นักศึกษา" },
     { value: "ADVISOR", label: "ที่ปรึกษา" },
-    { value: "COURSE_INSTRUCTOR", label: "ตัวแทนหลักสูตร" }
+    { value: "COURSE_INSTRUCTOR", label: "ตัวแทนหลักสูตร" },
+    { value: "ADMIN", label: "แอดมิน" },
   ];
 
   const [selectedRole, setSelectedRole] = useState("");
@@ -44,7 +44,9 @@ const Alluser = () => {
 
   const filteredUsers = users.filter((user) => {
     return (
-      (selectedRole === "ทั้งหมด" || selectedRole === "" || user.role === selectedRole) &&
+      (selectedRole === "ทั้งหมด" ||
+        selectedRole === "" ||
+        user.role === selectedRole) &&
       user.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
@@ -137,7 +139,11 @@ const Alluser = () => {
                       <div className="flex">
                         <p className="text-lg pr-2">{user.name}</p>{" "}
                         <p className="text-sm badge text">
-                          {roleOptions.find((option) => option.value === user.role)?.label}
+                          {
+                            roleOptions.find(
+                              (option) => option.value === user.role
+                            )?.label
+                          }
                         </p>
                       </div>
                       <p className="text-sm text-gray-500">{user.class}</p>
