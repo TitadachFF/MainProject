@@ -1,28 +1,36 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
-// import { useAuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const { user, setUser } = useContext(AuthContext);
-  // const { user } = useAuthContext;
-  console.log(user);
-
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const storedUserData = localStorage.getItem('userData');
+    if (token && storedUserData) {
+      setIsLoggedIn(true);
+      setUserData(JSON.parse(storedUserData));
+    }
+  }, []);
 
   const handleLogin = (userData) => {
     setIsLoggedIn(true);
     setUser(userData);
+    setUserData(userData);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUser(null);
+    setUserData(null);
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('userData');
     navigate("/");
   };
 
@@ -175,8 +183,8 @@ const Navbar = () => {
             >
               <li>
                 <div className="justify-between">
-                  <span>{user?.name}</span>
-                  <span className="badge">{user?.role}</span>
+                  <span>{userData?.decoded.name}</span>
+                  <span className="badge">{userData?.decoded.role}</span>
                 </div>
               </li>
               <li>

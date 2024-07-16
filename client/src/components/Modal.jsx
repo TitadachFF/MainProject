@@ -11,22 +11,38 @@ const Modal = ({ name, onLogin }) => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post("http://localhost:3000/api/login", {
+      const loginResponse = await axios.post("http://localhost:3000/api/login", {
         username: data.username,
         password: data.password,
       });
-
-      const token = response.data.token;
+  
+      const token = loginResponse.data.token;
       localStorage.setItem("token", token);
+  
+      // เรียก API เพื่อ decode token
+      const decodeResponse = await axios.get("http://localhost:3000/api/decode-token", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const userData = decodeResponse.data;
+      localStorage.setItem("userData", JSON.stringify(userData)); // เก็บข้อมูลที่ decode ได้ใน localStorage
+      console.log(userData); // แสดงข้อมูลที่ได้จากการ decode token
+  
       document.getElementById(name).close();
       onLogin(); // เรียกฟังก์ชัน handleLogin เมื่อเข้าสู่ระบบสำเร็จ
       navigate(from, { replace: true });
       alert("Login Successful");
+  
+      // รีเฟรชหน้าเว็บหลังจากเข้าสู่ระบบสำเร็จ
+      window.location.reload();
     } catch (error) {
       console.error("Login failed:", error);
       alert("Login failed. Please try again.");
     }
   };
+  
 
   return (
     <div>
