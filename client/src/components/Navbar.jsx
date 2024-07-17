@@ -9,10 +9,20 @@ const Navbar = () => {
 
   const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  let displayRole = user?.decoded?.role;
+  if (displayRole === "ADMIN") {
+    displayRole = "แอดมิน";
+  } else if (displayRole === "STUDENT") {
+    displayRole = "นักศึกษา";
+  } else if (displayRole === "ADVISOR") {
+    displayRole = "อาจารย์";
+  } else if (displayRole === "COURSE_INSTRUCTOR") {
+    displayRole = "ตัวแทนหลักสูตร";
+  }
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedUserData = localStorage.getItem('userData');
+    const token = localStorage.getItem("token");
+    const storedUserData = localStorage.getItem("userData");
     if (token && storedUserData) {
       setIsLoggedIn(true);
       setUserData(JSON.parse(storedUserData));
@@ -29,8 +39,8 @@ const Navbar = () => {
     setIsLoggedIn(false);
     setUser(null);
     setUserData(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('userData');
+    localStorage.removeItem("token");
+    localStorage.removeItem("userData");
     navigate("/");
   };
 
@@ -87,78 +97,130 @@ const Navbar = () => {
           </p>
         </div>
       </div>
-
       <div className="navbar-center hidden lg:flex ">
         <ul className="menu menu-horizontal px-1  ">
-          <li>
-            <a
-              className="font-semibold hover:underline"
-              onClick={() => navigate("/")}
-            >
-              หน้าแรก
-            </a>
-          </li>
-          {/* {user.role === "STUDENT" && (
-            <li>
+          {userData?.decoded.role === "STUDENT" && (
+            <li className="flex-row">
               <a
                 className="font-semibold hover:underline"
                 onClick={() => navigate("/student")}
               >
-                StudentMenu
+                เมนูนักศึกษา
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/fillgrade")}
+              >
+                กรอกแบบบันทึกผลการเรียน
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/documents")}
+              >
+                เอกสาร
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/studentinfo")}
+              >
+                ข้อมูลส่วนตัว
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/documentresponse")}
+              >
+                คำตอบกลับเอกสาร
               </a>
             </li>
           )}
-          {user.role === "COURSE_INSTRUCTOR" && (
-            <li>
+          {userData?.decoded.role === "COURSE_INSTRUCTOR" && (
+            <li className="flex-row">
               <a
                 className="font-semibold hover:underline"
-                onClick={() => navigate("/course")}
+                onClick={() => navigate("/addcourse")}
               >
-                CourseManagerMenu
+                เพิ่มหลักสูตร
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/allcourse")}
+              >
+                ดูหลักสูตร
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/courseinfo")}
+              >
+                ข้อมูลส่วนตัว
               </a>
             </li>
           )}
-          {user.role === "ADVISOR" && (
-            <li>
+          {userData?.decoded.role === "ADVISOR" && (
+            <li className="flex-row">
               <a
                 className="font-semibold hover:underline"
-                onClick={() => navigate("/advice")}
+                onClick={() => navigate("/addstudent")}
               >
-                AdviceMenu
+                เพิ่มนักศึกษา
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/allstudent")}
+              >
+                ดูรายชื่อนักศึกษา
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/studentplan")}
+              >
+                แผนการเรียน
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/adviceinfo")}
+              >
+                ข้อมูลส่วนตัว
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/documentstudent")}
+              >
+                เอกสารคำร้องขอ
               </a>
             </li>
-           )} */}
-          {user?.role === "ADMIN" && (
-            <li>
+          )}
+          {userData?.decoded.role === "ADMIN" && (
+            <li className="flex-row ">
               <a
                 className="font-semibold hover:underline"
                 onClick={() => navigate("/admin")}
               >
-                AdminMenu
+                เมนูแอดมิน
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/alluser")}
+              >
+                ดูรายชื่อผู้ใช้
+              </a>
+              <a
+                className="font-semibold hover:underline"
+                onClick={() => navigate("/admininfo")}
+              >
+                ข้อมูลส่วนตัว
               </a>
             </li>
           )}
-          <li>
-            <details>
-              <summary>Parent Dropdown</summary>
-              <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </details>
-          </li>
-          <li>
-            <a className="hover:underline">ข้อมูลส่วนตัว</a>
-          </li>
         </ul>
       </div>
       <div className="navbar-end pr-4">
         {isLoggedIn ? (
-          <div className="dropdown dropdown-end">
+          <div className="dropdown dropdown-end flex">
+            <div className="pt-3 flex">
+              <p className="font-bold pr-2">ยินดีต้อนรับ !</p>
+              <span className="pr-2">{userData?.decoded.name}</span>
+              <span className="h-6 badge">{displayRole}</span>
+            </div>
             <div
               tabIndex={0}
               role="button"
@@ -179,12 +241,12 @@ const Navbar = () => {
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+              className="menu menu-sm dropdown-content bg-base-100 mt-12 rounded-box z-[1]  w-56 p-2 shadow"
             >
               <li>
                 <div className="justify-between">
                   <span>{userData?.decoded.name}</span>
-                  <span className="badge">{userData?.decoded.role}</span>
+                  <span className="badge">{displayRole}</span>
                 </div>
               </li>
               <li>

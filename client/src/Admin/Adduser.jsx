@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Adduser = () => {
-  
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -36,14 +35,18 @@ const Adduser = () => {
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (response.ok) {
         alert("เพิ่มผู้ใช้เรียบร้อยแล้ว");
         navigate("/admin");
       } else {
         const errorData = await response.json();
         console.log("Response data:", errorData);
-        alert(`มีข้อผิดพลาดในการเพิ่มผู้ใช้: ${errorData.message || "Unknown error"}`);
+        alert(
+          `มีข้อผิดพลาดในการเพิ่มผู้ใช้: ${
+            errorData.message || "Unknown error"
+          }`
+        );
       }
     } catch (error) {
       console.error("Error adding user:", error);
@@ -90,10 +93,8 @@ const Adduser = () => {
                 onChange={handleChange}
                 className="select select-bordered w-full max-w-xs"
               >
-                <option>
-                  เลือกตำแหน่ง
-                </option>
-                <option value="STUDENT">นักศึกษา</option>
+                <option>เลือกตำแหน่ง</option>
+
                 <option value="ADVISOR">อาจารย์ที่ปรึกษา</option>
                 <option value="COURSE_INSTRUCTOR">ตัวแทนหลักสูตร</option>
               </select>

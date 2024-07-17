@@ -1,55 +1,43 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import { AuthContext } from "../context/AuthProvider";
 
 const Modal = ({ name, onLogin }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const from = location?.state?.from?.pathname || "/";
   const { register, handleSubmit } = useForm();
+  const { login } = useContext(AuthContext);
 
   const onSubmit = async (data) => {
-    try {
-      const loginResponse = await axios.post("http://localhost:3000/api/login", {
-        username: data.username,
-        password: data.password,
-      });
-  
-      const token = loginResponse.data.token;
-      localStorage.setItem("token", token);
-  
-      // เรียก API เพื่อ decode token
-      const decodeResponse = await axios.get("http://localhost:3000/api/decode-token", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      const userData = decodeResponse.data;
-      localStorage.setItem("userData", JSON.stringify(userData)); // เก็บข้อมูลที่ decode ได้ใน localStorage
-      console.log(userData); // แสดงข้อมูลที่ได้จากการ decode token
-  
+    const result = await login(data.username, data.password);
+    if (result.success) {
+      const { userData } = result;
       document.getElementById(name).close();
-      onLogin(); // เรียกฟังก์ชัน handleLogin เมื่อเข้าสู่ระบบสำเร็จ
-      navigate(from, { replace: true });
+      onLogin();
+
+      if (userData?.decoded.role === "ADMIN") {
+        navigate("/admin", { replace: true });
+      } else if (userData?.decoded.role === "STUDENT") {
+        navigate("/student", { replace: true });
+      } else if (userData?.decoded.role === "COURSE_INSTRUCTOR") {
+        navigate("/course", { replace: true });
+      } else if (userData?.decoded.role === "ADVISOR") {
+        navigate("/advice", { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
       alert("Login Successful");
-  
-      // รีเฟรชหน้าเว็บหลังจากเข้าสู่ระบบสำเร็จ
       window.location.reload();
-    } catch (error) {
-      console.error("Login failed:", error);
+    } else {
       alert("Login failed. Please try again.");
     }
   };
-  
 
   return (
     <div>
-      <dialog
-        id={name}
-        className="modal modal-bottom sm:modal-middle text-black"
-      >
+      <dialog id={name} className="modal modal-bottom sm:modal-middle text-black">
         <div className="modal-box">
           <div className="modal-action mt-0 flex flex-col justify-center">
             <h3 className="font-bold text-lg text-center">โปรดเข้าสู่ระบบ</h3>
