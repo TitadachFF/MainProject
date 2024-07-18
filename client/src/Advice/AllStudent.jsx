@@ -5,6 +5,7 @@ import { UserIcon } from "@heroicons/react/16/solid";
 const AllStudent = () => {
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [roomOptions, setRoomOptions] = useState([]);
@@ -15,19 +16,27 @@ const AllStudent = () => {
     const fetchStudents = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/getStudent");
+        console.log("API Response:", response);
+
+        
 
         if (!response.ok) {
           throw new Error("Failed to fetch students");
         }
         const data = await response.json();
+        console.log("Fetched Students:", data);
         setStudents(data);
 
         // Extract unique room values from students
         const uniqueRooms = Array.from(
-          new Set(data.map((student) => student.studentInfo.room))
+          new Set(
+            data.map((student) => `${student.studentInfo.room}`).filter(Boolean)
+          )
         );
         setRoomOptions(uniqueRooms);
+        console.log("Unique Rooms:", uniqueRooms);
       } catch (error) {
+        console.error("Error fetching students:", error);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -37,13 +46,21 @@ const AllStudent = () => {
     fetchStudents();
   }, []);
 
-  const filteredStudents = students.filter((student) => {
-    return (
-      (selectedRoom === "" ||
-        (student.studentInfo && student.studentInfo.room === selectedRoom)) &&
-      student.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  useEffect(() => {
+    const filtered = students.filter((student) => {
+      const isInSelectedRoom =
+        selectedRoom === "" ||
+        (student.studentInfo && `${student.studentInfo.room}` === selectedRoom);
+
+      const isInSearchTerm =
+        searchTerm === "" || student.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+      return isInSelectedRoom && isInSearchTerm;
+    });
+    setFilteredStudents(filtered);
+  }, [students, selectedRoom, searchTerm, loading]);
+
+
 
   const handleRoomChange = (e) => {
     setSelectedRoom(e.target.value);
@@ -118,11 +135,12 @@ const AllStudent = () => {
                   <UserIcon className="h-6 w-6 mr-2 text-gray-500" />
                   <div>
                     <p className="text-lg">{student.name}</p>
-                    {student.studentInfo && (
-                      <p className="text-sm text-gray-500">
-                        ชั้น {student.studentInfo.room}
-                      </p>
-                    )}
+                    {student.studentInfo &&
+                      student.studentInfo.room && ( // Check if studentInfo and room exist
+                        <p className="text-sm text-gray-500">
+                          ชั้น {student.studentInfo.room}
+                        </p>
+                      )}
                   </div>
                 </li>
               ))}

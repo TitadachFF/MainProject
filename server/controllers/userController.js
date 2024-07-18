@@ -143,12 +143,6 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).json({ message: `User with ID ${id} not found` });
     }
 
-    // Delete related records in StudentInfo table first
-    await prisma.studentInfo.deleteMany({
-      where: { studentsId: parseInt(id) },
-    });
-
-    // Then delete the user
     await prisma.user.delete({
       where: { id: parseInt(id) },
     });
@@ -271,3 +265,4 @@ exports.getAllCourseInstructors = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
