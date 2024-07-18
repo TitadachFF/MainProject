@@ -27,17 +27,18 @@ const AddStudent = () => {
       alert("รหัสผ่านไม่ตรงกัน");
       return;
     }
-
+  
     // Convert 'year,room,studentIdcard' to integer
     const year = parseInt(formData.year);
     const room = parseInt(formData.room);
     const studentIdcard = parseInt(formData.studentIdcard);
-
+  
     try {
       const response = await fetch("http://localhost:3000/api/createStudent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`, // เพิ่ม header การยืนยันตัวตน
         },
         body: JSON.stringify({
           name: formData.name,
@@ -48,7 +49,7 @@ const AddStudent = () => {
           room,
         }),
       });
-
+  
       if (response.ok) {
         alert("เพิ่มนักศึกษาเรียบร้อยแล้ว");
         navigate("/advice");
@@ -66,6 +67,7 @@ const AddStudent = () => {
       alert("มีข้อผิดพลาดในการเพิ่มนักศึกษา");
     }
   };
+  
 
   return (
     <div className="bg-gray-100">

@@ -69,7 +69,7 @@ const Adduser = () => {
       </div>
       <div className=" min-h-screen flex justify-center p-6">
         <div className="container mx-auto w-full max-w-3xl bg-white h-full  rounded-lg shadow-lg p-6 ">
-          <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
+          <h2 className="text-2xl text-red font-bold mb-6">
             เพิ่มผู้ใช้
           </h2>
 

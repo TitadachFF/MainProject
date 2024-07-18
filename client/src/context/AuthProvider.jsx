@@ -5,7 +5,7 @@ export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-
+// Decode Token
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("token");
@@ -25,7 +25,7 @@ const AuthProvider = ({ children }) => {
     };
     fetchUserData();
   }, []);
-
+// Login Function
   const login = async (username, password) => {
     try {
       const loginResponse = await axios.post("http://localhost:3000/api/login", {
@@ -52,13 +52,13 @@ const AuthProvider = ({ children }) => {
       return { success: false, error: error.message };
     }
   };
-
+// Logout Function
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
     setUser(null);
   };
-
+// Auth Info
   const authInfo = {
     user,
     setUser,

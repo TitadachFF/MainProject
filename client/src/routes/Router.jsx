@@ -32,6 +32,7 @@ import CourseCategory from "../Course/CourseCategory";
 import DocumentStudent from "../Advice/DocumentStudent";
 import StudentPlan from "../Advice/StudentPlan";
 import AddStudentplan from "../Advice/AddStudentplan";
+import AdminInfo from "../Admin/AdminInfo";
 
 const Router = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ const Router = createBrowserRouter([
       {
         path: "/admin",
         element: <AdminMenu />,
+      },
+      {
+        path: "/admininfo",
+        element: <AdminInfo />,
       },
       {
         path: "/alluser",

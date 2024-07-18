@@ -6,8 +6,8 @@ import { AuthContext } from "../context/AuthProvider";
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
-
   const { user, setUser } = useContext(AuthContext);
+
   const navigate = useNavigate();
   let displayRole = user?.decoded?.role;
   if (displayRole === "ADMIN") {
