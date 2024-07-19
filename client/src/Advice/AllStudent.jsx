@@ -77,9 +77,9 @@ const AllStudent = () => {
   const startEditing = (student) => {
     setEditingStudent(student);
     setUpdatedName(student.name);
-    setUpdatedYear(student.studentInfo.year); 
-    setUpdatedRoom(student.studentInfo.room); 
-    setUpdatedIdCard(student.studentInfo.studentIdcard); 
+    setUpdatedYear(student.studentInfo.year);
+    setUpdatedRoom(student.studentInfo.room);
+    setUpdatedIdCard(student.studentInfo.studentIdcard);
   };
 
   const saveChanges = async () => {
@@ -134,8 +134,6 @@ const AllStudent = () => {
       // }, 1000);
     }
   };
-
-
 
   if (loading) {
     return <div>Loading...</div>;
@@ -213,18 +211,21 @@ const AllStudent = () => {
                   <div className="flex items-center">
                     <UserIcon className="h-6 w-6 mr-2 text-gray-500" />
                     <div>
-                      <p className="text-lg">{student.studentInfo.studentIdcard} {student.name}</p>
+                      <p className="text-lg">
+                        {student.studentInfo.studentIdcard} {student.name}
+                      </p>
                       {student.studentInfo && (
                         <p className="text-sm text-gray-500">
-                          หมู่เรียน {student.studentInfo.year} / {student.studentInfo.room}
+                          หมู่เรียน {student.studentInfo.year} /{" "}
+                          {student.studentInfo.room}
                         </p>
                       )}
                     </div>
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2 pr-2">
                     <button
                       type="button"
-                      className="px-3 py-1 bg-gray-100 border border-red text-red rounded"
+                      className="px-4 py-2 bg-orange-300 text-white text-sm rounded"
                       onClick={() => startEditing(student)}
                     >
                       แก้ไข
@@ -237,7 +238,7 @@ const AllStudent = () => {
           <div className="mt-6 flex justify-between">
             <button
               type="button"
-              className="px-6 py-2 bg-gray-100 border border-red text-red rounded"
+              className="px-6 py-2 bg-gray-100 border  rounded"
               onClick={() => navigate("/advice")}
             >
               ย้อนกลับ
@@ -249,63 +250,62 @@ const AllStudent = () => {
       {editingStudent && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-1/3">
-            <h3 className="text-xl mb-4 text-red">Edit Student</h3>
+            <h3 className="text-xl mb-4 text-red">แก้ไขนักศึกษา</h3>
             <div className="mb-2">
               <label className="block text-md font-medium text-black">
-                Name
+                รหัสนักศึกษา
               </label>
               <input
                 type="text"
-                className="mt-1 w-full rounded border-gray-300 shadow-sm text-gray-500"
+                className="mt-1 w-full h-9 rounded border-gray-300  border text-gray-500 "
+                value={updatedIdCard}
+                onChange={(e) => setUpdatedIdCard(e.target.value)}
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-md font-medium text-black">
+                ชื่อ-นามสกุล
+              </label>
+              <input
+                type="text"
+                className="mt-1 w-full h-9 rounded border-gray-300  border text-gray-500 "
                 value={updatedName}
                 onChange={(e) => setUpdatedName(e.target.value)}
               />
             </div>
             <div className="mb-2">
-              <label className="block text-md font-medium text-black">
-                Year
-              </label>
+              <label className="block text-md font-medium text-black">ปี</label>
               <input
                 type="text"
-                className="mt-1 w-full rounded-md border-gray-300 shadow-sm text-gray-500"
+                className="mt-1 w-full h-9 rounded border-gray-300  border text-gray-500 "
                 value={updatedYear}
                 onChange={(e) => setUpdatedYear(e.target.value)}
               />
             </div>
             <div className="mb-2">
               <label className="block text-md font-medium text-black">
-                Room
+                ห้อง
               </label>
               <input
                 type="text"
-                className="mt-1 w-full rounded border-gray-300 shadow-sm text-gray-500"
+                className="mt-1 w-full h-9 rounded border-gray-300  border text-gray-500 "
                 value={updatedRoom}
                 onChange={(e) => setUpdatedRoom(e.target.value)}
               />
             </div>
-            <div className="mb-2">
-              <label className="block text-md font-medium text-black">
-                Student ID Card
-              </label>
-              <input
-                type="text"
-                className="mt-1 w-full rounded border-gray-300 shadow-sm text-gray-500"
-                value={updatedIdCard}
-                onChange={(e) => setUpdatedIdCard(e.target.value)}
-              />
-            </div>
+
             <div className="flex justify-end">
               <button
                 className="px-4 py-1 bg-red border border-red text-white rounded mr-2"
                 onClick={saveChanges}
               >
-                Save
+                บักทึก
               </button>
               <button
-                className="px-4 py-1 bg-gray-100 border border-red text-red rounded"
+                className="px-4 py-1 bg-gray-100 border  rounded"
                 onClick={() => setEditingStudent(null)}
               >
-                Cancel
+                ยกเลิก
               </button>
             </div>
           </div>

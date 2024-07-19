@@ -2,16 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserIcon } from "@heroicons/react/16/solid";
 
-const Alluser = () => {
+const AllUser = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
-  const [updatedName, setUpdatedName] = useState("");
   const [updatedRole, setUpdatedRole] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [updatedName, setUpdatedName] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -63,11 +64,10 @@ const Alluser = () => {
     setUpdatedName(user.name);
     setUpdatedRole(user.role);
   };
-  // Edit User
+
   const saveChanges = async () => {
     try {
       const requestBody = { name: updatedName, role: updatedRole };
-      console.log("Request Body:", requestBody); // ตรวจสอบข้อมูลที่ส่งไป
 
       const response = await fetch(
         `http://localhost:3000/api/updateUser/${editingUser.id}`,
@@ -92,6 +92,11 @@ const Alluser = () => {
       );
 
       setEditingUser(null);
+      setShowSuccessModal(true);
+
+      setTimeout(() => {
+        setShowSuccessModal(false);
+      }, 1000);
     } catch (error) {
       setError(error.message);
     }
@@ -229,66 +234,62 @@ const Alluser = () => {
               </ul>
             </div>
             {editingUser && (
-              <div className="mt-6 bg-gray-100 p-4 rounded-lg">
-                <h3 className="text-xl font-bold mb-4">แก้ไขข้อมูลผู้ใช้</h3>
-                <div className="mb-4">
-                  <label className="block text-gray-700">ชื่อผู้ใช้</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 bg-white border border-gray-300 rounded py-2 px-4 leading-tight focus:outline-none focus:border-gray-500"
-                    value={updatedName}
-                    onChange={(e) => setUpdatedName(e.target.value)}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700">ตำแหน่ง</label>
-                  <select
-                    className="w-full mt-1 bg-white border border-gray-300 rounded py-2 px-4 leading-tight focus:outline-none focus:border-gray-500"
-                    value={updatedRole}
-                    onChange={(e) => setUpdatedRole(e.target.value)}
-                  >
-                    {roleOptions
-                      .filter((option) => option.value !== "ทั้งหมด")
-                      .map((option, index) => (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white rounded-lg p-6 w-1/3">
+                  <h3 className="text-xl mb-4 text-red">Edit User</h3>
+                  <div className="mb-2">
+                    <label className="block text-md font-medium text-black">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      className="mt-1 w-full rounded border-gray-300 shadow-sm text-gray-500"
+                      value={updatedName}
+                      onChange={(e) => setUpdatedName(e.target.value)}
+                    />
+                  </div>
+                  <div className="mb-2">
+                    <label className="block text-md font-medium text-black">
+                      Role
+                    </label>
+                    <select
+                      className="w-full mt-1 bg-white border border-gray-300 rounded py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
+                      value={updatedRole}
+                      onChange={(e) => setUpdatedRole(e.target.value)}
+                    >
+                      {roleOptions.map((option, index) => (
                         <option key={index} value={option.value}>
                           {option.label}
                         </option>
                       ))}
-                  </select>
-                </div>
-                <div className="flex justify-end space-x-4">
-                  <button
-                    type="button"
-                    className="px-6 py-2 bg-gray-500 border text-white border-gray-500  rounded"
-                    onClick={() => setEditingUser(null)}
-                  >
-                    ยกเลิก
-                  </button>
-                  <button
-                    type="button"
-                    className="px-6 py-2 bg-blue-600 text-white rounded"
-                    onClick={saveChanges}
-                  >
-                    บันทึก
-                  </button>
+                    </select>
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <button
+                      type="button"
+                      className="px-4 py-2 bg-gray-300 text-white text-sm rounded"
+                      onClick={() => setEditingUser(null)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="px-4 py-2 bg-red text-white text-sm rounded"
+                      onClick={saveChanges}
+                    >
+                      Save
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
-            <div className="mt-6 flex justify-between">
-              <button
-                type="button"
-                className="px-6 py-2 bg-gray-100 border  rounded"
-                onClick={() => navigate("/admin")}
-              >
-                ย้อนกลับ
-              </button>
-              <button
-                type="button"
-                className="px-8 py-2 bg-red border text-white rounded"
-              >
-                บันทึก
-              </button>
-            </div>
+            {showSuccessModal && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white rounded-lg p-6 w-1/3">
+                  <p className="text-green-500 text-lg font-bold">Success!</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -296,4 +297,4 @@ const Alluser = () => {
   );
 };
 
-export default Alluser;
+export default AllUser;
