@@ -213,10 +213,10 @@ const AllStudent = () => {
                   <div className="flex items-center">
                     <UserIcon className="h-6 w-6 mr-2 text-gray-500" />
                     <div>
-                      <p className="text-lg">{student.name}</p>
+                      <p className="text-lg">{student.studentInfo.studentIdcard} {student.name}</p>
                       {student.studentInfo && (
                         <p className="text-sm text-gray-500">
-                          ชั้น {student.studentInfo.room}
+                          หมู่เรียน {student.studentInfo.year} / {student.studentInfo.room}
                         </p>
                       )}
                     </div>

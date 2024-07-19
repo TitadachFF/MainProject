@@ -5,10 +5,14 @@ import { AuthContext } from "../context/AuthProvider";
 
 const AdminInfo = () => {
   const navigate = useNavigate();
-  const [adminName, setAdminName] = useState("");
-  const { user, setUser } = useContext(AuthContext);
-  const [userData, setUserData] = useState(null);
+  const [adminname, setAdminname] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -18,6 +22,46 @@ const AdminInfo = () => {
       setUserData(JSON.parse(storedUserData));
     }
   }, []);
+
+  const handleUpdate = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const updatedUserData = { name: adminname, username, password };
+
+      const response = await axios.put(
+        `http://localhost:3000/api/updateUser/${userData.decoded.id}`,
+        updatedUserData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setMessage(response.data.message);
+      setShowModal(true);
+
+      setUserData({
+        ...userData,
+        decoded: {
+          ...userData.decoded,
+          name: adminname,
+        },
+      });
+
+      setTimeout(() => {
+        setShowModal(false);
+        navigate("/admin");
+      }, 1000);
+    } catch (error) {
+      console.error("Error updating user:", error.message);
+      setMessage("Error updating user");
+    }
+  };
+
+
+
+
 
   return (
     <div className="bg-gray-100">
@@ -45,8 +89,8 @@ const AdminInfo = () => {
                   type="text"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
                   placeholder={userData?.decoded.name}
-                  value={adminName}
-                  onChange={(e) => setAdminName(e.target.value)}
+                  value={adminname}
+                  onChange={(e) => setAdminname(e.target.value)}
                 />
               </div>
              
@@ -55,7 +99,9 @@ const AdminInfo = () => {
                 <input
                   type="text"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
-                  placeholder="Username"
+                  placeholder="ชื่อผู้ใช้"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
               <div>
@@ -64,6 +110,8 @@ const AdminInfo = () => {
                   type="password"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
                   placeholder="รหัสผ่าน"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div>
@@ -72,6 +120,8 @@ const AdminInfo = () => {
                   type="password"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
                   placeholder="ยืนยันรหัสผ่าน"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
             </div>
@@ -80,18 +130,29 @@ const AdminInfo = () => {
               <button
                 type="button"
                 className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
-                onClick={() => navigate("/advice")}
+                onClick={() => navigate("/admin")}
               >
                 ย้อนกลับ
               </button>
               <button
                 type="button"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
-              >
+                onClick={handleUpdate}
+             >
                 บันทึก
               </button>
             </div>
           </form>
+  {/* Modal Component */}
+  {showModal && (
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
+              <div className="absolute w-full h-full bg-gray-900 opacity-50"></div>
+              <div className="bg-white rounded-lg p-8 z-50">
+                <p className="text-lg text-red">อัปเดทข้อมูลส่วนตัวสำเร็จ</p>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
     </div>
