@@ -193,19 +193,19 @@ const Navbar = () => {
             <li className="flex-row ">
               <a
                 className="font-semibold hover:underline"
-                onClick={() => navigate("/admin")}
+               href="/admin"
               >
                 เมนูแอดมิน
               </a>
               <a
                 className="font-semibold hover:underline"
-                onClick={() => navigate("/alluser")}
+               href="/alluser"
               >
                 ดูรายชื่อผู้ใช้
               </a>
               <a
                 className="font-semibold hover:underline"
-                onClick={() => navigate("/admininfo")}
+             href="/admininfo"
               >
                 ข้อมูลส่วนตัว
               </a>

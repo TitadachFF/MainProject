@@ -257,7 +257,7 @@ const AllStudent = () => {
               </label>
               <input
                 type="text"
-                className="mt-1 w-full h-9 rounded border-gray-300  border text-gray-500 "
+                className="mt-1 w-full h-9 rounded border-gray-300 p-2  border text-gray-500 "
                 value={updatedIdCard}
                 onChange={(e) => setUpdatedIdCard(e.target.value)}
               />
@@ -268,7 +268,7 @@ const AllStudent = () => {
               </label>
               <input
                 type="text"
-                className="mt-1 w-full h-9 rounded border-gray-300  border text-gray-500 "
+                className="mt-1 w-full h-9 rounded border-gray-300 p-2  border text-gray-500 "
                 value={updatedName}
                 onChange={(e) => setUpdatedName(e.target.value)}
               />
@@ -277,7 +277,7 @@ const AllStudent = () => {
               <label className="block text-md font-medium text-black">ปี</label>
               <input
                 type="text"
-                className="mt-1 w-full h-9 rounded border-gray-300  border text-gray-500 "
+                className="mt-1 w-full h-9 rounded border-gray-300 p-2  border text-gray-500 "
                 value={updatedYear}
                 onChange={(e) => setUpdatedYear(e.target.value)}
               />
@@ -288,7 +288,7 @@ const AllStudent = () => {
               </label>
               <input
                 type="text"
-                className="mt-1 w-full h-9 rounded border-gray-300  border text-gray-500 "
+                className="mt-1 w-full h-9 rounded border-gray-300 p-2  border text-gray-500 "
                 value={updatedRoom}
                 onChange={(e) => setUpdatedRoom(e.target.value)}
               />

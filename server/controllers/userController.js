@@ -93,11 +93,10 @@ exports.getRole = async (req, res) => {
   }
 };
 
-
 // Update User   
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  const { name, username, password } = req.body;
+  const { name, username, password, role } = req.body;
 
   try {
     const existingUser = await prisma.user.findUnique({
@@ -116,6 +115,7 @@ exports.updateUser = async (req, res) => {
         name,
         username,
         password: hashedPassword || existingUser.password, 
+        role,  // อัปเดตข้อมูล role
       },
     });
 
@@ -125,6 +125,7 @@ exports.updateUser = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 
 

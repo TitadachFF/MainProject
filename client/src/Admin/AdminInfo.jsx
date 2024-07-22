@@ -1,11 +1,11 @@
-import React, { useContext,useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthProvider";
 
 const AdminInfo = () => {
   const navigate = useNavigate();
-  const [adminname, setAdminname] = useState("");
+  const [adminName, setAdminName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,14 +19,17 @@ const AdminInfo = () => {
     const storedUserData = localStorage.getItem("userData");
     if (token && storedUserData) {
       setIsLoggedIn(true);
-      setUserData(JSON.parse(storedUserData));
+      const parsedUserData = JSON.parse(storedUserData);
+      setUserData(parsedUserData);
+      setAdminName(parsedUserData.decoded.name); // ตั้งค่าเริ่มต้นสำหรับ adminName
+      setUsername(parsedUserData.decoded.username); // ตั้งค่าเริ่มต้นสำหรับ username
     }
   }, []);
 
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      const updatedUserData = { name: adminname, username, password };
+      const updatedUserData = { name: adminName, username, password };
 
       const response = await axios.put(
         `http://localhost:3000/api/updateUser/${userData.decoded.id}`,
@@ -45,7 +48,7 @@ const AdminInfo = () => {
         ...userData,
         decoded: {
           ...userData.decoded,
-          name: adminname,
+          name: adminName,
         },
       });
 
@@ -59,16 +62,12 @@ const AdminInfo = () => {
     }
   };
 
-
-
-
-
   return (
     <div className="bg-gray-100">
       <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28">
-        <p className="cursor-pointer" onClick={() => navigate("/")}>
+        <a className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
-        </p>
+        </a>
         <span className="mx-1">&gt;</span>
         <p className="cursor-pointer" onClick={() => navigate("/admin")}>
           เมนูแอดมิน
@@ -88,12 +87,19 @@ const AdminInfo = () => {
                 <input
                   type="text"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
-                  placeholder={userData?.decoded.name}
-                  value={adminname}
-                  onChange={(e) => setAdminname(e.target.value)}
+                  value={adminName}
+                  onChange={(e) => setAdminName(e.target.value)}
                 />
               </div>
-             
+              <div>
+                <label className="block text-gray-700">ตำแหน่ง</label>
+                <input
+                  type="text"
+                  className="w-full mt-1 border border-gray-300 rounded p-2 text-gray-500 cursor-not-allowed"
+                  value="แอดมิน"
+                  readOnly
+                />
+              </div>
               <div>
                 <label className="block text-gray-700">ชื่อผู้ใช้</label>
                 <input
@@ -129,22 +135,22 @@ const AdminInfo = () => {
             <div className="mt-6 flex justify-between">
               <button
                 type="button"
-                className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                className="px-6 py-2 bg-gray-100 border rounded-full"
                 onClick={() => navigate("/admin")}
               >
                 ย้อนกลับ
               </button>
               <button
                 type="button"
-                className="px-8 py-2 bg-red border border-red-600 text-white rounded"
+                className="px-8 py-2 bg-red border text-white rounded-full"
                 onClick={handleUpdate}
-             >
+              >
                 บันทึก
               </button>
             </div>
           </form>
-  {/* Modal Component */}
-  {showModal && (
+          {/* Modal Component */}
+          {showModal && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
               <div className="absolute w-full h-full bg-gray-900 opacity-50"></div>
               <div className="bg-white rounded-lg p-8 z-50">
@@ -152,7 +158,6 @@ const AdminInfo = () => {
               </div>
             </div>
           )}
-
         </div>
       </div>
     </div>

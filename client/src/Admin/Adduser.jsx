@@ -106,7 +106,7 @@ const Adduser = () => {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                className="w-full mt-1 border border-gray-300 rounded p-2"
+                className="w-full mt-1 border border-gray-300 rounded p-2 "
                 placeholder="ชื่อผู้ใช้"
               />
             </div>
@@ -136,14 +136,14 @@ const Adduser = () => {
           <div className="mt-6 flex justify-between">
             <button
               type="button"
-              className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+              className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded-full"
               onClick={() => navigate("/admin")}
             >
               ย้อนกลับ
             </button>
             <button
               type="button"
-              className="px-8 py-2 bg-red  border border-red-600 text-white rounded"
+              className="px-8 py-2 bg-red  border border-red-600 text-white rounded-full"
               onClick={handleSubmit}
             >
               บันทึก

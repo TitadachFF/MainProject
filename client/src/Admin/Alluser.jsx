@@ -1,24 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { UserIcon } from "@heroicons/react/16/solid";
 
 const AllUser = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
+  const [editingUserPassword, setEditingUserPassword] = useState(null);
   const [updatedRole, setUpdatedRole] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchUser, setSearchUser] = useState("");
   const [updatedName, setUpdatedName] = useState("");
+  const [updatedUserName, setUpdatedUserName] = useState("");
+  const [updatedUserPassword, setUpdatedUserPassword] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/getallUser");
-
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:3000/api/getallUser", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }
@@ -47,7 +55,7 @@ const AllUser = () => {
       (selectedRole === "ทั้งหมด" ||
         selectedRole === "" ||
         user.role === selectedRole) &&
-      user.name.toLowerCase().includes(searchTerm.toLowerCase())
+      user.name.toLowerCase().includes(searchUser.toLowerCase())
     );
   });
 
@@ -56,25 +64,42 @@ const AllUser = () => {
   };
 
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
+    setSearchUser(e.target.value);
   };
 
   const startEditing = (user) => {
     setEditingUser(user);
     setUpdatedName(user.name);
     setUpdatedRole(user.role);
+    setUpdatedUserName(user.username);
+  };
+
+  const startEditingPassword = (user) => {
+    setEditingUserPassword(user);
+    setUpdatedUserPassword("");
   };
 
   const saveChanges = async () => {
     try {
-      const requestBody = { name: updatedName, role: updatedRole };
+      const token = localStorage.getItem("token");
+      const requestBody = {
+        name: updatedName,
+        role: updatedRole,
+        username: updatedUserName,
+        password: updatedUserPassword,
+      };
+
+      console.log("Request Body :", requestBody);
 
       const response = await fetch(
-        `http://localhost:3000/api/updateUser/${editingUser.id}`,
+        `http://localhost:3000/api/updateUser/${
+          editingUser ? editingUser.id : editingUserPassword.id
+        }`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(requestBody),
         }
@@ -92,10 +117,12 @@ const AllUser = () => {
       );
 
       setEditingUser(null);
+      setEditingUserPassword(null);
       setShowSuccessModal(true);
 
       setTimeout(() => {
         setShowSuccessModal(false);
+        window.location.reload();
       }, 1000);
     } catch (error) {
       setError(error.message);
@@ -186,7 +213,7 @@ const AllUser = () => {
                   id="search"
                   className=" text-sm w-full mt-1 bg-white border border-gray-300 rounded-full py-2 px-4 leading-tight focus:outline-none focus:border-gray-500"
                   placeholder="ค้นหารายชื่อผู้ใช้"
-                  value={searchTerm}
+                  value={searchUser}
                   onChange={handleSearchChange}
                 />
               </div>
@@ -223,6 +250,13 @@ const AllUser = () => {
                       </button>
                       <button
                         type="button"
+                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded"
+                        onClick={() => startEditingPassword(user)}
+                      >
+                        ลืมรหัสผ่าน
+                      </button>
+                      <button
+                        type="button"
                         className="px-4 py-2 bg-red text-white text-sm rounded"
                         onClick={() => deleteUser(user.id)}
                       >
@@ -236,24 +270,27 @@ const AllUser = () => {
             {editingUser && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-white rounded-lg p-6 w-1/3">
-                  <h3 className="text-xl mb-4 text-red">Edit User</h3>
+                  <h3 className="text-2xl mb-4 font-bold text-red">
+                    แก้ไขผู้ใช้
+                  </h3>
                   <div className="mb-2">
                     <label className="block text-md font-medium text-black">
-                      Name
+                      ชื่อ-นามสกุล ผู้ใช้
                     </label>
                     <input
+                      disabled
                       type="text"
-                      className="mt-1 w-full rounded border-gray-300 shadow-sm text-gray-500"
+                      className="mt-1 w-full  rounded border-gray-300 p-2  border text-gray-500 "
                       value={updatedName}
                       onChange={(e) => setUpdatedName(e.target.value)}
                     />
                   </div>
                   <div className="mb-2">
                     <label className="block text-md font-medium text-black">
-                      Role
+                      ตำแหน่ง
                     </label>
                     <select
-                      className="w-full mt-1 bg-white border border-gray-300 rounded py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
+                      className="mt-1 w-full rounded border-gray-300 p-2 border text-gray-500"
                       value={updatedRole}
                       onChange={(e) => setUpdatedRole(e.target.value)}
                     >
@@ -264,20 +301,68 @@ const AllUser = () => {
                       ))}
                     </select>
                   </div>
+                  <div className="mb-2">
+                    <label className="block text-md font-medium text-black">
+                      ชื่อผู้ใช้
+                    </label>
+                    <input
+                      type="text"
+                      className="mt-1 w-full  rounded border-gray-300 p-2  border text-gray-500 "
+                      value={updatedUserName}
+                      onChange={(e) => setUpdatedUserName(e.target.value)}
+                    />
+                  </div>
+
                   <div className="flex justify-end space-x-2">
                     <button
                       type="button"
-                      className="px-4 py-2 bg-gray-300 text-white text-sm rounded"
+                      className="px-4 py-2 bg-gray-100 text-black text-sm rounded border"
                       onClick={() => setEditingUser(null)}
                     >
-                      Cancel
+                      ยกเลิก
                     </button>
                     <button
                       type="button"
                       className="px-4 py-2 bg-red text-white text-sm rounded"
                       onClick={saveChanges}
                     >
-                      Save
+                      บันทึก
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {editingUserPassword && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white rounded-lg p-6 w-1/3">
+                  <h3 className="text-2xl mb-4 font-bold text-red">
+                    ลืมรหัสผ่าน
+                  </h3>
+                  <div className="mb-2">
+                    <label className="block text-md font-medium text-black">
+                      กรอกรหัสผ่านใหม่
+                    </label>
+                    <input
+                      type="text"
+                      className="mt-1 w-full  rounded border-gray-300 p-2  border text-gray-500 "
+                      placeholder="New Password"
+                      onChange={(e) => setUpdatedUserPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <button
+                      type="button"
+                      className="px-4 py-2 bg-gray-100 text-black text-sm rounded border"
+                      onClick={() => setEditingUserPassword(null)}
+                    >
+                      ยกเลิก
+                    </button>
+                    <button
+                      type="button"
+                      className="px-4 py-2 bg-red text-white text-sm rounded"
+                      onClick={saveChanges}
+                    >
+                      บันทึก
                     </button>
                   </div>
                 </div>
@@ -285,11 +370,21 @@ const AllUser = () => {
             )}
             {showSuccessModal && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white rounded-lg p-6 w-1/3">
-                  <p className="text-green-500 text-lg font-bold">Success!</p>
+                <div className="bg-white rounded-lg p-6">
+                  <h3 className="text-xl text-red mb-2">แก้ไขข้อมูลสำเร็จ!</h3>
+                  <p className="text-lg">อัปเดตข้อมูลผู้ใช้เรียบร้อยแล้ว.</p>
                 </div>
               </div>
             )}
+          </div>
+          <div className="mt-6 flex justify-between">
+            <button
+              type="button"
+              className="px-6 py-2 bg-gray-100 border  rounded"
+              onClick={() => navigate("/admin")}
+            >
+              ย้อนกลับ
+            </button>
           </div>
         </div>
       </div>
