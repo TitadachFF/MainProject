@@ -3,11 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 const Adduser = () => {
   const navigate = useNavigate();
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showUnSuccessModal, setShowUnSuccessModal] = useState(false);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showRoleModal, setShowRoleModal] = useState(false);
-  const [showEmptyFieldsModal, setShowEmptyFieldsModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const [message2, setMessage2] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -28,15 +26,25 @@ const Adduser = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.name || !formData.username || !formData.password || !formData.confirmPassword || !formData.role) {
-      setShowEmptyFieldsModal(true);
+    if (
+      !formData.name ||
+      !formData.username ||
+      !formData.password ||
+      !formData.confirmPassword ||
+      !formData.role
+    ) {
+      setMessage("กรุณากรอกข้อมูลให้ครบถ้วน !");
+      setMessage2("*โปรดตรวจสอบข้อมูลให้ครบถ้วน");
+      setShowModal(true);
       setTimeout(() => {
-        setShowEmptyFieldsModal(false);
+        setShowModal(false);
       }, 2000);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
+      setMessage("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน !");
+      setMessage2("*โปรดตรวจสอบรหัสผ่านและยืนยันรหัสผ่าน");
       setShowPasswordModal(true);
       setTimeout(() => {
         setShowPasswordModal(false);
@@ -56,21 +64,27 @@ const Adduser = () => {
       });
 
       if (response.ok) {
-        setShowSuccessModal(true);
+        setMessage("เพิ่มผู้ใช้สำเร็จ");
+        setMessage2("*เพิ่มผู้ใช้เข้าสู่ระบบสำเร็จ");
+        setShowModal(true);
         setTimeout(() => {
-          setShowSuccessModal(false);
+          setShowModal(false);
           navigate("/admin");
         }, 1000);
       } else {
         const errorData = await response.json();
         console.log("Response data:", errorData);
-        setShowRoleModal(true);
+        setMessage("โปรดเลือกตำแหน่ง");
+        setMessage2("*โปรดตรวจสอบว่าเลือกตำแหน่งแล้ว");
+        setShowModal(true);
         setTimeout(() => {
-          setShowRoleModal(false);
+          setShowModal(false);
         }, 2000);
       }
     } catch (error) {
       console.error("Error adding user:", error);
+      setMessage("มีข้อผิดพลาดในการเพิ่มผู้ใช้ !");
+      setMessage2("*มีคนใช้ชื่อผู้ใช้นี้แล้ว");
       setShowUnSuccessModal(true);
       setTimeout(() => {
         setShowUnSuccessModal(false);
@@ -172,43 +186,11 @@ const Adduser = () => {
           </div>
         </div>
       </div>
-      {showSuccessModal && (
+      {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg modal-box">
-            <h3 className="font-bold text-red text-xl pb-4">เพิ่มผู้ใช้สำเร็จ</h3>
-            <p className="text-lg py-4 text-gray-500">เพิ่มผู้ใช้สำเร็จในระบบสำเร็จ</p>
-          </div>
-        </div>
-      )}
-      {showUnSuccessModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg modal-box">
-            <h3 className="font-bold text-red text-xl pb-4">มีข้อผิดพลาดในการเพิ่มผู้ใช้ !</h3>
-            <p className="text-lg py-4 text-gray-500">*มีคนใช้ชื่อผู้ใช้นี้แล้ว</p>
-          </div>
-        </div>
-      )}
-      {showPasswordModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg modal-box">
-            <h3 className="font-bold text-red text-xl pb-4">รหัสผ่านไม่ตรงกัน !</h3>
-            <p className="text-lg py-4 text-gray-500">*รหัสผ่านไม่ตรงกันโปรดตรวจสอบ</p>
-          </div>
-        </div>
-      )}
-      {showRoleModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg modal-box">
-            <h3 className="font-bold text-red text-xl pb-4">โปรดเลือกตำแหน่ง !</h3>
-            <p className="text-lg py-4 text-gray-500">*โปรดเลือกตำแหน่ง</p>
-          </div>
-        </div>
-      )}
-      {showEmptyFieldsModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg modal-box">
-            <h3 className="font-bold text-red text-xl pb-4">กรุณากรอกข้อมูลให้ครบถ้วน !</h3>
-            <p className="text-lg py-4 text-gray-500">*โปรดกรอกข้อมูลในฟิลด์ทั้งหมด</p>
+            <h3 className="font-bold text-red text-xl pb-4">{message}</h3>
+            <p className="text-lg py-4 text-gray-500">{message2}</p>
           </div>
         </div>
       )}
