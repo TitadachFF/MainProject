@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AddCourseCategory = () => {
@@ -6,25 +6,87 @@ const AddCourseCategory = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("");
   const [instructorName, setInstructorName] = useState("");
+  const [courses, setCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [formData, setFormData] = useState({
+    categoryName: "",
+    categoryUnit: "",
+    majorID: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    // ตรวจสอบให้แน่ใจว่ามีการเลือกหลักสูตรและกรอกข้อมูลครบถ้วน
+    if (!selectedCourse || !formData.categoryName || !formData.categoryUnit) {
+      console.error("กรุณากรอกข้อมูลให้ครบถ้วนและเลือกหลักสูตร");
+      return;
+    }
+  
+    try {
+      const token = localStorage.getItem("token");
+  
+      const response = await fetch("http://localhost:3000/api/createCategory", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          category: {
+            majorId: parseInt(selectedCourse, 10), // แปลง `selectedCourse` เป็นจำนวนเต็ม
+            categoryName: formData.categoryName,
+            categoryUnit: formData.categoryUnit,
+          }
+        }),
+      });
+  
+      if (response.ok) {
+        document.getElementById("my_modal_1").showModal();
+      } else {
+        const errorData = await response.json();
+        console.error("Error response:", errorData);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch("http://localhost:3000/api/getallMajor", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        setCourses(data.majors || []); // กำหนดค่า default เป็นอาร์เรย์ว่าง
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   const handleInstructorNameChange = (e) => {
     setInstructorName(e.target.value);
   };
+
   const handleCourseChange = (e) => {
     setSelectedCourse(e.target.value);
-  };
-  const [courses, setCourses] = useState([
-    { id: 1, name: "วิศวกรรมซอฟต์แวร์", code: "644259009" },
-    { id: 2, name: "วิศวกรรมคอมพิวเตอร์", code: "644259010" },
-    { id: 3, name: "วิศวกรรมไฟฟ้า", code: "644259011" },
-  ]);
-
-  const [selectedCourse, setSelectedCourse] = useState("");
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(
-      `Selected Category: ${selectedCategory}, Selected Group: ${selectedGroup}, Instructor Name: ${instructorName}`
-    );
   };
 
   const getQueryStringValue = (key) => {
@@ -41,7 +103,7 @@ const AddCourseCategory = () => {
     <div>
       <form onSubmit={handleSubmit}>
         <div className="mb-2">
-          <label className="mb-2">เลือกหลักสูตร </label>
+          <label className="mb-2">เลือกหลักสูตร</label>
         </div>
         <div className="relative mb-6">
           <select
@@ -51,11 +113,12 @@ const AddCourseCategory = () => {
             onChange={handleCourseChange}
           >
             <option value="">เลือกหลักสูตร</option>
-            {courses.map((course) => (
-              <option key={course.id} value={course.id}>
-                {course.name} ({course.code})
-              </option>
-            ))}
+            {Array.isArray(courses) &&
+              courses.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.majorNameTH}
+                </option>
+              ))}
           </select>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-4">
@@ -63,14 +126,21 @@ const AddCourseCategory = () => {
             <label className="mb-2">ชื่อหมวดวิชา</label>
             <input
               type="text"
+              name="categoryName"
               className="border rounded-lg px-2 py-2"
-              value={instructorName}
-              onChange={handleInstructorNameChange}
+              value={formData.categoryName}
+              onChange={handleChange}
             />
           </div>
           <div className="flex flex-col">
             <label className="mb-2">จำนวนหน่วยกิต</label>
-            <input type="number" className="border rounded-lg px-2 py-2" />
+            <input
+              type="number"
+              name="categoryUnit"
+              className="border rounded-lg px-2 py-2"
+              value={formData.categoryUnit}
+              onChange={handleChange}
+            />
           </div>
         </div>
         <div className="mt-6 flex justify-between">
@@ -86,17 +156,16 @@ const AddCourseCategory = () => {
             className="px-8 py-2 bg-red border border-red text-white rounded"
             onClick={() => document.getElementById("my_modal_1").showModal()}
           >
-            บักทึก
+            บันทึก
           </button>
           <dialog id="my_modal_1" className="modal">
             <div className="modal-box">
               <h3 className="font-bold text-lg">บันทึกข้อมูลสำเร็จ!</h3>
               <p className="py-4 text-gray-500">
-                กดปุ่ม ESC หรือ กดปุ่มปิดด้านล้างเพื่อปิด
+                กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
               </p>
               <div className="modal-action flex justify-between">
                 <form method="dialog" className="w-full flex justify-between">
-                  {/* if there is a button in form, it will close the modal */}
                   <button className="px-10 py-2 bg-white text-red border font-semibold border-red rounded">
                     ปิด
                   </button>
