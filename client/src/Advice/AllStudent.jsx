@@ -2,6 +2,25 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserIcon } from "@heroicons/react/16/solid";
 
+const SkeletonUser = () => (
+  <div className="flex items-center justify-between py-2">
+    <div className="flex items-center">
+      <div className="skeleton h-6 w-6 mr-2"></div>
+      <div>
+        <div className="skeleton h-4 w-32 mb-1"></div>
+        <div className="skeleton h-3 w-24"></div>
+      </div>
+    </div>
+    <div className="flex space-x-2">
+      <div className="skeleton h-8 w-16"></div>
+      <div className="skeleton h-8 w-20"></div>
+      <div className="skeleton h-8 w-12"></div>
+    </div>
+  </div>
+);
+
+
+
 const AllStudent = () => {
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
@@ -136,7 +155,52 @@ const AllStudent = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="bg-gray-100">
+        <div className="px-2 text-gray-400 text-sm flex items-center pt-28">
+          <p className="cursor-pointer" onClick={() => navigate("/")}>
+            หน้าแรก
+          </p>
+          <span className="mx-1">&gt;</span>
+          <p className="cursor-pointer" onClick={() => navigate("/admin")}>
+            เมนูแอดมิน
+          </p>
+          <span className="mx-1">&gt;</span>
+          <p>ดูรายชื่อผู้ใช้</p>
+        </div>
+        <div className="min-h-screen flex justify-center p-6 h-full">
+          <div className="container mx-auto w-full max-w-3xl bg-white h-full rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
+              ดูรายชื่อผู้ใช้
+            </h2>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="mb-3 flex">
+                <div className="flex space-x-4">
+                  <div className="relative w-40">
+                    <div className="skeleton h-10 w-full rounded-full"></div>
+                  </div>
+                </div>
+                <div className="w-full pl-20 mr-0">
+                  <div className="skeleton h-10 w-full rounded-full"></div>
+                </div>
+              </div>
+              <div className="overflow-y-auto h-full">
+                <ul className="divide-y divide-gray-200">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <li key={index}>
+                      <SkeletonUser />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-between">
+              <div className="skeleton h-10 w-24 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
