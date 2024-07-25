@@ -2,6 +2,23 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { UserIcon } from "@heroicons/react/16/solid";
 
+const SkeletonUser = () => (
+  <div className="flex items-center justify-between py-2">
+    <div className="flex items-center">
+      <div className="skeleton h-6 w-6 mr-2"></div>
+      <div>
+        <div className="skeleton h-4 w-32 mb-1"></div>
+        <div className="skeleton h-3 w-24"></div>
+      </div>
+    </div>
+    <div className="flex space-x-2">
+      <div className="skeleton h-8 w-16"></div>
+      <div className="skeleton h-8 w-20"></div>
+      <div className="skeleton h-8 w-12"></div>
+    </div>
+  </div>
+);
+
 const AllUser = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,6 +34,7 @@ const AllUser = () => {
   const [updatedUserName, setUpdatedUserName] = useState("");
   const [updatedUserPassword, setUpdatedUserPassword] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showUnSuccessModal, setShowUnSuccessModal] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -126,15 +144,24 @@ const AllUser = () => {
       }, 1000);
     } catch (error) {
       setError(error.message);
+      setShowUnSuccessModal(true);
+      setTimeout(() => {
+        setShowUnSuccessModal(false);
+        window.location.reload();
+      }, 1000);
     }
   };
 
   const deleteUser = async (userId) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(
         `http://localhost:3000/api/deleteUser/${userId}`,
         {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -149,7 +176,52 @@ const AllUser = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="bg-gray-100">
+        <div className="px-2 text-gray-400 text-sm flex items-center pt-28">
+          <p className="cursor-pointer" onClick={() => navigate("/")}>
+            หน้าแรก
+          </p>
+          <span className="mx-1">&gt;</span>
+          <p className="cursor-pointer" onClick={() => navigate("/admin")}>
+            เมนูแอดมิน
+          </p>
+          <span className="mx-1">&gt;</span>
+          <p>ดูรายชื่อผู้ใช้</p>
+        </div>
+        <div className="min-h-screen flex justify-center p-6 h-full">
+          <div className="container mx-auto w-full max-w-3xl bg-white h-full rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
+              ดูรายชื่อผู้ใช้
+            </h2>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="mb-3 flex">
+                <div className="flex space-x-4">
+                  <div className="relative w-40">
+                    <div className="skeleton h-10 w-full rounded-full"></div>
+                  </div>
+                </div>
+                <div className="w-full pl-20 mr-0">
+                  <div className="skeleton h-10 w-full rounded-full"></div>
+                </div>
+              </div>
+              <div className="overflow-y-auto h-full">
+                <ul className="divide-y divide-gray-200">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <li key={index}>
+                      <SkeletonUser />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-between">
+              <div className="skeleton h-10 w-24 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -211,7 +283,7 @@ const AllUser = () => {
                 <input
                   type="text"
                   id="search"
-                  className=" text-sm w-full mt-1 bg-white border border-gray-300 rounded-full py-2 px-4 leading-tight focus:outline-none focus:border-gray-500"
+                  className="w-full mt-1 bg-white border border-gray-300 rounded-full py-2 px-4 leading-tight focus:outline-none focus:border-gray-500"
                   placeholder="ค้นหารายชื่อผู้ใช้"
                   value={searchUser}
                   onChange={handleSearchChange}
@@ -369,10 +441,18 @@ const AllUser = () => {
               </div>
             )}
             {showSuccessModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50  ">
+          <div className="bg-white rounded-lg  modal-box">
+          <h3 className="font-bold text-red text-xl pb-4 ">แก้ไขข้อมูลสำเร็จ!</h3>
+                  <p className="text-lg py-4 text-gray-500">อัปเดตข้อมูลผู้ใช้เรียบร้อยแล้ว.</p>
+                </div>
+              </div>
+            )}
+             {showUnSuccessModal && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-white rounded-lg p-6">
-                  <h3 className="text-xl text-red mb-2">แก้ไขข้อมูลสำเร็จ!</h3>
-                  <p className="text-lg">อัปเดตข้อมูลผู้ใช้เรียบร้อยแล้ว.</p>
+                  <h3 className="text-xl text-red mb-2">12313!</h3>
+                  <p className="text-lg">12313123.</p>
                 </div>
               </div>
             )}
@@ -380,7 +460,7 @@ const AllUser = () => {
           <div className="mt-6 flex justify-between">
             <button
               type="button"
-              className="px-6 py-2 bg-gray-100 border  rounded"
+              className="px-6 py-2 bg-gray-100 border  rounded-full"
               onClick={() => navigate("/admin")}
             >
               ย้อนกลับ

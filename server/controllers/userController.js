@@ -50,11 +50,18 @@ exports.createUser = async (req, res) => {
 };
 
 
-
-///getAllUser
+// getAllUser
 exports.getallUser = async (req, res) => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      include: {
+        studentInfo: {
+          include: {
+            studentPlan: true,
+          },
+        },
+      },
+    });
     res.status(200).json(users);
   } catch (error) {
     console.error("Error fetching users:", error.message);
@@ -62,38 +69,37 @@ exports.getallUser = async (req, res) => {
   }
 };
 
-// Get All Users
-exports.getAllUsers = async (req, res) => {
-  try {
-    const users = await prisma.user.findMany();
-    res.status(200).json(users);
-  } catch (error) {
-    console.error("Error fetching users:", error.message);
-    res.status(400).json({ error: error.message });
-  }
-};
+
+
 
 // Get Roles 
 exports.getRole = async (req, res) => {
   const { role } = req.params;
 
   try {
-      const users = await prisma.user.findMany({
-          where: {
-            ////เมธอด toUpperCase() ใช้สำหรับแปลงข้อความให้กลายเป็นตัวพิมพ์ใหญ่ทั้งหมด 
-            ///โดยจะไม่เปลี่ยนแปลงข้อความต้นฉบับแต่จะสร้างข้อความใหม่ที่มีตัวอักษรทั้งหมดเป็นตัวพิมพ์ใหญ่
-              role: role.toUpperCase() 
-          }
-      });
+    const users = await prisma.user.findMany({
+      where: {
+        role: role.toUpperCase() // เปลี่ยนบทบาทให้เป็นตัวพิมพ์ใหญ่ทั้งหมด
+      },
+      include: {
+        studentInfo: {
+          include: {
+            studentPlan: true,
+          },
+        },
+      },
+    });
 
-      res.status(200).json(users);
+    res.status(200).json(users);
   } catch (error) {
-      console.error("Error fetching users by role:", error);
-      res.status(400).json({ error: "Error fetching users by role:" });
+    console.error("Error fetching users by role:", error);
+    res.status(400).json({ error: "Error fetching users by role" });
   }
 };
 
-// Update User   
+
+
+// Update User
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, username, password, role } = req.body;
@@ -114,8 +120,8 @@ exports.updateUser = async (req, res) => {
       data: {
         name,
         username,
-        password: hashedPassword || existingUser.password, 
-        role,  // อัปเดตข้อมูล role
+        password: hashedPassword || existingUser.password,
+        role, // อัปเดตข้อมูล role
       },
     });
 
@@ -125,11 +131,6 @@ exports.updateUser = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
-
-
-
-
 
 // Delete User
 exports.deleteUser = async (req, res) => {
@@ -144,6 +145,12 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).json({ message: `User with ID ${id} not found` });
     }
 
+    // ลบข้อมูลที่เกี่ยวข้อง
+    await prisma.studentInfo.deleteMany({
+      where: { studentsId: parseInt(id) },
+    });
+
+    // ลบผู้ใช้
     await prisma.user.delete({
       where: { id: parseInt(id) },
     });
@@ -154,28 +161,6 @@ exports.deleteUser = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

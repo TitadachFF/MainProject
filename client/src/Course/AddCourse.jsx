@@ -17,6 +17,8 @@ const AddCourse = () => {
     navigate(`?form=${form}`);
   };
 
+  
+
   return (
     // Selected Menu
     <div className="bg-gray-100">
@@ -48,20 +50,7 @@ const AddCourse = () => {
                   ชื่อหลักสูตร
                 </a>
               </li>
-              <li
-                className="mr-4"
-                onClick={() => updateQueryString("addTeacher")}
-              >
-                <a
-                  className={`cursor-pointer border-b-2 ${
-                    currentForm === "addTeacher"
-                      ? "border-red"
-                      : "text-gray-600"
-                  }`}
-                >
-                  เพิ่มอาจารย์
-                </a>
-              </li>
+              
               <li
                 className="mr-4"
                 onClick={() => updateQueryString("addCourseCategory")}
@@ -106,8 +95,7 @@ const AddCourse = () => {
 
           {/* เพิ่มชื่อหลักสูตร */}
           {currentForm === "addCourse" && <AddCourseName />}
-          {/* เพิ่มอาจารย์ */}
-          {currentForm === "addTeacher" && <AddTeacher />}
+        
           {/* You can add more conditional forms here for other cases */}
           {/* เพิ่มหมวดวิชา */}
           {currentForm === "addCourseCategory" && <AddCourseCategory />}

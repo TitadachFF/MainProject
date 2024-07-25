@@ -95,7 +95,12 @@ const StudentInfo = () => {
                   <input
                     type="text"
                     className="w-20 mt-1 border border-gray-300 rounded p-2"
-                    placeholder="XX/XX"
+                    placeholder="XX"
+                  /> / 
+                    <input
+                    type="text"
+                    className="w-20 mt-1 ml-1 border border-gray-300 rounded p-2"
+                    placeholder="XX"
                   />
                 </div>
                 <div>
@@ -156,7 +161,7 @@ const StudentInfo = () => {
                   <label className="block text-gray-700">รหัสประจำตัว</label>
                   <input
                     type="text"
-                    className="w-20 mt-1 border border-gray-300 rounded p-2"
+                    className="w-full mt-1 border border-gray-300 rounded p-2"
                     placeholder="รหัสประจำตัว"
                   />
                 </div>
@@ -282,14 +287,14 @@ const StudentInfo = () => {
               <div className="mt-6 flex justify-between ">
                 <button
                   type="button"
-                  className="px-6 py-2 bg-gray-100 border border-red text-red rounded"
+                  className="px-6 py-2 bg-gray-100 border   rounded-full"
                   onClick={() => navigate("/student")}
                 >
                   ย้อนกลับ
                 </button>
                 <button
                   type="submit"
-                  className="px-8 py-2 bg-red border border-red text-white rounded"
+                  className="px-8 py-2 bg-red border border-red text-white rounded-full"
                 >
                   บันทึก
                 </button>

@@ -18,6 +18,13 @@ const AdminMenu = () => {
         <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/adduser")}
+          onAuxClick={(e) => {
+            if (e.button === 1) {
+              // ตรวจสอบว่าคลิกเมาส์กลาง
+              e.preventDefault(); // ป้องกันการกระทำเริ่มต้น
+              window.open("/adduser", "_blank");
+            }
+          }}
         >
           <figure>
             <svg
@@ -48,6 +55,13 @@ const AdminMenu = () => {
         <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/alluser")}
+          onAuxClick={(e) => {
+            if (e.button === 1) {
+              // ตรวจสอบว่าคลิกเมาส์กลาง
+              e.preventDefault(); // ป้องกันการกระทำเริ่มต้น
+              window.open("/alluser", "_blank");
+            }
+          }}
         >
           <figure>
             <svg
@@ -78,6 +92,13 @@ const AdminMenu = () => {
         <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/admininfo")}
+          onAuxClick={(e) => {
+            if (e.button === 1) {
+              // ตรวจสอบว่าคลิกเมาส์กลาง
+              e.preventDefault(); // ป้องกันการกระทำเริ่มต้น
+              window.open("/admininfo", "_blank");
+            }
+          }}
         >
           <figure>
             <svg

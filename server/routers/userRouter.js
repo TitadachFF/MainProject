@@ -9,15 +9,15 @@ const {
 } = require("../controllers/userController");
 const checkRole = require("../middlewares/checkRole");
 
+
 ///admin zone
-router.post("/createUser",checkRole(["ADMIN"]), createUser);
-router.get("/getallUser", getallUser);
-router.get("/getRole/:role",checkRole(["ADMIN"]), getRole);
-router.put("/updateUser/:id",checkRole(["ADMIN"]), updateUser);
-router.delete("/deleteUser/:id", checkRole(["ADMIN"]), deleteUser);
-
-
-
-
+router.post("/createUser", checkRole(['ADMIN']),createUser);
+router.get("/getallUser", checkRole(['ADMIN']),getallUser);
+router.get("/getRole/:role", checkRole(['ADMIN']),getRole);
+router.put("/updateUser/:id",checkRole(['ADMIN']), updateUser);
+router.delete("/deleteUser/:id", checkRole(['ADMIN']), deleteUser);
 
 module.exports = router;
+
+
+

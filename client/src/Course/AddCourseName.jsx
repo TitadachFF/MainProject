@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const AddCourseName = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [instructorNames, setInstructorNames] = useState([""]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,6 +19,17 @@ const AddCourseName = () => {
   
   const updateQueryString = (form) => {
     navigate(`?form=${form}`);
+  };
+
+  
+  const handleInstructorNameChange = (index, e) => {
+    const newInstructorNames = [...instructorNames];
+    newInstructorNames[index] = e.target.value;
+    setInstructorNames(newInstructorNames);
+  };
+
+  const addInstructorField = () => {
+    setInstructorNames([...instructorNames, ""]);
   };
 
   return (
@@ -49,6 +61,26 @@ const AddCourseName = () => {
             <input type="number" className="border rounded-lg px-2 py-2" />
           </div>
         </div>
+        {instructorNames.map((name, index) => (
+              <div key={index}>
+                <label className="mb-2">อาจารย์ผู้รับผิดชอบหลักสูตร</label>
+                <input
+                  type="text"
+                  className="border rounded-lg px-2 py-2 mb-2 mt-2 block w-full"
+                  value={name}
+                  placeholder="ชื่อ-สกุล อาจารย์"
+                  onChange={(e) => handleInstructorNameChange(index, e)}
+                />
+              </div>
+            ))}
+
+<button type="button" className="px-4 py-2 bg-base border border-red text-red rounded mt-2 hover:bg-gray-100" onClick={addInstructorField}>
+              เพิ่มอาจารย์ผู้รับผิดชอบหลักสูตร +
+            </button>
+    
+
+
+
 
         <div className="mt-6 flex justify-between">
           <button
