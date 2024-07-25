@@ -1,7 +1,6 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { AuthContext } from "../context/AuthProvider";
 
 const AdminInfo = () => {
   const navigate = useNavigate();
@@ -10,6 +9,7 @@ const AdminInfo = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [message2, setMessage2] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -27,6 +27,28 @@ const AdminInfo = () => {
   }, []);
 
   const handleUpdate = async () => {
+    // กรณีกรอกข้อมูลไม่ครบ
+    if (!adminName || !username || !password || !confirmPassword) {
+      setMessage("กรุณากรอกข้อมูลให้ครบถ้วน !");
+      setMessage2("*โปรดตรวจสอบข้อมูลให้ครบถ้วน");
+      setShowModal(true);
+      setTimeout(() => {
+        setShowModal(false);
+      }, 1500);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      // กรณีรหัสผ่านไม่ตรงกัน
+      setMessage("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน !");
+      setMessage2("*โปรดตรวจสอบรหัสผ่านและยืนยันรหัสผ่าน");
+      setShowModal(true);
+      setTimeout(() => {
+        setShowModal(false);
+      }, 1500);
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       const updatedUserData = { name: adminName, username, password };
@@ -58,7 +80,13 @@ const AdminInfo = () => {
       }, 1000);
     } catch (error) {
       console.error("Error updating user:", error.message);
-      setMessage("Error updating user");
+            // กรณีผู้ใช้ซ้ำกับผู้ใช้อื่น
+      setMessage("ชื่อผู้ใช้อาจจะซ้ำกับผู้ใช้อื่น !");
+      setMessage("*โปรดตรวจสอบชื่อผู้ใช้");
+      setShowModal(true);
+      setTimeout(() => {
+        setShowModal(false);
+      }, 2000);
     }
   };
 
@@ -151,10 +179,10 @@ const AdminInfo = () => {
           </form>
           {/* Modal Component */}
           {showModal && (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
-              <div className="absolute w-full h-full bg-gray-900 opacity-50"></div>
-              <div className="bg-white rounded-lg p-8 z-50">
-                <p className="text-lg text-red">อัปเดทข้อมูลส่วนตัวสำเร็จ</p>
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white rounded-lg modal-box">
+                <h3 className="font-bold text-red text-xl pb-4">{message}</h3>
+                <p className="text-lg py-4 text-gray-500">{message2}</p>
               </div>
             </div>
           )}

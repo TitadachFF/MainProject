@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const AdviceInfo = () => {
   const navigate = useNavigate();
   const [advisorname, setAdvisorname] = useState("");
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(""); // Initialize with empty string
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -14,20 +14,30 @@ const AdviceInfo = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const storedUserData = localStorage.getItem("userData");
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const storedUserData = localStorage.getItem("userData");
 
-    if (token && storedUserData) {
-      setIsLoggedIn(true);
-      setUserData(JSON.parse(storedUserData));
-      setAdvisorname(JSON.parse(storedUserData)?.decoded?.name || "");
-    }
+        if (token && storedUserData) {
+          setIsLoggedIn(true);
+          const parsedUserData = JSON.parse(storedUserData);
+          setUserData(parsedUserData);
+          setAdvisorname(parsedUserData?.decoded?.name || "");
+          setUsername(parsedUserData?.decoded?.username || ""); // Fetch username
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error.message);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      const updatedUserData = { name: advisorname, username, password };
+      const updatedUserData = { name: advisorname, password };
 
       const response = await axios.put(
         `http://localhost:3000/api/updateUser/${userData.decoded.id}`,
@@ -103,9 +113,9 @@ const AdviceInfo = () => {
                 <input
                   type="text"
                   placeholder="ชื่อผู้ใช้"
-                  className="w-full mt-1 border border-gray-300 rounded p-2 text-black"
+                  className="w-full mt-1 border border-gray-300 rounded p-2 text-gray-500 cursor-not-allowed"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  readOnly
                 />
               </div>
               <div>
