@@ -137,37 +137,42 @@ exports.getStudentByYear = async (req,res) => {
 
 exports.updateStudent = async (req, res) => {
   const { id } = req.params;
-  const { name, studentIdcard, year, room } = req.body;
+  const {name, studentIdcard,year,room} = req.body
 
   try {
     const existingUser = await prisma.user.findUnique({
-      where: { id: parseInt(id) },
-      include: { studentInfo: true },
-    });
+      where: {id: parseInt(id)},
+      include: {studentInfo: true}
+    })
     if (!existingUser) {
       return res.status(404).json({ message: `User with ID ${id} not found` });
     }
 
-    if (existingUser.role !== "STUDENT") {
-      return res.status(404).json({ message: `ID ${id} is not a Student` });
+
+    if ( existingUser.role != 'STUDENT') {
+      return res.status(404).json({ message: `ID ${id} are not Student!!!!` });
     }
+    console.log(existingUser);
+
+
+
 
     const updateStudent = await prisma.user.update({
       where: { id: parseInt(id) },
-      include: { studentInfo: true },
+      include: {studentInfo: true},
       data: {
         name,
-        studentInfo: {
-          update: {
-            year: parseInt(year), // Ensure year is parsed as integer
-            room: parseInt(room), // Ensure room is parsed as integer
-            studentIdcard, // Update studentIdcard if necessary
-          },
-        },
-      },
-    });
+        studentInfo:{
+        update: {
+          year, 
+          room, 
+          studentIdcard
+        }
+      } 
+      }
+    })
 
-    res.status(200).json({ message: `Update successful`, updateStudent });
+      res.status(200).json({message: `update Success!!!!`, updateStudent})
   } catch (error) {
     console.error("Error updating user:", error.message);
     res.status(400).json({ error: error.message });

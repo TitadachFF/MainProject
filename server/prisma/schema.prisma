@@ -39,7 +39,7 @@ model User {
     studentIdcard   Int 
     year      Int
     room      Int
-    studentPlan  StudentPlan?
+    studentPlan  StudentPlan[]
  }
 
  model StudentPlan {
@@ -47,58 +47,75 @@ model User {
       studentPlanName String
       studentPlanYear String
 
-      student   StudentInfo   @relation(fields: [studentsId], references: [id])
-      studentsId Int   @unique
+      student   StudentInfo?   @relation(fields: [studentsId], references: [id])
+      studentsId Int?   @unique
 
-      course   Course   @relation(fields: [courseId], references: [id])
-      courseId Int @unique
+
+      category   Category?   @relation(fields: [categoryId], references: [id])
+      categoryId Int?
+      categoryName  String?
+
+      group   Group?   @relation(fields: [groupId], references: [id])
+      groupId Int?
+      groupName  String?
+
+      course   Course?   @relation(fields: [courseId], references: [id])
+      courseId Int?
+      courseName  String?
+
+
+
+
  }
 
+
+
+/// หลักสูตร
  model Major {
       id        Int      @id @default(autoincrement())
-      major   String
       majorNameTH String
       majorNameENG  String
       majorYear String
       majorUnit String
       majorStatus String
-      
+      majorCode String
       majorSupervisor String
 
       category  Category[]
-
-      group Group[]
       
       course  Course[]
  }
 
+ 
+//หมวดวิชา
  model Category {
         id        Int      @id @default(autoincrement())
         categoryName  String
         categoryUnit  String
 
         major   Major   @relation(fields: [majorId], references: [id])
-        majorId Int @unique
+        majorId Int 
 
         group Group[]
 
-        course  Course[]
- }
-
+        studentPlan  StudentPlan[]
+ 
+ }   
+///กลุ่มวิชา
  model  Group {
         id        Int      @id @default(autoincrement())
         groupName String
         groupUnit String
 
-        major   Major   @relation(fields: [majorId], references: [id])
-        majorId Int @unique
-
         category   Category   @relation(fields: [categoryId], references: [id])
-        categoryId Int @unique
+        categoryId Int 
 
+        studentPlan  StudentPlan[]
         course  Course[]
- }
 
+  
+ }
+//รายวิชา
  model Course {
         id        Int      @id @default(autoincrement())
         courseCode String
@@ -108,13 +125,11 @@ model User {
         courseUnit  Int
 
         major   Major   @relation(fields: [majorId], references: [id])
-        majorId Int @unique
-
-        category   Category   @relation(fields: [categoryId], references: [id])
-        categoryId Int @unique
+        majorId Int 
 
         group   Group   @relation(fields: [groupId], references: [id])
-        groupId Int @unique
+        groupId Int 
 
-        studentPlan StudentPlan[]
+        studentPlan  StudentPlan[]
+
  }
