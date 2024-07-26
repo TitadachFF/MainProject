@@ -45,9 +45,9 @@ const Adduser = () => {
     if (formData.password !== formData.confirmPassword) {
       setMessage("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน !");
       setMessage2("*โปรดตรวจสอบรหัสผ่านและยืนยันรหัสผ่าน");
-      setShowPasswordModal(true);
+      setShowModal(true);
       setTimeout(() => {
-        setShowPasswordModal(false);
+        setShowModal(false);
       }, 2000);
       return;
     }
@@ -85,9 +85,9 @@ const Adduser = () => {
       console.error("Error adding user:", error);
       setMessage("มีข้อผิดพลาดในการเพิ่มผู้ใช้ !");
       setMessage2("*มีคนใช้ชื่อผู้ใช้นี้แล้ว");
-      setShowUnSuccessModal(true);
+      setShowModal(true);
       setTimeout(() => {
-        setShowUnSuccessModal(false);
+        setShowModal(false);
       }, 2000);
     }
   };
@@ -136,7 +136,8 @@ const Adduser = () => {
             </div>
             <div>
               <label className="block text-gray-700">ชื่อผู้ใช้</label>
-              <input
+              <input 
+                id="input_username"
                 type="text"
                 name="username"
                 value={formData.username}
@@ -176,7 +177,7 @@ const Adduser = () => {
             >
               ย้อนกลับ
             </button>
-            <button
+            <button id="btn_submit"
               type="button"
               className="px-8 py-2 bg-red border border-red-600 text-white rounded-full"
               onClick={handleSubmit}

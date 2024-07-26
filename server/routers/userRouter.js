@@ -14,7 +14,7 @@ const checkRole = require("../middlewares/checkRole");
 router.post("/createUser", checkRole(['ADMIN']),createUser);
 router.get("/getallUser", checkRole(['ADMIN']),getallUser);
 router.get("/getRole/:role", checkRole(['ADMIN']),getRole);
-router.put("/updateUser/:id",checkRole(['ADMIN']), updateUser);
+router.put("/updateUser/:id", updateUser);
 router.delete("/deleteUser/:id", checkRole(['ADMIN']), deleteUser);
 
 module.exports = router;

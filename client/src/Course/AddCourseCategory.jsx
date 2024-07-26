@@ -108,9 +108,10 @@ const AddCourseCategory = () => {
         <div className="relative mb-6">
           <select
             id="class"
+            name="majorID"
             className="dropdown appearance-none w-30 mt-1 text-gray-400 bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
-            value={selectedCourse}
-            onChange={handleCourseChange}
+            value={formData.majorID}
+            onChange={handleChange}
           >
             <option value="">เลือกหลักสูตร</option>
             {Array.isArray(courses) &&

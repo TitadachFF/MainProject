@@ -334,6 +334,10 @@ const AllUser = () => {
                       >
                         ลบ
                       </button>
+                      {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+</svg> */}
+
                     </div>
                   </li>
                 ))}
@@ -350,7 +354,7 @@ const AllUser = () => {
                       ชื่อ-นามสกุล ผู้ใช้
                     </label>
                     <input
-                      disabled
+                      
                       type="text"
                       className="mt-1 w-full  rounded border-gray-300 p-2  border text-gray-500 "
                       value={updatedName}
@@ -381,6 +385,7 @@ const AllUser = () => {
                       type="text"
                       className="mt-1 w-full  rounded border-gray-300 p-2  border text-gray-500 "
                       value={updatedUserName}
+                      disabled
                       onChange={(e) => setUpdatedUserName(e.target.value)}
                     />
                   </div>
