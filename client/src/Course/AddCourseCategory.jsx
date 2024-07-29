@@ -25,6 +25,10 @@ const AddCourseCategory = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    // ตรวจสอบข้อมูลที่กรอก
+    console.log('Selected Course:', selectedCourse);
+    console.log('Form Data:', formData);
+  
     // ตรวจสอบให้แน่ใจว่ามีการเลือกหลักสูตรและกรอกข้อมูลครบถ้วน
     if (!selectedCourse || !formData.categoryName || !formData.categoryUnit) {
       console.error("กรุณากรอกข้อมูลให้ครบถ้วนและเลือกหลักสูตร");
@@ -59,6 +63,7 @@ const AddCourseCategory = () => {
       console.error("Error:", error);
     }
   };
+  
   
 
   useEffect(() => {
@@ -106,21 +111,22 @@ const AddCourseCategory = () => {
           <label className="mb-2">เลือกหลักสูตร</label>
         </div>
         <div className="relative mb-6">
-          <select
-            id="class"
-            name="majorID"
-            className="dropdown appearance-none w-30 mt-1 text-gray-400 bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
-            value={formData.majorID}
-            onChange={handleChange}
-          >
-            <option value="">เลือกหลักสูตร</option>
-            {Array.isArray(courses) &&
-              courses.map((course) => (
-                <option key={course.id} value={course.id}>
-                  {course.majorNameTH}
-                </option>
-              ))}
-          </select>
+        <select
+  id="class"
+  name="majorID"
+  className="dropdown appearance-none w-full mt-1 text-gray-400 bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
+  value={selectedCourse}
+  onChange={handleCourseChange}
+>
+  <option value="">เลือกหลักสูตร</option>
+  {Array.isArray(courses) &&
+    courses.map((course) => (
+      <option key={course.id} value={course.id}>
+        {course.majorNameTH}
+      </option>
+    ))}
+</select>
+
         </div>
         <div className="grid grid-cols-3 gap-4 mb-4">
           <div className="flex flex-col col-span-2">

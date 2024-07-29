@@ -279,6 +279,7 @@ exports.createGroup = async (req, res) => {
     // สร้าง Group ใหม่
     const newGroup = await prisma.group.create({
       data: {
+        majorId: group.majorId,
         groupName: group.groupName,
         groupUnit: group.groupUnit,
         categoryId: group.categoryId,
@@ -487,3 +488,18 @@ exports.deleteCourse = async (req, res) => {
 };
 
 
+// GET CATEGORY BY MAJORID
+exports.getCategoriesByMajorId = async (req, res) => {
+  const { majorId } = req.params;
+
+  try {
+    const categories = await prisma.category.findMany({
+      where: { majorId: parseInt(majorId) },
+    });
+
+    return res.status(200).json({ categories });
+  } catch (error) {
+    console.error('Error fetching categories:', error.message, error.stack);
+    res.status(500).json({ error: 'Unable to fetch categories', details: error.message });
+  }
+};
