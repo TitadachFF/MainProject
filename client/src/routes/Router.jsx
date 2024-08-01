@@ -24,7 +24,7 @@ import Documentres from "../Student/Documentres";
 import Adduser from "../Admin/Adduser";
 import Alluser from "../Admin/Alluser";
 import AllCourse from "../Course/AllCourse";
-import Course from "../Course/EditCourse";
+
 
 import CourseCategory from "../Course/CourseCategory";
 
@@ -33,6 +33,7 @@ import DocumentStudent from "../Advice/DocumentStudent";
 import StudentPlan from "../Advice/StudentPlan";
 import AddStudentplan from "../Advice/AddStudentplan";
 import AdminInfo from "../Admin/AdminInfo";
+import EditMajor from "../Course/EditMajor";
 
 const Router = createBrowserRouter([
   {
@@ -113,8 +114,8 @@ const Router = createBrowserRouter([
         element: <AllCourse />,
       },
       {
-        path: "/editcourse",
-        element: <Course />,
+        path: "/editmajor",
+        element: <EditMajor />,
       },
       {
         path: "/coursecategory",

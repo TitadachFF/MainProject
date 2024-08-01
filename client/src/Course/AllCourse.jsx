@@ -14,7 +14,7 @@ const AllCourse = () => {
     const fetchMajors = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:3000/api/getallMajor", {
+        const response = await fetch("http://localhost:3000/api/getAllMajors", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -54,9 +54,7 @@ const AllCourse = () => {
       </div>
       <div className="min-h-screen flex justify-center bg-gray-100">
         <div className="container mx-auto px-4 py-16">
-          <h1 className="text-2xl text-red font-bold mb-6">
-            รายชื่อหลักสูตร
-          </h1>
+          <h1 className="text-2xl text-red font-bold mb-6">รายชื่อหลักสูตร</h1>
           <div className="mt-8">
             {loading ? (
               <div className="text-gray-500 text-center">กำลังโหลด...</div>
@@ -69,7 +67,10 @@ const AllCourse = () => {
                     <tr key={major.id} className="border-t relative">
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
-                          <span className="text-xl">{major.majorNameTH}</span>
+                          <span className="text-xl flex">
+                            {major.majorNameTH}
+                            <p className="pl-8">{major.majorUnit} หน่วยกิต</p>
+                          </span>
                           <span>{major.majorNameENG}</span>
                         </div>
                       </td>
@@ -138,8 +139,7 @@ const AllCourse = () => {
   );
 };
 
-
-
+//
 const EditMajor = () => {
   const [searchParams] = useSearchParams();
   const majorId = searchParams.get("editMajor");
@@ -147,7 +147,9 @@ const EditMajor = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [groups, setGroups] = useState([]);
+  const [courses, setCourses] = useState({});
   const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchMajor = async () => {
@@ -165,17 +167,17 @@ const EditMajor = () => {
           throw new Error("Failed to fetch Major data");
         }
         const data = await response.json();
-        setMajor(data.major); // Assume data.major is the data received
+        setMajor(data.major);
       } catch (error) {
         console.error("Error fetching Major data:", error);
       }
     };
 
-    const fetchCategories = async () => {
+    const fetchCategories = async (majorId) => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          "http://localhost:3000/api/getAllCategories",
+          `http://localhost:3000/api/categories/major/${majorId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -186,38 +188,67 @@ const EditMajor = () => {
           throw new Error("Failed to fetch Categories");
         }
         const data = await response.json();
-        setCategories(data.categories); // Assume data.categories is the data received
+        setCategories(data.categories);
       } catch (error) {
         console.error("Error fetching Categories:", error);
       }
     };
 
-    const fetchGroups = async (categoryId) => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `http://localhost:3000/api/getGroupsByCategory/${categoryId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch Groups");
-        }
-        const data = await response.json();
-        setGroups(data.groups); // Assume data.groups is the data received
-      } catch (error) {
-        console.error("Error fetching Groups:", error);
-      }
-    };
-
     if (majorId) {
       fetchMajor();
+      fetchCategories(majorId);
     }
-    fetchCategories();
   }, [majorId]);
+
+  const fetchGroups = async (categoryId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3000/api/group/category/${categoryId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch Groups");
+      }
+      const data = await response.json();
+      setGroups(data.groups);
+      // Fetch courses for each group in this category
+      const groupIds = data.groups.map((group) => group.id);
+      for (const groupId of groupIds) {
+        await fetchCourses(groupId);
+      }
+    } catch (error) {
+      console.error("Error fetching Groups:", error);
+    }
+  };
+
+  const fetchCourses = async (groupId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3000/api/courses/group/${groupId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch Courses");
+      }
+      const data = await response.json();
+      setCourses((prevCourses) => ({
+        ...prevCourses,
+        [groupId]: data.courses,
+      }));
+    } catch (error) {
+      console.error("Error fetching Courses:", error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -311,6 +342,7 @@ const EditMajor = () => {
                   onChange={handleChange}
                 />
               </div>
+
               <div className="flex">
                 <div className="mr-4 w-1/3">
                   <label className="block text-gray-700">รหัสหลักสูตร</label>
@@ -359,27 +391,91 @@ const EditMajor = () => {
                   onChange={handleChange}
                 />
               </div>
-
+              <div className="flex">
+                <label className="block text-gray-700 pr-2 py-1">
+                  สถานะหลักสูตร :
+                </label>
+                <div
+                  className={`badge ${
+                    major.status === "INACTIVE"
+                      ? "badge-error"
+                      : "badge-success"
+                  } gap-2 p-4`}
+                >
+                  <p className="text-white font-semibold">{major.status}</p>
+                </div>
+              </div>
               {/* Categories Section */}
-              <div className="mt-6">
+              <div className="">
                 {categories.map((category) => (
                   <details
                     key={category.id}
-                    className="collapse bg-base-200 mb-2"
+                    className="collapse bg-gray-50 mb-2"
                     open={category.id === selectedCategoryId}
                   >
                     <summary
-                      className="collapse-title text-xl font-medium cursor-pointer bg-red text-white"
+                      className="collapse-title text-lg cursor-pointer bg-red text-white"
                       onClick={() => handleCategoryClick(category.id)}
                     >
-                      {category.categoryName}
+                      <div className="relative flex items-center">
+                        <input
+                          type="text"
+                          className="bg-red rounded-full border pl-10 pr-3 py-2"
+                          value={category.categoryName}
+                        />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="absolute left-3 w-6 h-6"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                          />
+                        </svg>
+                      </div>
                     </summary>
-                    <div className="collapse-content">
+                    <div className="collapse-content text-base">
                       {category.id === selectedCategoryId && (
                         <ul>
                           {groups.map((group) => (
                             <li key={group.id} className="py-2">
-                              {group.groupName} - {group.groupUnit}
+                              <span
+                                className="cursor-pointer"
+                                onClick={() => handleGroupClick(group.id)}
+                              >
+                                {group.groupName} - {group.groupUnit} หน่วยกิต
+                              </span>
+                              <hr />
+
+                              <ul>
+                                {courses[group.id] &&
+                                  courses[group.id].map((course) => (
+                                    <li key={course.id} className="ml-4">
+                                      <span className="flex">
+                                        <p className="pr-4">
+                                          {" "}
+                                          {course.courseCode}{" "}
+                                          {course.courseNameTH}
+                                          <div className="flex-row">
+                                            {" "}
+                                            {course.courseNameENG}
+                                          </div>
+                                        </p>{" "}
+                                        <p className="text-sm">
+                                          {" "}
+                                          {course.courseUnit}{" "}
+                                          {course.courseYear}
+                                        </p>
+                                      </span>
+                                      <hr />
+                                    </li>
+                                  ))}
+                              </ul>
                             </li>
                           ))}
                         </ul>
@@ -428,4 +524,3 @@ const CoursePage = () => {
 };
 
 export default CoursePage;
-

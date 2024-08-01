@@ -11,20 +11,19 @@ const AddCourseGroup = () => {
     groupName: "",
     groupUnit: "",
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("token");
 
-        const response = await fetch("http://localhost:3000/api/getallMajor", {
+        const response = await fetch("http://localhost:3000/api/getallMajors", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         const data = await response.json();
-        setCourses(data.majors || []); // กำหนดค่า default เป็นอาร์เรย์ว่าง
+        setCourses(data.majors || []);
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
@@ -46,7 +45,7 @@ const AddCourseGroup = () => {
         }
       );
       const data = await response.json();
-      setFilteredCategories(data.categories || []); // กำหนดค่า default เป็นอาร์เรย์ว่าง
+      setFilteredCategories(data.categories || []);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -54,13 +53,36 @@ const AddCourseGroup = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    if (name === "groupUnit") {
+      if (value >= 0) {
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
 
     if (name === "selectedCourse") {
       fetchCategoriesByMajorId(value);
+      setFormData({
+        ...formData,
+        selectedCourse: value,
+        selectedCategory: "",
+        groupName: "",
+        groupUnit: "",
+      });
+    } else if (name === "selectedCategory") {
+      setFormData({
+        ...formData,
+        selectedCategory: value,
+        groupName: "",
+        groupUnit: "",
+      });
     }
   };
 
@@ -133,6 +155,7 @@ const AddCourseGroup = () => {
           className="dropdown appearance-none text-gray-500 w-full mt-1 bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
           value={formData.selectedCategory}
           onChange={handleChange}
+          disabled={!formData.selectedCourse} // ปิดการใช้งานถ้าไม่ได้เลือกหลักสูตร
         >
           <option value="">เลือกหมวดวิชา</option>
           {Array.isArray(filteredCategories) &&
@@ -152,6 +175,7 @@ const AddCourseGroup = () => {
             className="border rounded-lg px-2 py-2"
             value={formData.groupName}
             onChange={handleChange}
+            disabled={!formData.selectedCategory} // ปิดการใช้งานถ้าไม่ได้เลือกหมวดวิชา
           />
         </div>
         <div className="flex flex-col">
@@ -162,6 +186,8 @@ const AddCourseGroup = () => {
             className="border rounded-lg px-2 py-2"
             value={formData.groupUnit}
             onChange={handleChange}
+            min="0"
+            disabled={!formData.selectedCategory} // ปิดการใช้งานถ้าไม่ได้เลือกหมวดวิชา
           />
         </div>
       </div>
@@ -174,38 +200,35 @@ const AddCourseGroup = () => {
         >
           ย้อนกลับ
         </button>
-        {/* Modal */}
         <button
           type="submit"
           className="px-8 py-2 bg-red border border-red text-white rounded"
         >
           บันทึก
         </button>
- 
-        <dialog id="my_modal_1" className="modal">
-            <div className="modal-box">
-              <h3 className="font-bold text-lg">บันทึกข้อมูลสำเร็จ!</h3>
-              <p className="py-4 text-gray-500">
-                กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
-              </p>
-              <div className="modal-action flex justify-between">
-                <form method="dialog" className="w-full flex justify-between">
-                  <button className="px-10 py-2 bg-white text-red border font-semibold border-red rounded">
-                    ปิด
-                  </button>
-                  <button
-                    className="px-8 py-2 bg-red border border-red text-white rounded"
-                    onClick={() => updateQueryString("addSubject")}
-                  >
-                    ถัดไป
-                  </button>
-                </form>
-              </div>
-            </div>
-          </dialog>
-  
-        {/* End Modal */}
       </div>
+
+      <dialog id="my_modal_1" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">บันทึกข้อมูลสำเร็จ!</h3>
+          <p className="py-4 text-gray-500">
+            กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
+          </p>
+          <div className="modal-action flex justify-between">
+            <form method="dialog" className="w-full flex justify-between">
+              <button className="px-10 py-2 bg-white text-red border font-semibold border-red rounded">
+                ปิด
+              </button>
+              <button
+                className="px-8 py-2 bg-red border border-red text-white rounded"
+                onClick={() => updateQueryString("addSubject")}
+              >
+                ถัดไป
+              </button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </form>
   );
 };
