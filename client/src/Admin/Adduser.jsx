@@ -8,11 +8,13 @@ const Adduser = () => {
   const [showModal, setShowModal] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
-    username: "",
-    password: "",
-    role: "",
+    T_firstname: "",
+    T_lastname: "",
+    T_username: "",
+    T_password: "",
     confirmPassword: "",
+    T_phone: "",
+    T_email: "",
   });
 
   console.log("Form Data:", formData);
@@ -27,11 +29,11 @@ const Adduser = () => {
 
   const handleSubmit = async () => {
     if (
-      !formData.name ||
-      !formData.username ||
-      !formData.password ||
-      !formData.confirmPassword ||
-      !formData.role
+      !formData.T_firstname ||
+      !formData.T_lastname ||
+      !formData.T_username ||
+      !formData.T_password ||
+      !formData.confirmPassword
     ) {
       setMessage("กรุณากรอกข้อมูลให้ครบถ้วน !");
       setMessage2("*โปรดตรวจสอบข้อมูลให้ครบถ้วน");
@@ -42,19 +44,19 @@ const Adduser = () => {
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.T_password !== formData.confirmPassword) {
       setMessage("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน !");
       setMessage2("*โปรดตรวจสอบรหัสผ่านและยืนยันรหัสผ่าน");
-      setShowPasswordModal(true);
+      setShowModal(true);
       setTimeout(() => {
-        setShowPasswordModal(false);
+        setShowModal(false);
       }, 2000);
       return;
     }
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:3000/api/createUser", {
+      const response = await fetch("http://localhost:3000/api/createTeacher", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -74,8 +76,8 @@ const Adduser = () => {
       } else {
         const errorData = await response.json();
         console.log("Response data:", errorData);
-        setMessage("โปรดเลือกตำแหน่ง");
-        setMessage2("*โปรดตรวจสอบว่าเลือกตำแหน่งแล้ว");
+        setMessage("มีข้อผิดพลาดในการเพิ่มผู้ใช้ !");
+        setMessage2(`*${errorData.message || "Unknown error"}`);
         setShowModal(true);
         setTimeout(() => {
           setShowModal(false);
@@ -85,9 +87,9 @@ const Adduser = () => {
       console.error("Error adding user:", error);
       setMessage("มีข้อผิดพลาดในการเพิ่มผู้ใช้ !");
       setMessage2("*มีคนใช้ชื่อผู้ใช้นี้แล้ว");
-      setShowUnSuccessModal(true);
+      setShowModal(true);
       setTimeout(() => {
-        setShowUnSuccessModal(false);
+        setShowModal(false);
       }, 2000);
     }
   };
@@ -110,47 +112,70 @@ const Adduser = () => {
           <h2 className="text-2xl text-red font-bold mb-6">เพิ่มผู้ใช้</h2>
 
           <div className="grid grid-cols-1 gap-6">
+            <div className="flex gap-6">
+              <div className="w-1/2">
+                <label className="block text-gray-700">ชื่อ</label>
+                <input
+                  type="text"
+                  name="T_firstname"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  placeholder="ชื่อ"
+                  value={formData.T_firstname}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-gray-700">นามสกุล</label>
+                <input
+                  type="text"
+                  name="T_lastname"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  placeholder="นามสกุล"
+                  value={formData.T_lastname}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
             <div>
-              <label className="block text-gray-700">ชื่อ-นามสกุล</label>
+              <label className="block text-gray-700">เบอร์โทรศัพท์</label>
               <input
                 type="text"
-                name="name"
-                className="w-full mt-1 border border-gray-300 rounded p-2"
-                placeholder="ชื่อ-นามสกุล"
-                value={formData.name}
+                name="T_phone"
+                value={formData.T_phone}
                 onChange={handleChange}
+                className="w-full mt-1 border border-gray-300 rounded p-2"
+                placeholder="เบอร์โทรศัพท์ (ไม่จำเป็นต้องกรอก)"
               />
             </div>
             <div>
-              <label className="block text-gray-700">ตำแหน่ง</label>
-              <select
-                name="role"
-                value={formData.role}
+              <label className="block text-gray-700">อีเมล</label>
+              <input
+                type="email"
+                name="T_email"
+                value={formData.T_email}
                 onChange={handleChange}
-                className="select select-bordered w-full max-w-xs"
-              >
-                <option value="">เลือกตำแหน่ง</option>
-                <option value="ADVISOR">อาจารย์ที่ปรึกษา</option>
-                <option value="COURSE_INSTRUCTOR">ตัวแทนหลักสูตร</option>
-              </select>
+                className="w-full mt-1 border border-gray-300 rounded p-2"
+                placeholder="อีเมล (ไม่จำเป็นต้องกรอก)"
+              />
             </div>
             <div>
               <label className="block text-gray-700">ชื่อผู้ใช้</label>
               <input
                 type="text"
-                name="username"
-                value={formData.username}
+                name="T_username"
+                value={formData.T_username}
                 onChange={handleChange}
                 className="w-full mt-1 border border-gray-300 rounded p-2"
                 placeholder="ชื่อผู้ใช้"
               />
             </div>
+
             <div>
               <label className="block text-gray-700">รหัสผ่าน</label>
               <input
                 type="password"
-                name="password"
-                value={formData.password}
+                name="T_password"
+                value={formData.T_password}
                 onChange={handleChange}
                 className="w-full mt-1 border border-gray-300 rounded p-2"
                 placeholder="รหัสผ่าน"
@@ -171,14 +196,14 @@ const Adduser = () => {
           <div className="mt-6 flex justify-between">
             <button
               type="button"
-              className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded-full"
+              className="px-6 py-2 bg-gray-100 border border-red0 text-red rounded"
               onClick={() => navigate("/admin")}
             >
               ย้อนกลับ
             </button>
             <button
               type="button"
-              className="px-8 py-2 bg-red border border-red-600 text-white rounded-full"
+              className="px-8 py-2 bg-red border border-red text-white rounded"
               onClick={handleSubmit}
             >
               บันทึก

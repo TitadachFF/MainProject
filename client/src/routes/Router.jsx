@@ -33,6 +33,9 @@ import DocumentStudent from "../Advice/DocumentStudent";
 import StudentPlan from "../Advice/StudentPlan";
 import AddStudentplan from "../Advice/AddStudentplan";
 import AdminInfo from "../Admin/AdminInfo";
+import AddClassroom from "../Course/AddClassroom";
+import AllTeacher from "../Course/AllTeacher";
+import AllAdvisor from "../Course/AllAdvisor";
 
 const Router = createBrowserRouter([
   {
@@ -119,7 +122,7 @@ const Router = createBrowserRouter([
       {
         path: "/coursecategory",
         element: <CourseCategory />,
-      },     
+      },
       {
         path: "/documentstudent",
         element: <DocumentStudent />,
@@ -130,7 +133,19 @@ const Router = createBrowserRouter([
       },
       {
         path: "/addstudentplan",
-        element: <AddStudentplan/>,
+        element: <AddStudentplan />,
+      },
+      {
+        path: "/addclassroom",
+        element: <AddClassroom />,
+      },
+      {
+        path: "/allteacher",
+        element: <AllTeacher />,
+      },
+      {
+        path: "/alladvisor",
+        element: <AllAdvisor />,
       },
     ],
   },

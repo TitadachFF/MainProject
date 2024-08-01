@@ -8,7 +8,7 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken"); // ใช้คีย์ "authToken"
       if (token) {
         try {
           const decodeResponse = await axios.get(
@@ -19,10 +19,14 @@ const AuthProvider = ({ children }) => {
               },
             }
           );
-          const userData = decodeResponse.data;
+          const userData = decodeResponse.data.decoded; // เข้าถึงข้อมูล decoded
+          console.log("Fetched user data:", userData); // ล็อกข้อมูลที่ดึงมา
           setUser(userData);
         } catch (error) {
           console.error("Failed to fetch user data:", error);
+          // ทำการลบ token ถ้าไม่สามารถดึงข้อมูลได้
+          localStorage.removeItem("authToken");
+          setUser(null);
         }
       }
     };
@@ -39,23 +43,12 @@ const AuthProvider = ({ children }) => {
         }
       );
 
-      const token = loginResponse.data.token;
-      localStorage.setItem("token", token);
-
-      const decodeResponse = await axios.get(
-        "http://localhost:3000/api/decode-token",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const userData = decodeResponse.data;
+      const { token, userData } = loginResponse.data;
+      localStorage.setItem("authToken", token); // ใช้คีย์ "authToken" ให้สอดคล้อง
       localStorage.setItem("userData", JSON.stringify(userData));
       setUser(userData);
 
-      return { success: true, userData };
+      return { success: true, token, userData };
     } catch (error) {
       console.error("Login failed:", error);
       return { success: false, error: error.message };
@@ -63,7 +56,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("authToken"); // ใช้คีย์ "authToken" ให้สอดคล้อง
     localStorage.removeItem("userData");
     setUser(null);
   };

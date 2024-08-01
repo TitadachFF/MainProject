@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 
 const Modal = ({ name, onLogin }) => {
+  const { user, setUser } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const from = location?.state?.from?.pathname || "/";
@@ -11,33 +12,56 @@ const Modal = ({ name, onLogin }) => {
   const { login } = useContext(AuthContext);
 
   const onSubmit = async (data) => {
+    console.log("Submitting login data:", data);
     const result = await login(data.username, data.password);
     if (result.success) {
-      const { userData } = result;
+      const { token, userData } = result;
+      console.log("Login successful. Token:", token); // ล็อก token
+      console.log("UserData:", userData); // ล็อกข้อมูลผู้ใช้
+      localStorage.setItem("authToken", token); // ตั้งค่า token ด้วยคีย์ "authToken"
+      localStorage.setItem("userData", JSON.stringify(userData)); // ตั้งค่า userData
+      setUser(userData); // ตั้งค่า userData ใน context
       document.getElementById(name).close();
       onLogin();
 
-      if (userData?.decoded.role === "ADMIN") {
+      // Navigate based on role
+      if (userData?.role === "ADMIN") {
         navigate("/admin", { replace: true });
-      } else if (userData?.decoded.role === "STUDENT") {
+      } else if (userData?.role === "STUDENT") {
         navigate("/student", { replace: true });
-      } else if (userData?.decoded.role === "COURSE_INSTRUCTOR") {
+      } else if (userData?.role === "COURSE_INSTRUCTOR") {
         navigate("/course", { replace: true });
-      } else if (userData?.decoded.role === "ADVISOR") {
+      } else if (userData?.role === "ADVISOR") {
         navigate("/advice", { replace: true });
       } else {
         navigate(from, { replace: true });
       }
       alert("Login Successful");
-      window.location.reload();
     } else {
       alert("Login failed. Please try again.");
     }
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    const storedUserData = localStorage.getItem("userData");
+    if (token && storedUserData) {
+      try {
+        const parsedUserData = JSON.parse(storedUserData);
+        setUser(parsedUserData);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        setUser(null);
+      }
+    }
+  }, [setUser]);
+
   return (
     <div>
-      <dialog id={name} className="modal modal-bottom sm:modal-middle text-black">
+      <dialog
+        id={name}
+        className="modal modal-bottom sm:modal-middle text-black"
+      >
         <div className="modal-box">
           <div className="modal-action mt-0 flex flex-col justify-center">
             <h3 className="font-bold text-lg text-center">โปรดเข้าสู่ระบบ</h3>
