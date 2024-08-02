@@ -67,10 +67,14 @@ const AllCourse = () => {
                     <tr key={major.id} className="border-t relative">
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
+
+                     
+
                           <span className="text-xl flex">
                             {major.majorNameTH}
                             <p className="pl-8">{major.majorUnit} หน่วยกิต</p>
                           </span>
+
                           <span>{major.majorNameENG}</span>
                         </div>
                       </td>
@@ -138,6 +142,7 @@ const AllCourse = () => {
     </div>
   );
 };
+
 
 //
 const EditMajor = () => {
@@ -524,3 +529,4 @@ const CoursePage = () => {
 };
 
 export default CoursePage;
+

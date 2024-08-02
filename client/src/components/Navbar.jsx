@@ -9,9 +9,8 @@ const Navbar = () => {
   const { user, setUser } = useContext(AuthContext);
 
   const navigate = useNavigate();
-  let displayRole = user?.decoded?.role;
-  let roleColor = "";
-  let svgRoleColor = "";
+
+  let displayRole = user?.role; // Assuming role is available directly on user object
 
   if (displayRole === "ADMIN") {
     displayRole = "แอดมิน";
@@ -32,28 +31,38 @@ const Navbar = () => {
   }
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     const storedUserData = localStorage.getItem("userData");
+
     if (token && storedUserData) {
-      setIsLoggedIn(true);
-      setUserData(JSON.parse(storedUserData));
+      try {
+        const parsedUserData = JSON.parse(storedUserData);
+        setIsLoggedIn(true);
+        setUser(parsedUserData);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        setIsLoggedIn(false);
+        setUser(null);
+      }
+    } else {
+      setIsLoggedIn(false);
+      setUser(null);
     }
-  }, []);
+  }, [setUser]);
 
   const handleLogin = (userData) => {
     setIsLoggedIn(true);
-    setUser(userData);
-    setUserData(userData);
+    setUser(userData); // อัปเดตข้อมูลผู้ใช้ใน context
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setUser(null);
-    setUserData(null);
-    localStorage.removeItem("token");
+    setUser(null); // เคลียร์ข้อมูลผู้ใช้ใน context
+    localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     navigate("/");
   };
+
 
   return (
     <div className="navbar bg-base-100 py-5 shadow-md fixed top-0 left-0 w-full z-50">
@@ -110,7 +119,7 @@ const Navbar = () => {
       </div>
       <div className="navbar-center hidden lg:flex ">
         <ul className="menu menu-horizontal px-1  ">
-          {userData?.decoded.role === "STUDENT" && (
+          {user?.decoded?.role === "STUDENT" && (
             <li className="flex-row">
               <a
                 className="font-semibold hover:underline"
@@ -144,7 +153,7 @@ const Navbar = () => {
               </a>
             </li>
           )}
-          {userData?.decoded.role === "COURSE_INSTRUCTOR" && (
+          {user?.decoded?.role === "COURSE_INSTRUCTOR" && (
             <li className="flex-row">
               <a
                 className="font-semibold hover:underline"
@@ -166,7 +175,7 @@ const Navbar = () => {
               </a>
             </li>
           )}
-          {userData?.decoded.role === "ADVISOR" && (
+          {user?.decoded?.role === "ADVISOR" && (
             <li className="flex-row">
               <a
                 className="font-semibold hover:underline"
@@ -200,7 +209,7 @@ const Navbar = () => {
               </a>
             </li>
           )}
-          {userData?.decoded.role === "ADMIN" && (
+          {user?.decoded?.role === "ADMIN" && (
             <li className="flex-row ">
               <a className="font-semibold hover:underline" href="/admin">
                 เมนูแอดมิน
@@ -220,8 +229,10 @@ const Navbar = () => {
           <div className="dropdown dropdown-end flex">
             <div className="pt-3 flex">
               <p className="font-bold pr-2">ยินดีต้อนรับ !</p>
-              <span className="pr-2">{userData?.decoded.name}</span>
-              <span className={`h-6 badge ${roleColor}`}>{displayRole}</span>
+
+              <span className="pr-2">{user?.firstname}</span>
+              <span className="h-6 badge">{displayRole}</span>
+
             </div>
             <div
               tabIndex={0}
@@ -247,8 +258,10 @@ const Navbar = () => {
             >
               <li>
                 <div className="justify-between">
-                  <span>{userData?.decoded.name}</span>
-                  <span className={`badge ${roleColor}`}>{displayRole}</span>
+
+                  <span>{user?.firstname}</span>
+                  <span className="badge">{displayRole}</span>
+
                 </div>
               </li>
               <li>

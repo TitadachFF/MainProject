@@ -123,7 +123,7 @@ const AdminMenu = () => {
             </p>
             <div className="card-actions justify-end"></div>
           </div>
-        </div>
+        </div>            
       </div>
     </div>
   );
