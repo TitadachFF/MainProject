@@ -9,15 +9,25 @@ const Navbar = () => {
   const { user, setUser } = useContext(AuthContext);
 
   const navigate = useNavigate();
+
   let displayRole = user?.role; // Assuming role is available directly on user object
+
   if (displayRole === "ADMIN") {
     displayRole = "แอดมิน";
+    svgRoleColor = "text-orange-300";
+    roleColor = "bg-orange-300 text-white";
   } else if (displayRole === "STUDENT") {
     displayRole = "นักศึกษา";
+    svgRoleColor = "text-red";
+    roleColor = "bg-red text-white";
   } else if (displayRole === "ADVISOR") {
     displayRole = "อาจารย์";
+    svgRoleColor = "text-blue-500";
+    roleColor = "bg-blue-500 text-white";
   } else if (displayRole === "COURSE_INSTRUCTOR") {
     displayRole = "ตัวแทนหลักสูตร";
+    svgRoleColor = "text-green-700";
+    roleColor = "bg-green-700 text-white";
   }
 
   useEffect(() => {
@@ -97,11 +107,11 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <a href="/" className="pl-4 text-5xl text-red pr-2  font-serif  ">
+        <a href="/" className="pl-4 text-5xl text-red pr-2 font-serif">
           SE
         </a>
         <div className="border-l-4">
-          <p className="pl-2 text-sm  pt-1">
+          <p className="pl-2 text-sm pt-1">
             Graduated System <br />
             ระบบกรอกแบบฟอร์มคำร้องขอสำเร็จการศึกษา
           </p>
@@ -219,8 +229,10 @@ const Navbar = () => {
           <div className="dropdown dropdown-end flex">
             <div className="pt-3 flex">
               <p className="font-bold pr-2">ยินดีต้อนรับ !</p>
+
               <span className="pr-2">{user?.firstname}</span>
               <span className="h-6 badge">{displayRole}</span>
+
             </div>
             <div
               tabIndex={0}
@@ -231,7 +243,7 @@ const Navbar = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="w-12 h-12 text-red"
+                className={`w-12 h-12 ${svgRoleColor}`}
               >
                 <path
                   fillRule="evenodd"
@@ -242,12 +254,14 @@ const Navbar = () => {
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 mt-12 rounded-box z-[1]  w-56 p-2 shadow"
+              className="menu menu-sm dropdown-content bg-base-100 mt-12 rounded-box z-[1] p-2 shadow"
             >
               <li>
                 <div className="justify-between">
+
                   <span>{user?.firstname}</span>
                   <span className="badge">{displayRole}</span>
+
                 </div>
               </li>
               <li>
@@ -263,7 +277,7 @@ const Navbar = () => {
           </div>
         ) : (
           <a
-            className=" btn rounded-full p-2 pr-5 pl-5 bg-red text-white cursor-pointer"
+            className="btn rounded-full p-2 pr-5 pl-5 bg-red text-white cursor-pointer"
             onClick={() => document.getElementById("login").showModal()}
           >
             เข้าสู่ระบบ

@@ -10,25 +10,34 @@ const AddCourseName = () => {
     majorYear: "",
     majorUnit: "",
     majorCode: "",
-    majorStatus: "",
+    status: "ACTIVE", // ตั้งค่า default เป็น ACTIVE
     majorSupervisor: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+
+    if (name === "majorUnit") {
+      // ตรวจสอบว่าจำนวนหน่วยกิตไม่ติดลบ
+      if (value >= 0) {
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    
-    try {
-      const token = localStorage.getItem("token");
 
+    try {
       const response = await fetch("http://localhost:3000/api/createMajor", {
         method: "POST",
         headers: {
@@ -37,7 +46,7 @@ const AddCourseName = () => {
         },
         body: JSON.stringify({ major: formData }),
       });
-      
+
       if (response.ok) {
         document.getElementById("my_modal_1").showModal();
       } else {
@@ -114,17 +123,37 @@ const AddCourseName = () => {
               className="border rounded-lg px-2 py-2"
               value={formData.majorUnit}
               onChange={handleChange}
+              min="0" // กำหนดค่า minimum เป็น 0
             />
           </div>
-          <div className="flex flex-col">
-            <label className="mb-2">สถานะ</label>
-            <input
-              type="text"
-              name="majorStatus"
-              className="border rounded-lg px-2 py-2"
-              value={formData.majorStatus}
-              onChange={handleChange}
-            />
+        </div>
+
+        <div className="flex flex-col mb-4">
+          <label className="mb-2">สถานะ</label>
+          <div className="flex items-center">
+            <label className="mr-4">
+              <input
+                type="radio"
+                name="status"
+                value="ACTIVE"
+                checked={formData.status === "ACTIVE"}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              ACTIVE
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="status"
+                value="INACTIVE"
+                checked={formData.status === "INACTIVE"}
+                onChange={handleChange}
+                className="mr-2"
+                disabled
+              />
+              INACTIVE
+            </label>
           </div>
         </div>
 

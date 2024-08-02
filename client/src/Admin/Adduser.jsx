@@ -160,7 +160,8 @@ const Adduser = () => {
             </div>
             <div>
               <label className="block text-gray-700">ชื่อผู้ใช้</label>
-              <input
+              <input 
+                id="input_username"
                 type="text"
                 name="T_username"
                 value={formData.T_username}
@@ -201,7 +202,7 @@ const Adduser = () => {
             >
               ย้อนกลับ
             </button>
-            <button
+            <button id="btn_submit"
               type="button"
               className="px-8 py-2 bg-red border border-red text-white rounded"
               onClick={handleSubmit}

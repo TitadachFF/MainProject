@@ -61,11 +61,35 @@ const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const deleteUser = async (userId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `http://localhost:3000/api/deleteUser/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+      return { success: false, error: error.message };
+    }
+  };
+
   const authInfo = {
     user,
     setUser,
     login,
     logout,
+    deleteUser, // เพิ่มฟังก์ชัน deleteUser ที่นี่
   };
 
   return (

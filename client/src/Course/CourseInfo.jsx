@@ -1,10 +1,10 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const CourseInfo = () => {
   const navigate = useNavigate();
-  const [advisorname, setAdvisorname] = useState("");
+  const [coursename, setCoursename] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,7 +23,7 @@ const CourseInfo = () => {
           setIsLoggedIn(true);
           const parsedUserData = JSON.parse(storedUserData);
           setUserData(parsedUserData);
-          setAdvisorname(parsedUserData?.decoded?.name || "");
+          setCoursename(parsedUserData?.decoded?.name || "");
           setUsername(parsedUserData?.decoded?.username || "");
         }
       } catch (error) {
@@ -37,7 +37,7 @@ const CourseInfo = () => {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      const updatedUserData = { name: advisorname, password };
+      const updatedUserData = { name: coursename, password };
 
       const response = await axios.put(
         `http://localhost:3000/api/updateUser/${userData.decoded.id}`,
@@ -56,13 +56,13 @@ const CourseInfo = () => {
         ...userData,
         decoded: {
           ...userData.decoded,
-          name: advisorname,
+          name: coursename,
         },
       });
 
       setTimeout(() => {
         setShowModal(false);
-        navigate("/advice");
+        navigate("/course");
       }, 1000);
     } catch (error) {
       console.error("Error updating user:", error.message);
@@ -70,8 +70,9 @@ const CourseInfo = () => {
     }
   };
 
+
   return (
-    <div className=" bg-gray-100">
+    <div className="bg-gray-100">
       <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
@@ -83,7 +84,7 @@ const CourseInfo = () => {
         <span className="mx-1">&gt;</span>
         <p>ข้อมูลส่วนตัว</p>
       </div>
-      <div className=" min-h-screen flex justify-center p-6 bg-gray-100">
+      <div className="min-h-screen flex justify-center p-6 bg-gray-100">
         <div className="container mx-auto w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-full">
           <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
             ข้อมูลส่วนตัว
@@ -95,8 +96,8 @@ const CourseInfo = () => {
                 <input
                   type="text"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
-                  value={advisorname}
-                  onChange={(e) => setAdvisorname(e.target.value)}
+                  value={coursename}
+                  onChange={(e) => setCoursename(e.target.value)}
                 />
               </div>
               <div>
@@ -150,7 +151,7 @@ const CourseInfo = () => {
               </button>
               <button
                 type="button"
-                className="px-8 py-2 bg-red  border border-red-600 text-white rounded"
+                className="px-8 py-2 bg-red border border-red-600 text-white rounded"
                 onClick={handleUpdate}
               >
                 บันทึก
@@ -167,7 +168,6 @@ const CourseInfo = () => {
               </div>
             </div>
           )}
-          
         </div>
       </div>
     </div>
