@@ -132,7 +132,6 @@ const AllTeacher = () => {
         T_firstname: updatedFirstname,
         T_lastname: updatedLastname,
         T_id: updatedId,
-        T_room: selectedRoom,
       };
 
       const response = await fetch(
@@ -368,9 +367,9 @@ const AllTeacher = () => {
 
           {editingTeacher && (
             <div className="fixed inset-0 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg shadow-lg p-6 w-1/2">
+              <div className="bg-white rounded-lg shadow-lg p-6 w-96">
                 <h2 className="text-xl font-semibold mb-4 text-red">
-                  เปลี่ยนตำแหน่งอาจารย์
+                  แก้ไขข้อมูลอาจารย์
                 </h2>
                 <form
                   onSubmit={(e) => {
@@ -384,6 +383,7 @@ const AllTeacher = () => {
                       type="text"
                       value={updatedId}
                       onChange={(e) => setUpdatedId(e.target.value)}
+                      readOnly
                       className="w-full border rounded py-2 px-3"
                       required
                     />
@@ -409,21 +409,6 @@ const AllTeacher = () => {
                       required
                     />
                   </div>
-                  <div className="mb-4">
-                    <label className="block text-gray-700">ห้อง</label>
-                    <select
-                      value={selectedRoom}
-                      onChange={(e) => setSelectedRoom(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg p-2"
-                    >
-                      <option value="">เลือกห้อง</option>
-                      {rooms.map((room) => (
-                        <option key={room.roomname} value={room.roomname}>
-                          {room.roomname}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
                   <div className=" rounded-b-lg p-4 flex justify-between items-center">
                     <button
                       type="button"
@@ -435,6 +420,7 @@ const AllTeacher = () => {
                     <button
                       type="submit"
                       className="px-4 py-1 bg-red border border-red text-white rounded"
+                      onClick={saveChanges}
                     >
                       บันทึก
                     </button>
@@ -451,6 +437,7 @@ const AllTeacher = () => {
               </div>
             </div>
           )}
+
           {showDeleteModal && (
             <div className="fixed inset-0 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg shadow-lg p-6 w-1/2">
@@ -482,23 +469,26 @@ const AllTeacher = () => {
                 </h2>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">
-                    Teacher ID
+                    รหัสอาจารย์
                   </label>
-                  <p className="border border-gray-300 rounded-lg p-2">
+                  <p className="border border-gray-300 rounded-lg p-2" readOnly>
                     {selectedTeacher.T_id}
                   </p>
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">
-                    First Name
+                    ชื่อจริง
                   </label>
-                  <p className="border border-gray-300 rounded-lg p-2">
+                  <p className="border border-gray-300 rounded-lg p-2" readOnly>
                     {selectedTeacher.T_firstname}
                   </p>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Last Name
+                  <label
+                    className="block text-sm font-medium text-gray-700"
+                    readOnly
+                  >
+                    นามสกุล
                   </label>
                   <p className="border border-gray-300 rounded-lg p-2">
                     {selectedTeacher.T_lastname}
@@ -509,7 +499,7 @@ const AllTeacher = () => {
                     htmlFor="A_room"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Room
+                    หมู่เรียน
                   </label>
                   <select
                     id="A_room"

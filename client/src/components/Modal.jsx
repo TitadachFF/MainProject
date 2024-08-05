@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
+import axios from "axios";
 
 const Modal = ({ name, onLogin }) => {
   const { user, setUser } = useContext(AuthContext);
@@ -14,12 +15,22 @@ const Modal = ({ name, onLogin }) => {
   const onSubmit = async (data) => {
     console.log("Submitting login data:", data);
     const result = await login(data.username, data.password);
+    console.log(result);
+    const userData = await axios.get("http://localhost:3000/api/decode-token", {
+      headers: {
+        "Authorization": `Bearer ${result.token}`,
+      },
+    });
+    if(!userData.data){
+      console.log("error",userData);
+    }
+    
     if (result.success) {
-      const { token, userData } = result;
+      const { token } = result;
       console.log("Login successful. Token:", token); // ล็อก token
-      console.log("UserData:", userData); // ล็อกข้อมูลผู้ใช้
+      console.log("userData:", userData); // ล็อกข้อมูลผู้ใช้
       localStorage.setItem("authToken", token); // ตั้งค่า token ด้วยคีย์ "authToken"
-      localStorage.setItem("userData", JSON.stringify(userData)); // ตั้งค่า userData
+      localStorage.setItem("userData", JSON.stringify(userData.data.decoded)); // ตั้งค่า userData
       setUser(userData); // ตั้งค่า userData ใน context
       document.getElementById(name).close();
       onLogin();
@@ -37,6 +48,7 @@ const Modal = ({ name, onLogin }) => {
         navigate(from, { replace: true });
       }
       alert("Login Successful");
+        window.location.reload();
     } else {
       alert("Login failed. Please try again.");
     }
@@ -45,6 +57,8 @@ const Modal = ({ name, onLogin }) => {
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     const storedUserData = localStorage.getItem("userData");
+    console.log("Stored UserData:", storedUserData); // Log stored user data
+
     if (token && storedUserData) {
       try {
         const parsedUserData = JSON.parse(storedUserData);
