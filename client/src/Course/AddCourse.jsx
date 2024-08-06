@@ -21,6 +21,7 @@ const AddCourse = () => {
 
   return (
     // Selected Menu
+    // qweqew
     <div className="bg-gray-100">
       <div className="px-2 text-gray-400 text-sm flex items-center pt-28">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
