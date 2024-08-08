@@ -102,11 +102,12 @@ const Navbar = () => {
           SE
         </a>
         <div className="border-l-4">
-          <p className="pl-2 text-sm pt-1">
-            Graduated System <br />
-            ระบบกรอกแบบฟอร์มคำร้องขอสำเร็จการศึกษา
-          </p>
-        </div>
+  <p className="pl-2 text-sm pt-1 hidden sm:block">
+    Graduated System <br />
+    ระบบกรอกแบบฟอร์มคำร้องขอสำเร็จการศึกษา
+  </p>
+</div>
+
       </div>
       <div className="navbar-center hidden lg:flex ">
         <ul className="menu menu-horizontal px-1  ">

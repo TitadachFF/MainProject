@@ -5,7 +5,7 @@ const AdminMenu = () => {
   const navigate = useNavigate();
   return (
     <div className="pb-[120px]">
-      <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28">
+      <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28 ">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
         </p>
@@ -13,7 +13,7 @@ const AdminMenu = () => {
         <p>เมนูแอดมิน</p>
       </div>
 
-      <div className="py-20 flex flex-wrap justify-center gap-4 p-4">
+      <div className="py-20 flex flex-wrap justify-center gap-4 p-4 section-container">
         {/* Card 1 */}
         <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
