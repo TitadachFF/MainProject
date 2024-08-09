@@ -2,7 +2,7 @@ import React from "react";
 
 const Index = () => {
   return (
-    <div className="section-container mx-auto pb-16 pt-28 min-h-screen">
+    <div className="section-container mx-auto pb-16 pt-28 min-h-screen ">
       {/* Title */}
       <p className="font-normal text-5xl text-start py-10 text-gray-600 leading-tight">
         ยินดีต้อนรับ{" "}
@@ -16,8 +16,8 @@ const Index = () => {
 
       {/* Grid Box */}
 
-      <div className="md:col-span-2 border rounded-sm h-auto">
-        <div className="border-b h-12 p-2 px-6 bg-red flex items-center justify-between">
+      <div className="md:col-span-2 border  h-auto ">
+        <div className="border-b h-12 p-8 px-6 bg-red flex items-center justify-between">
           <p className="text-white text-xl font-semibold">ประกาศเรื่อง 📢</p>
           <a
             href="https://drive.google.com/file/d/1hbeDZIBdAdLc1doWCHlXp8Vdvgz2F2qj/view"
@@ -25,13 +25,11 @@ const Index = () => {
             className="flex items-center ml-auto text-white font-semibold px-4 rounded-xl bg-gray-700 hover:bg-gray-300"
             rel="noopener noreferrer"
           >
-           ตัวอย่างเอกสาร
-           📝
-           
+            ตัวอย่างเอกสาร 📝
           </a>
         </div>
 
-        <div className="content p-6 space-y-4">
+        <div className="content p-6 space-y-4 bg-gray-50">
           <a
             className="flex font-semibold hover:text-red py-2 hover:underline"
             href="https://news.npru.ac.th/u_news/detail.php?news_id=34762&ref_id=PR"

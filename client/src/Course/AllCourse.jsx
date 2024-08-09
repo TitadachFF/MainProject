@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
-// AllCourse component
 const AllCourse = () => {
   const [majors, setMajors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,11 +19,16 @@ const AllCourse = () => {
           },
         });
         if (!response.ok) {
-          throw new Error("Failed to fetch Major");
+          throw new Error("Failed to fetch Majors");
         }
         const data = await response.json();
         console.log("Fetched Majors:", data);
-        setMajors(data.majors);
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          setMajors(data);
+        } else {
+          throw new Error("Data format is incorrect");
+        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -64,11 +68,11 @@ const AllCourse = () => {
               <table className="w-full rounded-lg border bg-red h-full text-white cursor-pointer">
                 <tbody>
                   {majors.map((major) => (
-                    <tr key={major.id} className="border-t relative">
+                    <tr key={major.major_code} className="border-t relative">
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
                           <span className="text-xl flex">
-                            {major.majorNameTH}
+                            {major.major_code} {major.majorNameTH}
                             <p className="pl-8">{major.majorUnit} หน่วยกิต</p>
                           </span>
                           <span>{major.majorNameENG}</span>
@@ -87,7 +91,7 @@ const AllCourse = () => {
                             className="w-6 h-8 text-gray-300 cursor-pointer z-10"
                             onClick={() =>
                               setDropdownOpen(
-                                dropdownOpen === major.id ? null : major.id
+                                dropdownOpen === major.major_code ? null : major.major_code
                               )
                             }
                           >
@@ -98,16 +102,16 @@ const AllCourse = () => {
                             ></path>
                           </svg>
                           {/* dropdown Menu */}
-                          {dropdownOpen === major.id && (
+                          {dropdownOpen === major.major_code && (
                             <div className="absolute right-0 mt-2 bg-white text-black border rounded shadow-lg w-48 z-50">
                               <button
-                                onClick={() => handleEdit(major.id)}
+                                onClick={() => handleEdit(major.major_code)}
                                 className="block px-4 py-2 hover:bg-gray-200 w-full text-left"
                               >
                                 แก้ไขหลักสูตร
                               </button>
                               <button
-                                onClick={() => handleStore(major.id)}
+                                onClick={() => handleStore(major.major_code)}
                                 className="block px-4 py-2 hover:bg-gray-200 w-full text-left"
                               >
                                 จัดเก็บหลักสูตร
@@ -142,7 +146,7 @@ const AllCourse = () => {
 //
 const EditMajor = () => {
   const [searchParams] = useSearchParams();
-  const majorId = searchParams.get("editMajor");
+  const major_code = searchParams.get("editMajor"); // สมมติว่าคุณดึงค่า major_code จาก URL searchParams
   const [major, setMajor] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
@@ -156,7 +160,7 @@ const EditMajor = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/api/getMajorById/${majorId}`,
+          `http://localhost:3000/api/getMajorByCode/${major_code}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -167,38 +171,45 @@ const EditMajor = () => {
           throw new Error("Failed to fetch Major data");
         }
         const data = await response.json();
-        setMajor(data.major);
+        console.log("Fetched Major data:", data);
+        setMajor(data);
       } catch (error) {
         console.error("Error fetching Major data:", error);
       }
     };
-
-    const fetchCategories = async (majorId) => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `http://localhost:3000/api/categories/major/${majorId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch Categories");
-        }
-        const data = await response.json();
-        setCategories(data.categories);
-      } catch (error) {
-        console.error("Error fetching Categories:", error);
-      }
-    };
-
-    if (majorId) {
+  
+    if (major_code) {
       fetchMajor();
-      fetchCategories(majorId);
     }
-  }, [majorId]);
+  }, [major_code]);
+  
+
+  //   const fetchCategories = async (major_code) => {
+  //     try {
+  //       const token = localStorage.getItem("token");
+  //       const response = await fetch(
+  //         `http://localhost:3000/api/categories/major/${major_code}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch Categories");
+  //       }
+  //       const data = await response.json();
+  //       setCategories(data.categories);
+  //     } catch (error) {
+  //       console.error("Error fetching Categories:", error);
+  //     }
+  //   };
+
+  //   if (majorId) {
+  //     fetchMajor();
+  //     fetchCategories(majorId);
+  //   }
+  // }, [majorId]);
 
   const fetchGroups = async (categoryId) => {
     try {
@@ -351,7 +362,7 @@ const EditMajor = () => {
                     name="majorCode"
                     className="w-full mt-1 border border-gray-300 rounded p-2"
                     placeholder="รหัสหลักสูตร"
-                    value={major.majorCode}
+                    value={major.major_code}
                     onChange={handleChange}
                   />
                 </div>
@@ -378,19 +389,7 @@ const EditMajor = () => {
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-gray-700">
-                  อาจารย์ผู้รับผิดชอบหลักสูตร
-                </label>
-                <input
-                  type="text"
-                  name="majorSupervisor"
-                  className="w-full mt-1 border border-gray-300 rounded p-2"
-                  placeholder="อาจารย์ผู้รับผิดชอบหลักสูตร"
-                  value={major.majorSupervisor}
-                  onChange={handleChange}
-                />
-              </div>
+             
               <div className="flex">
                 <label className="block text-gray-700 pr-2 py-1">
                   สถานะหลักสูตร :
