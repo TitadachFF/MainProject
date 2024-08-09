@@ -91,7 +91,9 @@ const AllCourse = () => {
                             className="w-6 h-8 text-gray-300 cursor-pointer z-10"
                             onClick={() =>
                               setDropdownOpen(
-                                dropdownOpen === major.major_code ? null : major.major_code
+                                dropdownOpen === major.major_code
+                                  ? null
+                                  : major.major_code
                               )
                             }
                           >
@@ -144,16 +146,23 @@ const AllCourse = () => {
 };
 
 //
+
 const EditMajor = () => {
   const [searchParams] = useSearchParams();
-  const major_code = searchParams.get("editMajor"); // สมมติว่าคุณดึงค่า major_code จาก URL searchParams
+  const major_code = searchParams.get("editMajor");
   const [major, setMajor] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [groups, setGroups] = useState([]);
   const [courses, setCourses] = useState({});
   const navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setMajor((prevMajor) => ({
+      ...prevMajor,
+      [name]: value,
+    }));
+  };
 
   useEffect(() => {
     const fetchMajor = async () => {
@@ -177,45 +186,40 @@ const EditMajor = () => {
         console.error("Error fetching Major data:", error);
       }
     };
-  
+
+    const fetchCategories = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `http://localhost:3000/api/getCategoriesByMajorCode/${major_code}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch Categories");
+        }
+        const data = await response.json();
+        console.log("Fetched Categories data:", data);
+        setCategories(data); // ตั้งค่า categories ตามที่ได้รับจาก API
+      } catch (error) {
+        console.error("Error fetching Categories:", error);
+      }
+    };
+
     if (major_code) {
       fetchMajor();
+      fetchCategories();
     }
   }, [major_code]);
-  
 
-  //   const fetchCategories = async (major_code) => {
-  //     try {
-  //       const token = localStorage.getItem("token");
-  //       const response = await fetch(
-  //         `http://localhost:3000/api/categories/major/${major_code}`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch Categories");
-  //       }
-  //       const data = await response.json();
-  //       setCategories(data.categories);
-  //     } catch (error) {
-  //       console.error("Error fetching Categories:", error);
-  //     }
-  //   };
-
-  //   if (majorId) {
-  //     fetchMajor();
-  //     fetchCategories(majorId);
-  //   }
-  // }, [majorId]);
-
-  const fetchGroups = async (categoryId) => {
+  const fetchGroups = async (category_id) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/group/category/${categoryId}`,
+        `http://localhost:3000/api/getGroupsByCategoryId${category_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -226,9 +230,10 @@ const EditMajor = () => {
         throw new Error("Failed to fetch Groups");
       }
       const data = await response.json();
+      console.log("Fetched Groups data:", data); // ตรวจสอบข้อมูลที่ได้รับ
       setGroups(data.groups);
       // Fetch courses for each group in this category
-      const groupIds = data.groups.map((group) => group.id);
+      const groupIds = data.groups.map((group) => group.group_id);
       for (const groupId of groupIds) {
         await fetchCourses(groupId);
       }
@@ -252,45 +257,13 @@ const EditMajor = () => {
         throw new Error("Failed to fetch Courses");
       }
       const data = await response.json();
+      console.log("Fetched Courses data:", data); // ตรวจสอบข้อมูลที่ได้รับ
       setCourses((prevCourses) => ({
         ...prevCourses,
         [groupId]: data.courses,
       }));
     } catch (error) {
       console.error("Error fetching Courses:", error);
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setMajor({
-      ...major,
-      [name]: value,
-    });
-  };
-
-  const handleSave = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:3000/api/updateMajor/${major.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(major),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update Major");
-      }
-
-      navigate("/course");
-    } catch (error) {
-      console.error("Error updating Major:", error);
     }
   };
 
@@ -389,7 +362,7 @@ const EditMajor = () => {
                   />
                 </div>
               </div>
-             
+
               <div className="flex">
                 <label className="block text-gray-700 pr-2 py-1">
                   สถานะหลักสูตร :
@@ -406,83 +379,89 @@ const EditMajor = () => {
               </div>
               {/* Categories Section */}
               <div className="">
-                {categories.map((category) => (
-                  <details
-                    key={category.id}
-                    className="collapse bg-gray-50 mb-2"
-                    open={category.id === selectedCategoryId}
-                  >
-                    <summary
-                      className="collapse-title text-lg cursor-pointer bg-red text-white"
-                      onClick={() => handleCategoryClick(category.id)}
+                {categories &&
+                  categories.length > 0 &&
+                  categories.map((category) => (
+                    <details
+                      key={category.category_id}
+                      className="collapse bg-gray-50 mb-2"
+                      open={category.category_id === selectedCategoryId}
                     >
-                      <div className="relative flex items-center">
-                        <input
-                          type="text"
-                          className="bg-red rounded-full border pl-10 pr-3 py-2"
-                          value={category.categoryName}
-                        />
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="absolute left-3 w-6 h-6"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                      <summary
+                        className="collapse-title text-lg cursor-pointer bg-red text-white"
+                        onClick={() =>
+                          handleCategoryClick(category.category_id)
+                        }
+                      >
+                        <div className="relative flex items-center">
+                          <input
+                            type="text"
+                            className="bg-red rounded-full border pl-10 pr-3 py-2"
+                            value={category.category_name}
+                            readOnly // ป้องกันการแก้ไข
                           />
-                        </svg>
-                      </div>
-                    </summary>
-                    <div className="collapse-content text-base">
-                      {category.id === selectedCategoryId && (
-                        <ul>
-                          {groups.map((group) => (
-                            <li key={group.id} className="py-2">
-                              <span
-                                className="cursor-pointer"
-                                onClick={() => handleGroupClick(group.id)}
-                              >
-                                {group.groupName} - {group.groupUnit} หน่วยกิต
-                              </span>
-                              <hr />
-
-                              <ul>
-                                {courses[group.id] &&
-                                  courses[group.id].map((course) => (
-                                    <li key={course.id} className="ml-4">
-                                      <span className="flex">
-                                        <p className="pr-4">
-                                          {" "}
-                                          {course.courseCode}{" "}
-                                          {course.courseNameTH}
-                                          <div className="flex-row">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="absolute left-3 w-6 h-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                            />
+                          </svg>
+                        </div>
+                      </summary>
+                      <div className="collapse-content text-base">
+                        {category.category_id === selectedCategoryId && (
+                          <ul>
+                            {groups.map((group) => (
+                              <li key={group.group_id} className="py-2">
+                                <span
+                                  className="cursor-pointer"
+                                  onClick={() => handleGroupClick(group.group_id)}
+                                >
+                                  {group.group_unit} - {group.group_unit} หน่วยกิต
+                                </span>
+                                <hr />
+                                <ul>
+                                  {courses[group.group_id] &&
+                                    courses[group.group_id].map((course) => (
+                                      <li key={course.group_id} className="ml-4">
+                                        <span className="flex">
+                                          <p className="pr-4">
                                             {" "}
-                                            {course.courseNameENG}
-                                          </div>
-                                        </p>{" "}
-                                        <p className="text-sm">
-                                          {" "}
-                                          {course.courseUnit}{" "}
-                                          {course.courseYear}
-                                        </p>
-                                      </span>
-                                      <hr />
-                                    </li>
-                                  ))}
-                              </ul>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                      {category.id !== selectedCategoryId && <p>กลุ่มวิชา</p>}
-                    </div>
-                  </details>
-                ))}
+                                            {course.courseCode}{" "}
+                                            {course.courseNameTH}
+                                            <div className="flex-row">
+                                              {" "}
+                                              {course.courseNameENG}
+                                            </div>
+                                          </p>{" "}
+                                          <p className="text-sm">
+                                            {" "}
+                                            {course.courseUnit}{" "}
+                                            {course.courseYear}
+                                          </p>
+                                        </span>
+                                        <hr />
+                                      </li>
+                                    ))}
+                                </ul>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {category.category_id !== selectedCategoryId && (
+                          <p>กลุ่มวิชา</p>
+                        )}
+                      </div>
+                    </details>
+                  ))}
               </div>
             </div>
 
@@ -496,7 +475,7 @@ const EditMajor = () => {
               </button>
               <button
                 type="button"
-                onClick={handleSave}
+                // onClick={handleSave}
                 className="px-8 py-2 bg-red text-white rounded"
               >
                 บันทึก
