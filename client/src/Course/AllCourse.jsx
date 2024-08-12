@@ -145,8 +145,7 @@ const AllCourse = () => {
   );
 };
 
-//
-
+//Edit Major
 const EditMajor = () => {
   const [searchParams] = useSearchParams();
   const major_code = searchParams.get("editMajor");
@@ -165,6 +164,7 @@ const EditMajor = () => {
   };
 
   useEffect(() => {
+    // getMajorByMajorCode
     const fetchMajor = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -186,7 +186,7 @@ const EditMajor = () => {
         console.error("Error fetching Major data:", error);
       }
     };
-
+    // getCategoriesByMajorCode
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -215,11 +215,12 @@ const EditMajor = () => {
     }
   }, [major_code]);
 
+  // getGroupsByCategoryId
   const fetchGroups = async (category_id) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/getGroupsByCategoryId${category_id}`,
+        `http://localhost:3000/api/getGroupsByCategoryId/${category_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -231,22 +232,18 @@ const EditMajor = () => {
       }
       const data = await response.json();
       console.log("Fetched Groups data:", data); // ตรวจสอบข้อมูลที่ได้รับ
-      setGroups(data.groups);
-      // Fetch courses for each group in this category
-      const groupIds = data.groups.map((group) => group.group_id);
-      for (const groupId of groupIds) {
-        await fetchCourses(groupId);
-      }
+      setGroups(data || []); // ป้องกัน groups เป็น undefined
     } catch (error) {
       console.error("Error fetching Groups:", error);
+      setGroups([]); // กรณีที่เกิด error จะตั้งค่าเป็น array ว่าง
     }
   };
 
-  const fetchCourses = async (groupId) => {
+  const fetchCourses = async (group_id) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/courses/group/${groupId}`,
+        `http://localhost:3000/api/getCoursesByGroupId/${group_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -260,16 +257,20 @@ const EditMajor = () => {
       console.log("Fetched Courses data:", data); // ตรวจสอบข้อมูลที่ได้รับ
       setCourses((prevCourses) => ({
         ...prevCourses,
-        [groupId]: data.courses,
+        [group_id]: data,
       }));
     } catch (error) {
       console.error("Error fetching Courses:", error);
     }
   };
 
-  const handleCategoryClick = async (categoryId) => {
-    setSelectedCategoryId(categoryId);
-    await fetchGroups(categoryId);
+  const handleCategoryClick = async (category_id) => {
+    setSelectedCategoryId(category_id);
+    await fetchGroups(category_id);
+  };
+
+  const handleGroupClick = async (group_id) => {
+    await fetchCourses(group_id);
   };
 
   if (!major) {
@@ -295,9 +296,7 @@ const EditMajor = () => {
       </div>
       <div className="flex justify-center p-6 bg-gray-100">
         <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
-            แก้ไขหลักสูตร
-          </h2>
+          <h2 className="text-2xl text-red font-bold mb-6">แก้ไขหลักสูตร</h2>
           <form>
             <div className="grid grid-cols-1 gap-6">
               <div>
@@ -416,47 +415,56 @@ const EditMajor = () => {
                           </svg>
                         </div>
                       </summary>
+                      {/* Fetch Group */}
                       <div className="collapse-content text-base">
-                        {category.category_id === selectedCategoryId && (
+                        {category.category_id === selectedCategoryId ? (
                           <ul>
-                            {groups.map((group) => (
-                              <li key={group.group_id} className="py-2">
-                                <span
-                                  className="cursor-pointer"
-                                  onClick={() => handleGroupClick(group.group_id)}
-                                >
-                                  {group.group_unit} - {group.group_unit} หน่วยกิต
-                                </span>
-                                <hr />
-                                <ul>
-                                  {courses[group.group_id] &&
-                                    courses[group.group_id].map((course) => (
-                                      <li key={course.group_id} className="ml-4">
-                                        <span className="flex">
-                                          <p className="pr-4">
-                                            {" "}
-                                            {course.courseCode}{" "}
-                                            {course.courseNameTH}
-                                            <div className="flex-row">
-                                              {" "}
-                                              {course.courseNameENG}
-                                            </div>
-                                          </p>{" "}
-                                          <p className="text-sm">
-                                            {" "}
-                                            {course.courseUnit}{" "}
-                                            {course.courseYear}
-                                          </p>
-                                        </span>
-                                        <hr />
-                                      </li>
-                                    ))}
-                                </ul>
-                              </li>
-                            ))}
+                            {groups.length > 0 ? (
+                              groups.map((group) => (
+                                <li key={group.group_id} className="py-2">
+                                  <span
+                                    className="cursor-pointer font-bold"
+                                    onClick={() =>
+                                      handleGroupClick(group.group_id)
+                                    }
+                                  >
+                                    {group.group_name} - {group.group_unit}{" "}
+                                    หน่วยกิต
+                                  </span>
+                                  <hr />
+                                  <ul>
+                                    {courses[group.group_id] &&
+                                      courses[group.group_id].map((course) => (
+                                        <li
+                                          key={course.group_id}
+                                          className="ml-4"
+                                        >
+                                          <span className="flex">
+                                            <p className="pr-4">
+                                              {course.course_id}{" "}
+                                              {course.courseNameTH}
+                                              <div className="flex-row">
+                                                {course.courseNameENG}
+                                              </div>
+                                            </p>
+                                            <p className="text-sm">
+                                              {course.courseUnit} (
+                                              {course.courseTheory}-
+                                              {course.coursePractice}-
+                                              {course.categoryResearch})
+                                            </p>
+                                          </span>
+                                          <hr />
+                                        </li>
+                                      ))}
+                                  </ul>
+                                </li>
+                              ))
+                            ) : (
+                              <li>ไม่มีกลุ่มวิชา</li>
+                            )}
                           </ul>
-                        )}
-                        {category.category_id !== selectedCategoryId && (
+                        ) : (
                           <p>กลุ่มวิชา</p>
                         )}
                       </div>
