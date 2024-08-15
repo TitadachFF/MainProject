@@ -16,14 +16,15 @@ const AddCourseGroup = () => {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("token");
-
-        const response = await fetch("http://localhost:3000/api/getallMajors", {
+        const response = await fetch("http://localhost:3000/api/getAllMajors", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         const data = await response.json();
-        setCourses(data.majors || []);
+        console.log(data);
+        
+        setCourses(data || []);
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
@@ -32,27 +33,35 @@ const AddCourseGroup = () => {
     fetchCourses();
   }, []);
 
-  const fetchCategoriesByMajorId = async (majorId) => {
+  const fetchCategoriesByMajorCode = async (major_code) => {
+    console.log("Fetching categories for major_code:", major_code); // ตรวจสอบการเรียกฟังก์ชัน
     try {
       const token = localStorage.getItem("token");
-
       const response = await fetch(
-        `http://localhost:3000/api/categories/major/${majorId}`,
+        `http://localhost:3000/api/getCategoriesByMajorCode/${major_code}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch Categories");
+      }
+  
       const data = await response.json();
-      setFilteredCategories(data.categories || []);
+      console.log("Fetched Categories data:", data);
+      setFilteredCategories(data || []);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     if (name === "groupUnit") {
       if (value >= 0) {
         setFormData({
@@ -68,7 +77,15 @@ const AddCourseGroup = () => {
     }
 
     if (name === "selectedCourse") {
-      fetchCategoriesByMajorId(value);
+      const selectedCourseCode = courses.find(
+        (course) => course.major_code === value
+      )?.major_code;
+      
+
+      if (selectedCourseCode) {
+        fetchCategoriesByMajorCode(selectedCourseCode);
+      }
+
       setFormData({
         ...formData,
         selectedCourse: value,
@@ -85,6 +102,8 @@ const AddCourseGroup = () => {
       });
     }
   };
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,10 +134,6 @@ const AddCourseGroup = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
   };
 
   const updateQueryString = (form) => {
@@ -160,8 +175,8 @@ const AddCourseGroup = () => {
           <option value="">เลือกหมวดวิชา</option>
           {Array.isArray(filteredCategories) &&
             filteredCategories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.categoryName}
+              <option key={category.category_id} value={category.category_id}>
+                {category.category_name}
               </option>
             ))}
         </select>

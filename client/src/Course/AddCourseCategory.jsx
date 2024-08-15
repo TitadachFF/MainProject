@@ -74,19 +74,18 @@ const AddCourseCategory = () => {
       console.error("Error:", error);
     }
   };
-
+// Fetch Major
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("token");
-
-        const response = await fetch("http://localhost:3000/api/getallMajors", {
+        const response = await fetch("http://localhost:3000/api/getAllMajors", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         const data = await response.json();
-        setCourses(data.majors || []); // กำหนดค่า default เป็นอาร์เรย์ว่าง
+        setCourses(data || []);
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
