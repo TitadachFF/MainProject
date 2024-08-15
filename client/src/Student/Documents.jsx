@@ -71,74 +71,24 @@ const Documents = () => {
           </div>
           {/* คำร้อง */}
           {currentForm === "documents" && (
-            <form>
-              <div className="grid grid-cols-1 gap-6">
-                <div>
-                  <label className="block text-gray-700">ชื่อ-นามสกุล</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="ชื่อ-นามสกุล"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">รหัสนักศึกษา</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="รหัสนักศึกษา"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">หมู่เรียน</label>
-                  <input
-                    type="text"
-                    className="w-20 mt-1 border border-gray-300 rounded p-2"
-                    placeholder="XX/XX"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">รหัสผ่าน</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="รหัสผ่าน"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">ยืนยันรหัสผ่าน</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="ยืนยันรหัสผ่าน"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-between">
-                <button
-                  type="button"
-                  className="px-6 py-2 bg-gray-100 border border-red text-red rounded-full"
-                  onClick={() => navigate("/student")}
+            <div className="flex justify-center items-center bg-gradient-to-r from-gray-100 to-gray-100 py-8 h-[200px]">
+              <button
+                type="button"
+                className="px-16 py-4 bg-red hover:bg-red text-white text-2xl font-bold rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105 flex"
+                onClick={() => (window.location.href = "/qweqe.pdf")}
+              >
+                ดูเอกสาร
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="size-8"
                 >
-                  ย้อนกลับ
-                </button>
-                <div className="flex ml-auto">
-                  <button
-                    type="button"
-                    className="px-8 py-2 bg-red border border-red text-white rounded-full"
-                  >
-                    ส่งให้อาจารย์ที่ปรึกษา
-                  </button>
-                  <button
-                    type="button"
-                    className="px-8 py-2 bg-red border border-red text-white rounded-full ml-2"
-                  >
-                    ดาวโหลดPDF
-                  </button>
-                </div>
-              </div>
-            </form>
+                  <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0 0 16.5 9h-1.875a1.875 1.875 0 0 1-1.875-1.875V5.25A3.75 3.75 0 0 0 9 1.5H5.625Z" />
+                  <path d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" />
+                </svg>
+              </button>
+            </div>
           )}
 
           {/* แบบบันทึกผลการเรียน */}
@@ -186,10 +136,10 @@ const Documents = () => {
                   <div className="mb-2">
                     <div className="grid grid-cols-7 text-center ">
                       <div className="border border-r-0 border-t-0 border-black p-2">
-                        1500001
+                        1500201
                       </div>
                       <div className="border border-r-0 border-t-0 border-black p-2 col-span-2">
-                        ภาษาอังกฤษเพื่อการสื่อสารในสังคม
+                        ภาษาอังกฤษเพื่อการสื่อสารข้ามวัฒนธรรม
                       </div>
                       <div className="border border-r-0 border-t-0 border-black p-2">
                         3(3-0-6)
@@ -198,7 +148,7 @@ const Documents = () => {
                         2654/1
                       </div>
                       <div className="border border-r-0 border-t-0 border-black p-2">
-                        ดร.วรเชษฐ์ สุขรา
+                        ดร.วรเชษฐ์ อุทธา
                       </div>
                       <input
                         className="border border-t-0 border-black p-2 text-center"
@@ -209,10 +159,10 @@ const Documents = () => {
 
                     <div className="grid grid-cols-7 text-center">
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        1500001
+                        1500202
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2 col-span-2">
-                        ภาษาอังกฤษเพื่อการสื่อสารในสังคม
+                        ภาษาอังกฤษเพื่อการสื่อสารในบริบทสากล
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
                         3(3-0-6)
@@ -221,7 +171,7 @@ const Documents = () => {
                         2654/1
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        ดร.วรเชษฐ์ สุขรา
+                        ดร.วรเชษฐ์ อุทธา
                       </div>
                       <input
                         className="border border-t-0 border-black p-2 text-center"
@@ -232,10 +182,10 @@ const Documents = () => {
 
                     <div className="grid grid-cols-7 text-center">
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        1500001
+                        1500204
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2 col-span-2">
-                        ภาษาอังกฤษเพื่อการสื่อสารในสังคม
+                        การสื่อสารอย่างผู้นํา
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
                         3(3-0-6)
@@ -244,7 +194,7 @@ const Documents = () => {
                         2654/1
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        ดร.วรเชษฐ์ สุขรา
+                        ดร.วรเชษฐ์ อุทธา
                       </div>
                       <input
                         className="border border-t-0 border-black p-2 text-center"
@@ -274,10 +224,10 @@ const Documents = () => {
                   <div className="mb-2">
                     <div className="grid grid-cols-7 text-center ">
                       <div className="border border-r-0 border-t-0 border-black p-2">
-                        1500001
+                        7152801
                       </div>
                       <div className="border border-r-0 border-t-0 border-black p-2 col-span-2">
-                        ภาษาอังกฤษเพื่อการสื่อสารในสังคม
+                        คณิตศาสตร์ดีสครีต
                       </div>
                       <div className="border border-r-0 border-t-0 border-black p-2">
                         3(3-0-6)
@@ -286,7 +236,7 @@ const Documents = () => {
                         2654/1
                       </div>
                       <div className="border border-r-0 border-t-0 border-black p-2">
-                        ดร.วรเชษฐ์ สุขรา
+                        ดร.วรเชษฐ์ อุทธา
                       </div>
                       <input
                         className="border border-t-0 border-black p-2 text-center"
@@ -297,10 +247,10 @@ const Documents = () => {
 
                     <div className="grid grid-cols-7 text-center">
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        1500001
+                        7152802
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2 col-span-2">
-                        ภาษาอังกฤษเพื่อการสื่อสารในสังคม
+                        พีชคณิตเชิงเส้นและโครงสร้างข้อมูล
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
                         3(3-0-6)
@@ -309,7 +259,7 @@ const Documents = () => {
                         2654/1
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        ดร.วรเชษฐ์ 
+                        ดร.วรเชษฐ์ อุทธา
                       </div>
                       <input
                         className="border border-t-0 border-black p-2 text-center"
@@ -320,10 +270,10 @@ const Documents = () => {
 
                     <div className="grid grid-cols-7 text-center">
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        1500001
+                        7153803
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2 col-span-2">
-                        ภาษาอังกฤษเพื่อการสื่อสารในสังคม
+                        สถิติและวิธีการเชิงประสบการณ์สําหรับวิศวกรรมซอฟต์แวร์
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
                         3(3-0-6)
@@ -332,7 +282,7 @@ const Documents = () => {
                         2654/1
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        ดร.วรเชษฐ์ สุขรา
+                        ดร.วรเชษฐ์ อุทธา
                       </div>
                       <input
                         className="border border-t-0 border-black p-2 text-center"
@@ -362,12 +312,12 @@ const Documents = () => {
                     </div>
                   </div>
                   <div className="mb-2">
-                    <div className="grid grid-cols-7 text-center ">
+                  <div className="grid grid-cols-7 text-center ">
                       <div className="border border-r-0 border-t-0 border-black p-2">
-                        1500001
+                        1500201
                       </div>
                       <div className="border border-r-0 border-t-0 border-black p-2 col-span-2">
-                        ภาษาอังกฤษเพื่อการสื่อสารในสังคม
+                        ภาษาอังกฤษเพื่อการสื่อสารข้ามวัฒนธรรม
                       </div>
                       <div className="border border-r-0 border-t-0 border-black p-2">
                         3(3-0-6)
@@ -376,7 +326,7 @@ const Documents = () => {
                         2654/1
                       </div>
                       <div className="border border-r-0 border-t-0 border-black p-2">
-                        ดร.วรเชษฐ์ สุขรา
+                        ดร.วรเชษฐ์ อุทธา
                       </div>
                       <input
                         className="border border-t-0 border-black p-2 text-center"
@@ -387,10 +337,10 @@ const Documents = () => {
 
                     <div className="grid grid-cols-7 text-center">
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        1500001
+                        1500202
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2 col-span-2">
-                        ภาษาอังกฤษเพื่อการสื่อสารในสังคม
+                        ภาษาอังกฤษเพื่อการสื่อสารในบริบทสากล
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
                         3(3-0-6)
@@ -399,7 +349,7 @@ const Documents = () => {
                         2654/1
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        ดร.วรเชษฐ์ สุขรา
+                        ดร.วรเชษฐ์ อุทธา
                       </div>
                       <input
                         className="border border-t-0 border-black p-2 text-center"
@@ -410,10 +360,10 @@ const Documents = () => {
 
                     <div className="grid grid-cols-7 text-center">
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        1500001
+                        1500204
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2 col-span-2">
-                        ภาษาอังกฤษเพื่อการสื่อสารในสังคม
+                        การสื่อสารอย่างผู้นํา
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
                         3(3-0-6)
@@ -422,7 +372,7 @@ const Documents = () => {
                         2654/1
                       </div>
                       <div className="border border-t-0 border-r-0 border-black p-2">
-                        ดร.วรเชษฐ์ สุขรา
+                        ดร.วรเชษฐ์ อุทธา
                       </div>
                       <input
                         className="border border-t-0 border-black p-2 text-center"

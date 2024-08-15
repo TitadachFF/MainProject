@@ -18,3 +18,15 @@ footer {
   padding: 1rem 0;
   text-align: center;
 }
+
+
+.background-container {
+  background-image: url('/images/background.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3; /* ความโปร่งแสงของพื้นหลัง */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background-repeat: no-repeat;
+}
