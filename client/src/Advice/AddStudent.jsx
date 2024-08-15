@@ -1,18 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AddStudent = () => {
   const navigate = useNavigate();
+  const [sections, setSections] = useState([]);
+  const [message, setMessage] = useState("");
+  const [message2, setMessage2] = useState("");
 
   const [formData, setFormData] = useState({
-    name: "",
-    studentIdcard: "",
-    year: "",
-    room: "",
+    student_id: "",
     username: "",
     password: "",
     confirmPassword: "",
+    firstname: "",
+    lastname: "",
+    phone: "",
+    email: "",
+    sec_id: "",
   });
+
+  const [modalMessage, setModalMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/getSections", {
+          method: "GET",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Fetched sections:", data);
+          setSections(data);
+        } else {
+          console.error("Error fetching sections");
+        }
+      } catch (error) {
+        console.error("Error fetching sections:", error);
+      }
+    };
+
+    fetchSections();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,47 +54,66 @@ const AddStudent = () => {
 
   const handleSubmit = async () => {
     if (formData.password !== formData.confirmPassword) {
-      alert("รหัสผ่านไม่ตรงกัน");
+      setMessage("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน !");
+      setMessage2("*โปรดตรวจสอบรหัสผ่านและยืนยันรหัสผ่าน");
+      setShowModal(true);
+      setTimeout(() => {
+        setShowModal(false);
+      }, 2000);
       return;
     }
 
-    // Convert 'year,room,studentIdcard' to integer
-    const year = parseInt(formData.year);
-    const room = parseInt(formData.room);
-    const studentIdcard = parseInt(formData.studentIdcard);
+    const requestBody = {
+      student_id: parseInt(formData.student_id, 10),
+      username: formData.username,
+      password: formData.password,
+      firstname: formData.firstname,
+      lastname: formData.lastname,
+      sec_id: parseInt(formData.sec_id, 10),
+    };
+
+    if (formData.phone) {
+      requestBody.phone = formData.phone;
+    }
+
+    if (formData.email) {
+      requestBody.email = formData.email;
+    }
 
     try {
       const response = await fetch("http://localhost:3000/api/createStudent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // เพิ่ม header การยืนยันตัวตน
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          name: formData.name,
-          username: formData.username,
-          password: formData.password,
-          studentIdcard,
-          year,
-          room,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
-        alert("เพิ่มนักศึกษาเรียบร้อยแล้ว");
-        navigate("/advice");
+        setMessage("เพิ่มนักศึกษาสำเร็จ");
+        setMessage2("*เพิ่มผู้นักศึกษาเข้าสู่ระบบสำเร็จ");
+        setShowModal(true);
+        setTimeout(() => {
+          setShowModal(false);
+          navigate("/advice");
+        }, 1000);
       } else {
         const errorData = await response.json();
-        console.log("Response data:", errorData);
-        alert(
-          `มีข้อผิดพลาดในการเพิ่มนักศึกษา: ${
-            errorData.error || "Unknown error"
-          }`
-        );
+        setMessage("โปรดกรอกข้อมูลให้ครบถ้วน");
+        setMessage2("*โปรดตรวจสอบว่ากรอกข้อมูลครบแล้ว");
+        setShowModal(true);
+        setTimeout(() => {
+          setShowModal(false);
+        }, 3000);
       }
     } catch (error) {
-      console.error("Error adding user:", error);
-      alert("มีข้อผิดพลาดในการเพิ่มนักศึกษา");
+      setMessage("มีข้อผิดพลาดในการเพิ่มนักศึกษา !");
+      setMessage2("*มีคนใช้ชื่อผู้ใช้นี้แล้ว");
+      setShowModal(true);
+      setTimeout(() => {
+        setShowModal(false);
+      }, 2000);
     }
   };
 
@@ -82,57 +131,86 @@ const AddStudent = () => {
         <p>เพิ่มนักศึกษา</p>
       </div>
       <div className="min-h-screen flex justify-center p-6 bg-gray-100">
-        <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[700px]">
+        <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[900px]">
           <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
             เพิ่มนักศึกษา
           </h2>
           <form>
             <div className="grid grid-cols-1 gap-6">
-              <div>
-                <label className="block text-gray-700">ชื่อ-นามสกุล</label>
-                <input
-                  type="text"
-                  name="name"
-                  className="w-full mt-1 border border-gray-300 rounded p-2"
-                  placeholder="ชื่อ-นามสกุล"
-                  value={formData.name}
-                  onChange={handleChange}
-                />
+              <div className="flex gap-6">
+                <div className="w-1/2">
+                  <label className="block text-gray-700">ชื่อ</label>
+                  <input
+                    type="text"
+                    name="firstname"
+                    className="w-full mt-1 border border-gray-300 rounded p-2"
+                    placeholder="ชื่อ"
+                    value={formData.firstname}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="w-1/2">
+                  <label className="block text-gray-700">นามสกุล</label>
+                  <input
+                    type="text"
+                    name="lastname"
+                    className="w-full mt-1 border border-gray-300 rounded p-2"
+                    placeholder="นามสกุล"
+                    value={formData.lastname}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-gray-700">รหัสนักศึกษา</label>
                 <input
                   type="text"
-                  name="studentIdcard"
+                  name="student_id"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
                   placeholder="รหัสนักศึกษา"
-                  value={formData.studentIdcard}
+                  value={formData.student_id}
                   onChange={handleChange}
                 />
               </div>
-              <div className="flex">
-                <div className="mr-4">
-                  <label className="block text-gray-700">ปีการศึกษา</label>
-                  <input
-                    type="text"
-                    name="year"
-                    className="w-20 mt-1 border border-gray-300 rounded p-2"
-                    placeholder="XX/XX"
-                    value={formData.year}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">หมู่เรียน</label>
-                  <input
-                    type="text"
-                    name="room"
-                    className="w-20 mt-1 border border-gray-300 rounded p-2"
-                    placeholder="XX/XX"
-                    value={formData.room}
-                    onChange={handleChange}
-                  />
-                </div>
+              <div>
+                <label className="block text-gray-700">ห้องเรียน</label>
+                <select
+                  name="sec_id"
+                  className="w-full max-w-xs mt-1 border border-gray-300 rounded p-2"
+                  value={formData.sec_id}
+                  onChange={handleChange}
+                >
+                  <option value="" disabled>
+                    เลือกห้องเรียน
+                  </option>
+                  {sections.map((section) => (
+                    <option key={section.sec_id} value={section.sec_id}>
+                      {section.sec_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-gray-700">เบอร์โทร</label>
+                <input
+                  type="text"
+                  name="phone"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  placeholder="เบอร์โทร (ไม่จำเป็นต้องกรอก)"
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">อีเมล</label>
+                <input
+                  type="email"
+                  name="email"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  placeholder="อีเมล (ไม่จำเป็นต้องกรอก)"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
               </div>
               <div>
                 <label className="block text-gray-700">ชื่อผู้ใช้</label>
@@ -188,6 +266,15 @@ const AddStudent = () => {
           </form>
         </div>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg modal-box">
+            <h3 className="font-bold text-red text-xl pb-4">{message}</h3>
+            <p className="text-lg py-4 text-gray-500">{message2}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

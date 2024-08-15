@@ -40,16 +40,42 @@ const AllUser = () => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:3000/api/getallUser", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
+        // ใช้ Promise.all เพื่อทำการดึงข้อมูลจาก API ทั้งสามแบบพร้อมกัน
+        const [studentsResponse, teachersResponse, instructorResponse] =
+          await Promise.all([
+            fetch("http://localhost:3000/api/getStudents", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+            fetch("http://localhost:3000/api/getCourseIns", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+            fetch("http://localhost:3000/api/getTeachers", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+          ]);
+        if (
+          !studentsResponse.ok ||
+          !teachersResponse.ok ||
+          !instructorResponse.ok
+        ) {
+          throw new Error("Failed to fetch data");
         }
-        const data = await response.json();
-        setUsers(data);
+        const studentsData = await studentsResponse.json();
+        const teachersData = await teachersResponse.json();
+        const instructorData = await instructorResponse.json();
+
+        const mergedData = [
+          ...studentsData,
+          ...teachersData,
+          ...instructorData,
+        ];
+        setUsers(mergedData);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -60,22 +86,26 @@ const AllUser = () => {
     fetchUsers();
   }, []);
 
-  const roleOptions = [
-    { value: "ทั้งหมด", label: "ทั้งหมด" },
-    { value: "STUDENT", label: "นักศึกษา" },
-    { value: "ADVISOR", label: "ที่ปรึกษา" },
-    { value: "COURSE_INSTRUCTOR", label: "ตัวแทนหลักสูตร" },
-    { value: "ADMIN", label: "แอดมิน" },
-  ];
+  // const roleOptions = [
+  //   { value: "ทั้งหมด", label: "ทั้งหมด" },
+  //   { value: "STUDENT", label: "นักศึกษา" },
+  //   { value: "ADVISOR", label: "ที่ปรึกษา" },
+  //   { value: "COURSE_INSTRUCTOR", label: "ตัวแทนหลักสูตร" },
+  //   { value: "ADMIN", label: "แอดมิน" },
+  // ];
 
-  const filteredUsers = users.filter((user) => {
-    return (
-      (selectedRole === "ทั้งหมด" ||
-        selectedRole === "" ||
-        user.role === selectedRole) &&
-      user.name.toLowerCase().includes(searchUser.toLowerCase())
-    );
-  });
+  const filteredUsers = users;
+
+  // const filteredUsers = users.filter((user) => {
+  //   return (
+  //     (selectedRole === "ทั้งหมด" ||
+  //       selectedRole === "" ||
+  //       user.role === selectedRole) &&
+  //     `${user.firstname} ${user.lastname}`
+  //       .toLowerCase()
+  //       .includes(searchUser.toLowerCase())
+  //   );
+  // });
 
   const handleRoleChange = (e) => {
     setSelectedRole(e.target.value);
@@ -87,93 +117,129 @@ const AllUser = () => {
 
   const startEditing = (user) => {
     setEditingUser(user);
-    setUpdatedName(user.name);
+    setUpdatedName(`${user.firstname} ${user.lastname}`);
     setUpdatedRole(user.role);
     setUpdatedUserName(user.username);
   };
 
-  const startEditingPassword = (user) => {
-    setEditingUserPassword(user);
-    setUpdatedUserPassword("");
-  };
+  // const startEditingPassword = (user) => {
+  //   setEditingUserPassword(user);
+  //   setUpdatedUserPassword("");
+  // };
 
-  const saveChanges = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const requestBody = {
-        name: updatedName,
-        role: updatedRole,
-        username: updatedUserName,
-        password: updatedUserPassword,
-      };
+  // const saveChanges = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const [firstname, lastname] = updatedName.split(" ");
 
-      console.log("Request Body :", requestBody);
+  //     const requestBody = {
+  //       firstname: firstname || "",
+  //       lastname: lastname || "",
+  //       username: updatedUserName,
+  //       password: updatedUserPassword,
+  //     };
 
-      const response = await fetch(
-        `http://localhost:3000/api/updateUser/${
-          editingUser ? editingUser.id : editingUserPassword.id
-        }`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+  //     console.log("Request Body:", requestBody);
 
-      if (!response.ok) {
-        throw new Error("Failed to update user");
-      }
+  //     let response;
+  //     let url;
 
-      const updatedUser = await response.json();
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === updatedUser.id ? updatedUser : user
-        )
-      );
+  //     // ตรวจสอบว่า editingUser มีข้อมูลอะไรบ้าง
+  //     if (editingUser) {
+  //       if (editingUser.userType === "student") {
+  //         url = `http://localhost:3000/api/updateStudent/${editingUser.id}`;
+  //       } else if (editingUser.userType === "teacher") {
+  //         url = `http://localhost:3000/api/updateTeacher/${editingUser.id}`;
+  //       } else if (editingUser.userType === "course_instructor") {
+  //         url = `http://localhost:3000/api/updateCourseIn/${editingUser.id}`;
+  //       } else {
+  //         throw new Error("Unknown user type");
+  //       }
 
-      setEditingUser(null);
-      setEditingUserPassword(null);
-      setShowSuccessModal(true);
+  //       response = await fetch(url, {
+  //         method: "PUT",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify(requestBody),
+  //       });
 
-      setTimeout(() => {
-        setShowSuccessModal(false);
-        window.location.reload();
-      }, 1000);
-    } catch (error) {
-      setError(error.message);
-      setShowUnSuccessModal(true);
-      setTimeout(() => {
-        setShowUnSuccessModal(false);
-        window.location.reload();
-      }, 1000);
-    }
-  };
+  //       if (!response.ok) {
+  //         throw new Error("Failed to update user");
+  //       }
 
-  const deleteUser = async (userId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:3000/api/deleteUser/${userId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //       const updatedUser = await response.json();
+  //       setUsers((prevUsers) =>
+  //         prevUsers.map((user) =>
+  //           user.id === updatedUser.id ? updatedUser : user
+  //         )
+  //       );
 
-      if (!response.ok) {
-        throw new Error("Failed to delete user");
-      }
+  //       setEditingUser(null);
+  //       setEditingUserPassword(null);
+  //       setShowSuccessModal(true);
 
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
-    } catch (error) {
-      setError(error.message);
-    }
-  };
+  //       setTimeout(() => {
+  //         setShowSuccessModal(false);
+  //         window.location.reload();
+  //       }, 1000);
+  //     } else if (editingUserPassword) {
+  //       url = `http://localhost:3000/api/updatePassword/${editingUserPassword.id}`;
+
+  //       response = await fetch(url, {
+  //         method: "PUT",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify({ password: updatedUserPassword }),
+  //       });
+
+  //       if (!response.ok) {
+  //         throw new Error("Failed to update password");
+  //       }
+
+  //       setEditingUserPassword(null);
+  //       setShowSuccessModal(true);
+
+  //       setTimeout(() => {
+  //         setShowSuccessModal(false);
+  //         window.location.reload();
+  //       }, 1000);
+  //     }
+  //   } catch (error) {
+  //     setError(error.message);
+  //     setShowUnSuccessModal(true);
+  //     setTimeout(() => {
+  //       setShowUnSuccessModal(false);
+  //       window.location.reload();
+  //     }, 1000);
+  //   }
+  // };
+
+  // const deleteUser = async (userId) => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const response = await fetch(
+  //       `http://localhost:3000/api/deleteUser/${userId}`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to delete user");
+  //     }
+
+  //     setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+  //   } catch (error) {
+  //     setError(error.message);
+  //   }
+  // };
 
   if (loading) {
     return (
@@ -256,11 +322,11 @@ const AllUser = () => {
                     value={selectedRole}
                     onChange={handleRoleChange}
                   >
-                    {roleOptions.map((option, index) => (
+                    {/* {roleOptions.map((option, index) => (
                       <option key={index} value={option.value}>
                         {option.label}
                       </option>
-                    ))}
+                    ))} */}
                   </select>
 
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-700">
@@ -301,13 +367,15 @@ const AllUser = () => {
                       <UserIcon className="h-6 w-6 mr-2 text-gray-500" />
                       <div>
                         <div className="flex">
-                          <p className="pr-2">{user.name}</p>{" "}
+                          <p className="pr-2">
+                            {user.firstname} {user.lastname}
+                          </p>{" "}
                           <p className="text-xs badge">
-                            {
+                            {/* {
                               roleOptions.find(
                                 (option) => option.value === user.role
                               )?.label
-                            }
+                            } */}
                           </p>
                         </div>
                       </div>
@@ -337,12 +405,12 @@ const AllUser = () => {
                       {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
 </svg> */}
-
                     </div>
                   </li>
                 ))}
               </ul>
             </div>
+
             {editingUser && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-white rounded-lg p-6 w-1/3">
@@ -354,14 +422,13 @@ const AllUser = () => {
                       ชื่อ-นามสกุล ผู้ใช้
                     </label>
                     <input
-                      
                       type="text"
-                      className="mt-1 w-full  rounded border-gray-300 p-2  border text-gray-500 "
+                      className="mt-1 w-full rounded border-gray-300 p-2 border text-gray-500"
                       value={updatedName}
                       onChange={(e) => setUpdatedName(e.target.value)}
                     />
                   </div>
-                  <div className="mb-2">
+                  {/* <div className="mb-2">
                     <label className="block text-md font-medium text-black">
                       ตำแหน่ง
                     </label>
@@ -376,7 +443,7 @@ const AllUser = () => {
                         </option>
                       ))}
                     </select>
-                  </div>
+                  </div> */}
                   <div className="mb-2">
                     <label className="block text-md font-medium text-black">
                       ชื่อผู้ใช้
@@ -401,7 +468,7 @@ const AllUser = () => {
                     <button
                       type="button"
                       className="px-4 py-2 bg-red text-white text-sm rounded"
-                      onClick={saveChanges}
+                      // onClick={saveChanges}
                     >
                       บันทึก
                     </button>
@@ -409,7 +476,7 @@ const AllUser = () => {
                 </div>
               </div>
             )}
-            {editingUserPassword && (
+            {/* {editingUserPassword && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-white rounded-lg p-6 w-1/3">
                   <h3 className="text-2xl mb-4 font-bold text-red">
@@ -444,16 +511,20 @@ const AllUser = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
             {showSuccessModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50  ">
-          <div className="bg-white rounded-lg  modal-box">
-          <h3 className="font-bold text-red text-xl pb-4 ">แก้ไขข้อมูลสำเร็จ!</h3>
-                  <p className="text-lg py-4 text-gray-500">อัปเดตข้อมูลผู้ใช้เรียบร้อยแล้ว.</p>
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50  ">
+                <div className="bg-white rounded-lg  modal-box">
+                  <h3 className="font-bold text-red text-xl pb-4 ">
+                    แก้ไขข้อมูลสำเร็จ!
+                  </h3>
+                  <p className="text-lg py-4 text-gray-500">
+                    อัปเดตข้อมูลผู้ใช้เรียบร้อยแล้ว.
+                  </p>
                 </div>
               </div>
             )}
-             {showUnSuccessModal && (
+            {showUnSuccessModal && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-white rounded-lg p-6">
                   <h3 className="text-xl text-red mb-2">12313!</h3>
