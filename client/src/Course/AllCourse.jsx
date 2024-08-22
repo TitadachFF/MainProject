@@ -376,7 +376,7 @@ const EditMajor = () => {
                   <p className="text-white font-semibold">{major.status}</p>
                 </div>
               </div>
-              {/* Categories Section */}
+              {/* Categories  */}
               <div className="">
                 {categories &&
                   categories.length > 0 &&
@@ -384,7 +384,7 @@ const EditMajor = () => {
                     <details
                       key={category.category_id}
                       className="collapse bg-gray-50 mb-2"
-                      open={category.category_id === selectedCategoryId}
+                       onClick={() => handleCategoryClick(category.category_id)}
                     >
                       <summary
                         className="collapse-title text-lg cursor-pointer bg-red text-white"

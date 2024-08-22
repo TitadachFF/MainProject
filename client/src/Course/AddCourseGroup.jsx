@@ -8,8 +8,8 @@ const AddCourseGroup = () => {
   const [formData, setFormData] = useState({
     selectedCourse: "",
     selectedCategory: "",
-    groupName: "",
-    groupUnit: "",
+    group_name: "",
+    group_unit: "",
   });
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const AddCourseGroup = () => {
         });
         const data = await response.json();
         console.log(data);
-        
+
         setCourses(data || []);
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -45,11 +45,11 @@ const AddCourseGroup = () => {
           },
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to fetch Categories");
       }
-  
+
       const data = await response.json();
       console.log("Fetched Categories data:", data);
       setFilteredCategories(data || []);
@@ -57,12 +57,11 @@ const AddCourseGroup = () => {
       console.error("Error fetching categories:", error);
     }
   };
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "groupUnit") {
+    if (name === "group_unit") {
       if (value >= 0) {
         setFormData({
           ...formData,
@@ -80,7 +79,6 @@ const AddCourseGroup = () => {
       const selectedCourseCode = courses.find(
         (course) => course.major_code === value
       )?.major_code;
-      
 
       if (selectedCourseCode) {
         fetchCategoriesByMajorCode(selectedCourseCode);
@@ -90,40 +88,39 @@ const AddCourseGroup = () => {
         ...formData,
         selectedCourse: value,
         selectedCategory: "",
-        groupName: "",
-        groupUnit: "",
+        group_name: "",
+        group_unit: "",
       });
     } else if (name === "selectedCategory") {
       setFormData({
         ...formData,
         selectedCategory: value,
-        groupName: "",
-        groupUnit: "",
+        group_name: "",
+        group_unit: "",
       });
     }
   };
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:3000/api/createGroup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          group: {
-            groupName: formData.groupName,
-            groupUnit: formData.groupUnit,
-            categoryId: parseInt(formData.selectedCategory, 10),
+      const response = await fetch(
+        "http://localhost:3000/api/createGroupMajor",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-        }),
-      });
+          body: JSON.stringify({
+            group_name: formData.group_name,
+            group_unit: parseInt(formData.group_unit, 10),
+            category_id: parseInt(formData.selectedCategory, 10),
+          }),
+        }
+      );
 
       if (response.ok) {
         document.getElementById("my_modal_1").showModal();
@@ -155,7 +152,8 @@ const AddCourseGroup = () => {
           <option value="">เลือกหลักสูตร</option>
           {Array.isArray(courses) &&
             courses.map((course) => (
-              <option key={course.id} value={course.id}>
+              <option key={course.id} value={course.major_code}>
+                {/* แก้ไขตรงนี้ */}
                 {course.majorNameTH}
               </option>
             ))}
@@ -186,9 +184,9 @@ const AddCourseGroup = () => {
           <label className="mb-2">ชื่อกลุ่มวิชา</label>
           <input
             type="text"
-            name="groupName"
+            name="group_name"
             className="border rounded-lg px-2 py-2"
-            value={formData.groupName}
+            value={formData.group_name}
             onChange={handleChange}
             disabled={!formData.selectedCategory} // ปิดการใช้งานถ้าไม่ได้เลือกหมวดวิชา
           />
@@ -197,9 +195,9 @@ const AddCourseGroup = () => {
           <label className="mb-2">จำนวนหน่วยกิต</label>
           <input
             type="number"
-            name="groupUnit"
+            name="group_unit"
             className="border rounded-lg px-2 py-2"
-            value={formData.groupUnit}
+            value={formData.group_unit}
             onChange={handleChange}
             min="0"
             disabled={!formData.selectedCategory} // ปิดการใช้งานถ้าไม่ได้เลือกหมวดวิชา

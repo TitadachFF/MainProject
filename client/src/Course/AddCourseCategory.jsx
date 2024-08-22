@@ -9,16 +9,16 @@ const AddCourseCategory = () => {
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState("");
   const [formData, setFormData] = useState({
-    categoryName: "",
-    categoryUnit: "",
-    majorID: "",
+    category_name: "",
+    category_unit: "",
+    major_id: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "categoryUnit") {
-      // ตรวจสอบว่าจำนวนหน่วยกิตไม่ติดลบ
+    if (name === "category_unit") {
+      // ตรวจสอบว่าจำนวนหน่วยกิตไม่ติดลบ 
       if (value >= 0) {
         setFormData({
           ...formData,
@@ -41,7 +41,7 @@ const AddCourseCategory = () => {
     console.log("Form Data:", formData);
 
     // ตรวจสอบให้แน่ใจว่ามีการเลือกหลักสูตรและกรอกข้อมูลครบถ้วน
-    if (!selectedCourse || !formData.categoryName || !formData.categoryUnit) {
+    if (!selectedCourse || !formData.category_name || !formData.category_unit) {
       console.error("กรุณากรอกข้อมูลให้ครบถ้วนและเลือกหลักสูตร");
       return;
     }
@@ -56,11 +56,9 @@ const AddCourseCategory = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          category: {
-            majorId: parseInt(selectedCourse, 10), // แปลง `selectedCourse` เป็นจำนวนเต็ม
-            categoryName: formData.categoryName,
-            categoryUnit: formData.categoryUnit,
-          },
+          category_name: formData.category_name,
+          category_unit: parseInt(selectedCourse, 10),
+          major_id: parseInt(selectedCourse, 10), // แปลง major_id ให้เป็น Int ก่อนส่งไปยัง backend
         }),
       });
 
@@ -74,7 +72,8 @@ const AddCourseCategory = () => {
       console.error("Error:", error);
     }
   };
-// Fetch Major
+
+  // Fetch Major
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -97,9 +96,13 @@ const AddCourseCategory = () => {
   const handleInstructorNameChange = (e) => {
     setInstructorName(e.target.value);
   };
-
   const handleCourseChange = (e) => {
-    setSelectedCourse(e.target.value);
+    const major_id = e.target.value;
+    setSelectedCourse(major_id);
+    setFormData({
+      ...formData,
+      major_id: major_id, // เก็บ major_id ใน formData ด้วย
+    });
   };
 
   const getQueryStringValue = (key) => {
@@ -121,7 +124,7 @@ const AddCourseCategory = () => {
         <div className="relative mb-6">
           <select
             id="class"
-            name="majorID"
+            name="major_id"
             className="dropdown appearance-none w-full mt-1 text-gray-400 bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
             value={selectedCourse}
             onChange={handleCourseChange}
@@ -129,7 +132,7 @@ const AddCourseCategory = () => {
             <option value="">เลือกหลักสูตร</option>
             {Array.isArray(courses) &&
               courses.map((course) => (
-                <option key={course.id} value={course.id}>
+                <option key={course.major_id} value={course.major_id}>
                   {course.majorNameTH}
                 </option>
               ))}
@@ -140,9 +143,9 @@ const AddCourseCategory = () => {
             <label className="mb-2">ชื่อหมวดวิชา</label>
             <input
               type="text"
-              name="categoryName"
+              name="category_name"
               className="border rounded-lg px-2 py-2"
-              value={formData.categoryName}
+              value={formData.category_name}
               onChange={handleChange}
               disabled={!selectedCourse} // ปิดการใช้งานถ้าไม่ได้เลือกหลักสูตร
             />
@@ -151,9 +154,9 @@ const AddCourseCategory = () => {
             <label className="mb-2">จำนวนหน่วยกิต</label>
             <input
               type="number"
-              name="categoryUnit"
+              name="category_unit"
               className="border rounded-lg px-2 py-2"
-              value={formData.categoryUnit}
+              value={formData.category_unit}
               onChange={handleChange}
               min="0"
               disabled={!selectedCourse} // ปิดการใช้งานถ้าไม่ได้เลือกหลักสูตร

@@ -5,13 +5,12 @@ const AddCourseName = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({
+    major_code: "",
     majorNameTH: "",
     majorNameENG: "",
     majorYear: "",
     majorUnit: "",
-    majorCode: "",
-    status: "ACTIVE", // ตั้งค่า default เป็น ACTIVE
-    majorSupervisor: "",
+    status: "ACTIVE",
   });
 
   const handleChange = (e) => {
@@ -44,7 +43,7 @@ const AddCourseName = () => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ major: formData }),
+        body: JSON.stringify(formData), // ปรับแก้ตรงนี้
       });
 
       if (response.ok) {
@@ -99,9 +98,9 @@ const AddCourseName = () => {
             <label className="mb-2">รหัสหลักสูตร</label>
             <input
               type="text"
-              name="majorCode"
+              name="major_code"
               className="border rounded-lg px-2 py-2"
-              value={formData.majorCode}
+              value={formData.major_code}
               onChange={handleChange}
             />
           </div>
@@ -142,7 +141,7 @@ const AddCourseName = () => {
               />
               ACTIVE
             </label>
-            <label>
+            <label className="text-gray-400">
               <input
                 type="radio"
                 name="status"
@@ -155,18 +154,6 @@ const AddCourseName = () => {
               INACTIVE
             </label>
           </div>
-        </div>
-
-        <div>
-          <label className="mb-2">อาจารย์ผู้รับผิดชอบหลักสูตร</label>
-          <input
-            type="text"
-            name="majorSupervisor"
-            className="border rounded-lg px-2 py-2 mb-2 mt-2 block w-full"
-            placeholder="ชื่อ-สกุล อาจารย์"
-            value={formData.majorSupervisor}
-            onChange={handleChange}
-          />
         </div>
 
         <div className="mt-6 flex justify-between">
