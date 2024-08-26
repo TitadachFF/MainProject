@@ -65,12 +65,13 @@ const AllCourse = () => {
             ) : error ? (
               <div className="text-gray-500 text-center">{error}</div>
             ) : majors.length > 0 ? (
-              <table className="w-full rounded-lg border bg-red h-full text-white cursor-pointer">
+              <table className="w-full rounded-lg border hover:shadow-xl bg-red h-full text-white cursor-pointer hover:bg-gray-600">
                 <tbody>
                   {majors.map((major) => (
                     <tr key={major.major_code} className="border-t relative">
                       <td className="px-6 py-4">
-                        <div className="flex flex-col">
+                        <div className="flex flex-col "  onClick={() => handleEdit(major.major_code)}>
+                          
                           <span className="text-xl flex">
                             {major.major_code} {major.majorNameTH}
                             <p className="pl-8">{major.majorUnit} หน่วยกิต</p>
@@ -130,10 +131,10 @@ const AllCourse = () => {
               <div className="text-gray-500 text-center">ไม่มีหลักสูตร</div>
             )}
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-4">
             <button
               type="button"
-              className="px-8 py-2 bg-red border border-red text-white rounded"
+              className="px-8 py-2 bg-red border border-red text-white rounded  hover:shadow-md hover:bg-gray-500"
               onClick={() => navigate("/addcourse")}
             >
               เพิ่มหลักสูตร
