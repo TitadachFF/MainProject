@@ -35,6 +35,7 @@ import AddStudentplan from "../Advice/AddStudentplan";
 import AdminInfo from "../Admin/AdminInfo";
 import EditMajor from "../Course/EditMajor";
 import NavigateMenu from "../components/NavigateMenu";
+import EditStudentPlan from "../Advice/EditStudentPlan";
 
 const Router = createBrowserRouter([
   {
@@ -121,7 +122,7 @@ const Router = createBrowserRouter([
       {
         path: "/coursecategory",
         element: <CourseCategory />,
-      },     
+      },
       {
         path: "/documentstudent",
         element: <DocumentStudent />,
@@ -132,11 +133,14 @@ const Router = createBrowserRouter([
       },
       {
         path: "/addstudentplan",
-        element: <AddStudentplan/>,
+        element: <AddStudentplan />,
       },
       {
         path: "/navigate",
-        element: <NavigateMenu/>,
+        element: <NavigateMenu />,
+      },
+      { 
+        path:"/editstudentplan", element: <EditStudentPlan />
       },
     ],
   },

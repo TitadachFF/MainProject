@@ -312,7 +312,7 @@ const Documents = () => {
                     </div>
                   </div>
                   <div className="mb-2">
-                  <div className="grid grid-cols-7 text-center ">
+                    <div className="grid grid-cols-7 text-center ">
                       <div className="border border-r-0 border-t-0 border-black p-2">
                         1500201
                       </div>
@@ -398,7 +398,7 @@ const Documents = () => {
                 <button
                   type="button"
                   className="px-6 py-2 bg-gray-100 border border-red text-red rounded-full"
-                  onClick={() => console.log("Go back")}
+                  onClick={() => navigate("/student")}
                 >
                   ย้อนกลับ
                 </button>
