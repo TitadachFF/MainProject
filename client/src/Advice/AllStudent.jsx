@@ -31,18 +31,25 @@ const AllStudent = () => {
   const [selectedRoom, setSelectedRoom] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [editingStudent, setEditingStudent] = useState(null);
-  const [updatedName, setUpdatedName] = useState("");
-  const [updatedYear, setUpdatedYear] = useState("");
-  const [updatedRoom, setUpdatedRoom] = useState("");
-  const [updatedIdCard, setUpdatedIdCard] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
   //const [showErrorModal, setShowErrorModal] = useState(false);
+
+  const [updatedStudent, setUpdatedStudent] = useState({
+    id: "",
+    firstname: "",
+    lastname: "",
+    phone: "",
+    email: "",
+    room: "",
+  });
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:3000/api/getStudent", {
+        const response = await fetch("http://localhost:3000/api/getStudents", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -51,14 +58,27 @@ const AllStudent = () => {
         if (!response.ok) {
           throw new Error("Failed to fetch students");
         }
-        //นำข้อมูลที่ได้มาแปลงเป็น JSON (response.json()) แล้วใช้ setStudents เพื่อเซ็ต state ของ students
         const data = await response.json();
         setStudents(data);
-        //หา room แล้วมาเก็บไว้ใน roomOptions
-        const uniqueRooms = Array.from(
-          new Set(data.map((student) => student.studentInfo.room))
+
+        // ดึงข้อมูล Section และอัปเดต roomOptions ด้วย section names
+        const sectionResponse = await fetch(
+          "http://localhost:3000/api/getSections",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        setRoomOptions(uniqueRooms);
+
+        if (!sectionResponse.ok) {
+          throw new Error("Failed to fetch sections");
+        }
+        const sections = await sectionResponse.json();
+        setRoomOptions(sections);
+
+        // Log section data for debugging
+        //console.log("Fetched sections:", sections);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -69,21 +89,22 @@ const AllStudent = () => {
     fetchStudents();
   }, []);
 
+
+
   useEffect(() => {
     const filtered = students.filter((student) => {
       const isInSelectedRoom =
-        selectedRoom === "" ||
-        //เนื่องจากข้อมูลใน Backend เป็น INT จึงใช้ `${student.studentInfo.room}` แทนการเรียกค่า String โดยตรง
-        (student.studentInfo && `${student.studentInfo.room}` === selectedRoom);
+        selectedRoom === "" || student.sec_id === parseInt(selectedRoom);
 
       const isInSearchTerm =
         searchTerm === "" ||
-        student.name.toLowerCase().includes(searchTerm.toLowerCase());
+        student.username.toLowerCase().includes(searchTerm.toLowerCase());
 
       return isInSelectedRoom && isInSearchTerm;
     });
     setFilteredStudents(filtered);
-  }, [students, selectedRoom, searchTerm, loading]);
+  }, [students, selectedRoom, searchTerm]);
+
 
   const handleRoomChange = (e) => {
     setSelectedRoom(e.target.value);
@@ -95,64 +116,114 @@ const AllStudent = () => {
 
   const startEditing = (student) => {
     setEditingStudent(student);
-    setUpdatedName(student.name);
-    setUpdatedYear(student.studentInfo.year);
-    setUpdatedRoom(student.studentInfo.room);
-    setUpdatedIdCard(student.studentInfo.studentIdcard);
+    setUpdatedStudent({
+      id: student.student_id,
+      firstname: student.firstname,
+      lastname: student.lastname,
+      phone: student.S_phone,
+      email: student.S_email,
+      room:
+        // หาชื่อห้อง (sec_name) ที่ตรงกับ sec_id ของนักเรียนจากรายการห้องที่มี
+        roomOptions.find((room) => room.sec_id === student.sec_id)?.sec_name ||
+        "",
+    });
+  };
+
+  const handleUpdateChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedStudent((prev) => ({ ...prev, [name]: value }));
   };
 
   const saveChanges = async () => {
     try {
       const token = localStorage.getItem("token");
-      // แปลง year,room,studentIdcard เป็น integer เพราะหลังบ้านรับเป็น INT
-      const requestBody = {
-        name: updatedName,
-        year: parseInt(updatedYear),
-        room: parseInt(updatedRoom),
-        studentIdcard: parseInt(updatedIdCard),
-      };
+      // หา sec_id ของห้องที่ตรงกับชื่อห้องใน updatedStudent
+      const room = roomOptions.find(
+        (room) => room.sec_name === updatedStudent.room
+      );
+      const secId = room ? room.sec_id : "";
+
+      // ตรวจสอบว่า editingStudent มีข้อมูลที่ถูกต้องก่อนที่จะทำการอัปเดต
+      if (!editingStudent || !editingStudent.student_id) {
+        throw new Error("Invalid student data");
+      }
 
       const response = await fetch(
-        `http://localhost:3000/api/updateStudent/${editingStudent.id}`,
+        `http://localhost:3000/api/updateStudent/${editingStudent.student_id}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify({
+            ...updatedStudent,
+            sec_id: secId,
+          }),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to update user");
+        throw new Error("Failed to update student");
       }
 
-      const updatedStudent = await response.json();
-      //ใช้ setStudents เพื่ออัพเดตข้อมูลนักศึกษาใน state โดยใช้ข้อมูลที่ได้รับกลับมา
+      const updatedStudentData = await response.json();
       setStudents((prevStudents) =>
         prevStudents.map((student) =>
-          student.id === updatedStudent.updateStudent.id
-            ? updatedStudent.updateStudent
+          student.student_id === updatedStudentData.student_id
+            ? updatedStudentData
             : student
         )
       );
 
       setEditingStudent(null);
       setShowSuccessModal(true);
-
-      setTimeout(() => {
-        setShowSuccessModal(false);
-      }, 1000);
+      setTimeout(() => setShowSuccessModal(false), 1000);
     } catch (error) {
       setError(error.message);
-      //setShowErrorModal(true);
-
-      // setTimeout(() => {
-      //   setShowErrorModal(false);
-      // }, 1000);
     }
   };
+
+
+
+  const confirmDeleteStudent = (student) => {
+    setStudentToDelete(student);
+    setShowDeleteModal(true);
+  };
+
+  const deleteStudent = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      // ตรวจสอบว่ามีข้อมูลของนักเรียนที่ต้องการลบหรือไม่
+      if (!studentToDelete || !studentToDelete.student_id) {
+        throw new Error("Student ID is undefined");
+      }
+      const response = await fetch(
+        `http://localhost:3000/api/deleteStudent/${studentToDelete.student_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete student");
+      }
+
+      setStudents((prevStudents) =>
+        prevStudents.filter(
+          (student) => student.student_id !== studentToDelete.student_id
+        )
+      );
+      setShowDeleteModal(false);
+      setStudentToDelete(null);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -162,16 +233,16 @@ const AllStudent = () => {
             หน้าแรก
           </p>
           <span className="mx-1">&gt;</span>
-          <p className="cursor-pointer" onClick={() => navigate("/admin")}>
-            เมนูแอดมิน
+          <p className="cursor-pointer" onClick={() => navigate("/advice")}>
+            อาจารย์
           </p>
           <span className="mx-1">&gt;</span>
-          <p>ดูรายชื่อผู้ใช้</p>
+          <p>ดูราชื่อนักศึกษา</p>
         </div>
         <div className="min-h-screen flex justify-center p-6 h-full">
           <div className="container mx-auto w-full max-w-3xl bg-white h-full rounded-lg shadow-lg p-6">
             <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
-              ดูรายชื่อผู้ใช้
+              ดูรายชื่อนักศึกษา
             </h2>
             <div className="grid grid-cols-1 gap-6">
               <div className="mb-3 flex">
@@ -221,7 +292,7 @@ const AllStudent = () => {
         <p>รายชื่อนักศึกษา</p>
       </div>
       <div className="min-h-screen flex justify-center p-6 bg-gray-100">
-        <div className="w-full h-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
+        <div className="w-full h-full max-w-3xl bg-white rounded-lg shadow-lg p-6  ">
           <h2 className="text-2xl text-red font-bold mb-6">รายชื่อนักศึกษา</h2>
           <div className="mb-3 flex">
             <div className="w-40">
@@ -233,27 +304,15 @@ const AllStudent = () => {
                   onChange={handleRoomChange}
                 >
                   <option value="">ทั้งหมด</option>
-                  {roomOptions.map((option, index) => (
-                    <option key={index} value={option}>
-                      {option}
+                  {roomOptions.map((room) => (
+                    <option key={room.sec_id} value={room.sec_id}>
+                      {room.sec_name}
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-700">
-                  <svg
-                    className="fill-current h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 5.293a1 1 0 011.414 0L10 10.586l4.293-4.293a1 1 0 111.414 1.414l-5 5a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
               </div>
             </div>
+
             <div className="w-full pl-20 mr-0">
               <input
                 type="text"
@@ -267,36 +326,48 @@ const AllStudent = () => {
           </div>
           <div className="overflow-y-auto max-h-96">
             <ul className="divide-y divide-gray-200">
-              {filteredStudents.map((student) => (
-                <li
-                  key={student.id}
-                  className="py-2 flex items-center justify-between"
-                >
-                  <div className="flex items-center">
-                    <UserIcon className="h-6 w-6 mr-2 text-gray-500" />
-                    <div>
-                      <p className="text-lg">
-                        {student.studentInfo.studentIdcard} {student.name}
-                      </p>
-                      {student.studentInfo && (
-                        <p className="text-sm text-gray-500">
-                          หมู่เรียน {student.studentInfo.year} /{" "}
-                          {student.studentInfo.room}
+              {filteredStudents.map((student) => {
+                // หาชื่อหมู่เรียนจากข้อมูลของนักเรียนที่มี sec_id ตรงกับ roomOptions
+                const secName = roomOptions.find(
+                  (sec) => sec.sec_id === student.sec_id
+                )?.sec_name;
+                return (
+                  <li
+                    key={student.id}
+                    className="py-2 flex items-center justify-between"
+                  >
+                    <div className="flex items-center">
+                      <UserIcon className="h-6 w-6 mr-2 text-gray-500" />
+                      <div>
+                        <p className="text-lg">
+                          {student.student_id} {student.firstname}{" "}
+                          {student.lastname}
                         </p>
-                      )}
+                        {student && (
+                          <p className="text-sm text-gray-500">
+                            หมู่เรียน {secName || "หมู่เรียนไม่ระบุ"}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex space-x-2 pr-2">
-                    <button
-                      type="button"
-                      className="px-4 py-2 bg-orange-300 text-white text-sm rounded"
-                      onClick={() => startEditing(student)}
-                    >
-                      แก้ไข
-                    </button>
-                  </div>
-                </li>
-              ))}
+                    <div className="flex space-x-2 pr-2">
+                      <button
+                        type="button"
+                        className="px-4 py-2 bg-orange-300 text-white text-sm rounded"
+                        onClick={() => startEditing(student)}
+                      >
+                        แก้ไข
+                      </button>
+                      <button
+                        className="px-4 py-2 text-white bg-red rounded"
+                        onClick={() => confirmDeleteStudent(student)}
+                      >
+                        ลบ
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div className="mt-6 flex justify-between">
@@ -313,60 +384,95 @@ const AllStudent = () => {
 
       {editingStudent && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 w-1/3">
-            <h3 className="text-xl mb-4 text-red">แก้ไขนักศึกษา</h3>
-            <div className="mb-2">
-              <label className="block text-md font-medium text-black">
-                รหัสนักศึกษา
-              </label>
-              <input
-                type="text"
-                className="mt-1 w-full h-9 rounded border-gray-300 p-2  border text-gray-500 "
-                value={updatedIdCard}
-                onChange={(e) => setUpdatedIdCard(e.target.value)}
-              />
+          <div className="bg-white rounded-lg w-4/5 md:w-1/2 lg:w-1/3 h-3/5 max-h-screen flex flex-col">
+            <div className=" text-white rounded-t-lg p-4 flex-shrink-0">
+              <h3 className="text-xl text-red">แก้ไขนักศึกษา</h3>
             </div>
-            <div className="mb-2">
-              <label className="block text-md font-medium text-black">
-                ชื่อ-นามสกุล
-              </label>
-              <input
-                type="text"
-                className="mt-1 w-full h-9 rounded border-gray-300 p-2  border text-gray-500 "
-                value={updatedName}
-                onChange={(e) => setUpdatedName(e.target.value)}
-              />
-            </div>
-            <div className="mb-2">
-              <label className="block text-md font-medium text-black">ปี</label>
-              <input
-                type="text"
-                className="mt-1 w-full h-9 rounded border-gray-300 p-2  border text-gray-500 "
-                value={updatedYear}
-                onChange={(e) => setUpdatedYear(e.target.value)}
-              />
-            </div>
-            <div className="mb-2">
-              <label className="block text-md font-medium text-black">
-                ห้อง
-              </label>
-              <input
-                type="text"
-                className="mt-1 w-full h-9 rounded border-gray-300 p-2  border text-gray-500 "
-                value={updatedRoom}
-                onChange={(e) => setUpdatedRoom(e.target.value)}
-              />
-            </div>
+            <div className="flex-grow overflow-y-auto p-6">
+              <div className="mb-4">
+                <label className="block text-md font-medium text-black">
+                  รหัสนักศึกษา
+                </label>
+                <input
+                  type="text"
+                  className="mt-1 w-full h-9 rounded border-gray-300 p-2 border text-gray-500"
+                  value={updatedStudent.id}
+                  readOnly
+                  onChange={handleUpdateChange}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-md font-medium text-black">
+                  ชื่อ
+                </label>
+                <input
+                  type="text"
+                  name="firstname"
+                  className="mt-1 w-full h-9 rounded border-gray-300 p-2 border text-gray-500"
+                  value={updatedStudent.firstname}
+                  onChange={handleUpdateChange}
+                />
+              </div>
 
-            <div className="flex justify-end">
+              <div className="mb-4">
+                <label className="block text-md font-medium text-black">
+                  นามสกุล
+                </label>
+                <input
+                  type="text"
+                  name="lastname"
+                  className="mt-1 w-full h-9 rounded border-gray-300 p-2 border text-gray-500"
+                  value={updatedStudent.lastname}
+                  onChange={handleUpdateChange}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-md font-medium text-black">
+                  ห้อง
+                </label>
+                <input
+                  type="text"
+                  className="mt-1 w-full h-9 rounded border-gray-300 p-2 border text-gray-500"
+                  value={updatedStudent.room}
+                  readOnly
+                  onChange={handleUpdateChange}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-md font-medium text-black">
+                  เบอร์โทร
+                </label>
+                <input
+                  type="text"
+                  className="mt-1 w-full h-9 rounded border-gray-300 p-2 border text-gray-500"
+                  value={updatedStudent.phone}
+                  readOnly
+                  onChange={handleUpdateChange}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-md font-medium text-black">
+                  อีเมล
+                </label>
+                <input
+                  type="email"
+                  className="mt-1 w-full h-9 rounded border-gray-300 p-2 border text-gray-500"
+                  value={updatedStudent.email}
+                  readOnly
+                  onChange={handleUpdateChange}
+                />
+              </div>
+            </div>
+            <div className="bg-gray-100 rounded-b-lg p-4 flex-shrink-0 flex justify-end space-x-2">
               <button
-                className="px-4 py-1 bg-red border border-red text-white rounded mr-2"
+                className="px-4 py-1 bg-red border border-red text-white rounded"
                 onClick={saveChanges}
               >
-                บักทึก
+                บันทึก
               </button>
               <button
-                className="px-4 py-1 bg-gray-100 border  rounded"
+                className="px-4 py-1 bg-gray-100 border rounded"
                 onClick={() => setEditingStudent(null)}
               >
                 ยกเลิก
@@ -381,6 +487,34 @@ const AllStudent = () => {
           <div className="bg-white rounded-lg p-6">
             <h3 className="text-xl text-red mb-2">แก้ไขข้อมูลสำเร็จ!</h3>
             <p className="text-lg">อัปเดตข้อมูลนักศึกษาเรียบร้อยแล้ว.</p>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-lg font-bold mb-4 text-red">
+              ยืนยันการลบนักศึกษา
+            </h3>
+            <p>
+              คุณต้องการลบนักศึกษาชื่อ {studentToDelete?.firstname}{" "}
+              {studentToDelete?.lastname} หรือไม่?
+            </p>
+            <div className="flex justify-end space-x-2 mt-4">
+              <button
+                className="bg-red text-white px-4 py-2 rounded"
+                onClick={deleteStudent}
+              >
+                ลบ
+              </button>
+              <button
+                className="bg-gray-200 text-gray-800 px-4 py-2 rounded"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                ยกเลิก
+              </button>
+            </div>
           </div>
         </div>
       )}

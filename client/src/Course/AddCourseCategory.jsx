@@ -9,31 +9,46 @@ const AddCourseCategory = () => {
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState("");
   const [formData, setFormData] = useState({
-    categoryName: "",
-    categoryUnit: "",
-    majorID: "",
+    category_name: "",
+    category_unit: "",
+    major_id: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+
+    if (name === "category_unit") {
+      // ตรวจสอบว่าจำนวนหน่วยกิตไม่ติดลบ 
+      if (value >= 0) {
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    // ตรวจสอบข้อมูลที่กรอก
+    console.log("Selected Course:", selectedCourse);
+    console.log("Form Data:", formData);
+
     // ตรวจสอบให้แน่ใจว่ามีการเลือกหลักสูตรและกรอกข้อมูลครบถ้วน
-    if (!selectedCourse || !formData.categoryName || !formData.categoryUnit) {
+    if (!selectedCourse || !formData.category_name || !formData.category_unit) {
       console.error("กรุณากรอกข้อมูลให้ครบถ้วนและเลือกหลักสูตร");
       return;
     }
-  
+
     try {
       const token = localStorage.getItem("token");
-  
+
       const response = await fetch("http://localhost:3000/api/createCategory", {
         method: "POST",
         headers: {
@@ -41,14 +56,12 @@ const AddCourseCategory = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          category: {
-            majorId: parseInt(selectedCourse, 10), // แปลง `selectedCourse` เป็นจำนวนเต็ม
-            categoryName: formData.categoryName,
-            categoryUnit: formData.categoryUnit,
-          }
+          category_name: formData.category_name,
+          category_unit: parseInt(selectedCourse, 10),
+          major_id: parseInt(selectedCourse, 10), // แปลง major_id ให้เป็น Int ก่อนส่งไปยัง backend
         }),
       });
-  
+
       if (response.ok) {
         document.getElementById("my_modal_1").showModal();
       } else {
@@ -59,20 +72,19 @@ const AddCourseCategory = () => {
       console.error("Error:", error);
     }
   };
-  
 
+  // Fetch Major
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("token");
-
-        const response = await fetch("http://localhost:3000/api/getallMajor", {
+        const response = await fetch("http://localhost:3000/api/getAllMajors", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         const data = await response.json();
-        setCourses(data.majors || []); // กำหนดค่า default เป็นอาร์เรย์ว่าง
+        setCourses(data || []);
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
@@ -84,9 +96,13 @@ const AddCourseCategory = () => {
   const handleInstructorNameChange = (e) => {
     setInstructorName(e.target.value);
   };
-
   const handleCourseChange = (e) => {
-    setSelectedCourse(e.target.value);
+    const major_id = e.target.value;
+    setSelectedCourse(major_id);
+    setFormData({
+      ...formData,
+      major_id: major_id, // เก็บ major_id ใน formData ด้วย
+    });
   };
 
   const getQueryStringValue = (key) => {
@@ -108,14 +124,15 @@ const AddCourseCategory = () => {
         <div className="relative mb-6">
           <select
             id="class"
-            className="dropdown appearance-none w-30 mt-1 text-gray-400 bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
+            name="major_id"
+            className="dropdown appearance-none w-full mt-1 text-gray-400 bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
             value={selectedCourse}
             onChange={handleCourseChange}
           >
             <option value="">เลือกหลักสูตร</option>
             {Array.isArray(courses) &&
               courses.map((course) => (
-                <option key={course.id} value={course.id}>
+                <option key={course.major_id} value={course.major_id}>
                   {course.majorNameTH}
                 </option>
               ))}
@@ -126,20 +143,23 @@ const AddCourseCategory = () => {
             <label className="mb-2">ชื่อหมวดวิชา</label>
             <input
               type="text"
-              name="categoryName"
+              name="category_name"
               className="border rounded-lg px-2 py-2"
-              value={formData.categoryName}
+              value={formData.category_name}
               onChange={handleChange}
+              disabled={!selectedCourse} // ปิดการใช้งานถ้าไม่ได้เลือกหลักสูตร
             />
           </div>
           <div className="flex flex-col">
             <label className="mb-2">จำนวนหน่วยกิต</label>
             <input
               type="number"
-              name="categoryUnit"
+              name="category_unit"
               className="border rounded-lg px-2 py-2"
-              value={formData.categoryUnit}
+              value={formData.category_unit}
               onChange={handleChange}
+              min="0"
+              disabled={!selectedCourse} // ปิดการใช้งานถ้าไม่ได้เลือกหลักสูตร
             />
           </div>
         </div>
@@ -147,41 +167,40 @@ const AddCourseCategory = () => {
           <button
             type="button"
             className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
-            onClick={() => updateQueryString("addTeacher")}
+            onClick={() => updateQueryString("addCourse")}
           >
             ย้อนกลับ
           </button>
-          {/* Modal */}
           <button
+            type="submit"
             className="px-8 py-2 bg-red border border-red text-white rounded"
-            onClick={() => document.getElementById("my_modal_1").showModal()}
           >
             บันทึก
           </button>
-          <dialog id="my_modal_1" className="modal">
-            <div className="modal-box">
-              <h3 className="font-bold text-lg">บันทึกข้อมูลสำเร็จ!</h3>
-              <p className="py-4 text-gray-500">
-                กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
-              </p>
-              <div className="modal-action flex justify-between">
-                <form method="dialog" className="w-full flex justify-between">
-                  <button className="px-10 py-2 bg-white text-red border font-semibold border-red rounded">
-                    ปิด
-                  </button>
-                  <button
-                    className="px-8 py-2 bg-red border border-red text-white rounded"
-                    onClick={() => updateQueryString("addCourseGroup")}
-                  >
-                    ถัดไป
-                  </button>
-                </form>
-              </div>
-            </div>
-          </dialog>
-          {/* End Modal */}
         </div>
       </form>
+
+      <dialog id="my_modal_1" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">บันทึกข้อมูลสำเร็จ!</h3>
+          <p className="py-4 text-gray-500">
+            กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
+          </p>
+          <div className="modal-action flex justify-between">
+            <form method="dialog" className="w-full flex justify-between">
+              <button className="px-10 py-2 bg-white text-red border font-semibold border-red rounded">
+                ปิด
+              </button>
+              <button
+                className="px-8 py-2 bg-red border border-red text-white rounded"
+                onClick={() => updateQueryString("addCourseGroup")}
+              >
+                ถัดไป
+              </button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };

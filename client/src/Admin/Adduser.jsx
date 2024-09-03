@@ -6,13 +6,16 @@ const Adduser = () => {
   const [message, setMessage] = useState("");
   const [message2, setMessage2] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [apiEndpoint, setApiEndpoint] = useState(""); // เก็บ endpoint ที่จะใช้ยิง API
 
   const [formData, setFormData] = useState({
-    name: "",
+    firstname: "",
+    lastname: "",
     username: "",
     password: "",
-    role: "",
     confirmPassword: "",
+    phone: "",
+    email: "",
   });
 
   console.log("Form Data:", formData);
@@ -25,15 +28,28 @@ const Adduser = () => {
     });
   };
 
+  const handleRoleChange = (e) => {
+    const selectedRole = e.target.value;
+    if (selectedRole === "TEACHER") {
+      setApiEndpoint("http://localhost:3000/api/createTeacher");
+    } else if (selectedRole === "INSTRUCTOR") {
+      setApiEndpoint("http://localhost:3000/api/createCourseIn");
+    }
+  };
+
   const handleSubmit = async () => {
-    if (
-      !formData.name ||
-      !formData.username ||
-      !formData.password ||
-      !formData.confirmPassword ||
-      !formData.role
-    ) {
-      setMessage("กรุณากรอกข้อมูลให้ครบถ้วน !");
+    const {
+      firstname,
+      lastname,
+      username,
+      password,
+      confirmPassword,
+      phone,
+      email,
+    } = formData;
+
+    if (!firstname || !lastname || !username || !password || !confirmPassword) {
+      setMessage("กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน !");
       setMessage2("*โปรดตรวจสอบข้อมูลให้ครบถ้วน");
       setShowModal(true);
       setTimeout(() => {
@@ -42,25 +58,34 @@ const Adduser = () => {
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       setMessage("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน !");
       setMessage2("*โปรดตรวจสอบรหัสผ่านและยืนยันรหัสผ่าน");
-      setShowPasswordModal(true);
+      setShowModal(true);
       setTimeout(() => {
-        setShowPasswordModal(false);
+        setShowModal(false);
       }, 2000);
       return;
     }
 
+    const submissionData = {
+      firstname,
+      lastname,
+      username,
+      password,
+      phone: phone || null, // ถ้าไม่กรอกจะเป็น null
+      email: email || null, // ถ้าไม่กรอกจะเป็น null
+    };
+
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:3000/api/createUser", {
+      const response = await fetch(apiEndpoint, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
       if (response.ok) {
@@ -85,9 +110,9 @@ const Adduser = () => {
       console.error("Error adding user:", error);
       setMessage("มีข้อผิดพลาดในการเพิ่มผู้ใช้ !");
       setMessage2("*มีคนใช้ชื่อผู้ใช้นี้แล้ว");
-      setShowUnSuccessModal(true);
+      setShowModal(true);
       setTimeout(() => {
-        setShowUnSuccessModal(false);
+        setShowModal(false);
       }, 2000);
     }
   };
@@ -111,32 +136,42 @@ const Adduser = () => {
 
           <div className="grid grid-cols-1 gap-6">
             <div>
-              <label className="block text-gray-700">ชื่อ-นามสกุล</label>
+              <label className="block text-gray-700">ชื่อ</label>
               <input
                 type="text"
-                name="name"
+                name="firstname"
                 className="w-full mt-1 border border-gray-300 rounded p-2"
-                placeholder="ชื่อ-นามสกุล"
-                value={formData.name}
+                placeholder="ชื่อ"
+                value={formData.firstname}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700">นามสกุล</label>
+              <input
+                type="text"
+                name="lastname"
+                className="w-full mt-1 border border-gray-300 rounded p-2"
+                placeholder="นามสกุล"
+                value={formData.lastname}
                 onChange={handleChange}
               />
             </div>
             <div>
               <label className="block text-gray-700">ตำแหน่ง</label>
               <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
+                onChange={handleRoleChange}
                 className="select select-bordered w-full max-w-xs"
               >
                 <option value="">เลือกตำแหน่ง</option>
-                <option value="ADVISOR">อาจารย์ที่ปรึกษา</option>
-                <option value="COURSE_INSTRUCTOR">ตัวแทนหลักสูตร</option>
+                <option value="TEACHER">อาจารย์</option>
+                <option value="INSTRUCTOR">ตัวแทนหลักสูตร</option>
               </select>
             </div>
             <div>
               <label className="block text-gray-700">ชื่อผู้ใช้</label>
               <input
+                id="input_username"
                 type="text"
                 name="username"
                 value={formData.username}
@@ -167,18 +202,41 @@ const Adduser = () => {
                 placeholder="ยืนยันรหัสผ่าน"
               />
             </div>
+            <div>
+              <label className="block text-gray-700">เบอร์โทร</label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full mt-1 border border-gray-300 rounded p-2"
+                placeholder="เบอร์โทร"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700">อีเมล</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full mt-1 border border-gray-300 rounded p-2"
+                placeholder="อีเมล"
+              />
+            </div>
           </div>
           <div className="mt-6 flex justify-between">
             <button
               type="button"
-              className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded-full"
+              className="px-6 py-2 bg-gray-100 border border-red text-red rounded-full"
               onClick={() => navigate("/admin")}
             >
               ย้อนกลับ
             </button>
             <button
+              id="btn_submit"
               type="button"
-              className="px-8 py-2 bg-red border border-red-600 text-white rounded-full"
+              className="px-8 py-2 bg-red border border-red text-white rounded-full"
               onClick={handleSubmit}
             >
               บันทึก

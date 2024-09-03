@@ -5,39 +5,47 @@ const AddCourseName = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({
+    major_code: "",
     majorNameTH: "",
     majorNameENG: "",
     majorYear: "",
     majorUnit: "",
-    majorCode: "",
-    majorStatus: "",
-    majorSupervisor: "",
+    status: "ACTIVE",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+
+    if (name === "majorUnit") {
+      // ตรวจสอบว่าจำนวนหน่วยกิตไม่ติดลบ
+      if (value >= 0) {
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    
-    try {
-      const token = localStorage.getItem("token");
 
+    try {
       const response = await fetch("http://localhost:3000/api/createMajor", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ major: formData }),
+        body: JSON.stringify(formData), // ปรับแก้ตรงนี้
       });
-      
+
       if (response.ok) {
         document.getElementById("my_modal_1").showModal();
       } else {
@@ -90,9 +98,9 @@ const AddCourseName = () => {
             <label className="mb-2">รหัสหลักสูตร</label>
             <input
               type="text"
-              name="majorCode"
+              name="major_code"
               className="border rounded-lg px-2 py-2"
-              value={formData.majorCode}
+              value={formData.major_code}
               onChange={handleChange}
             />
           </div>
@@ -114,30 +122,38 @@ const AddCourseName = () => {
               className="border rounded-lg px-2 py-2"
               value={formData.majorUnit}
               onChange={handleChange}
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="mb-2">สถานะ</label>
-            <input
-              type="text"
-              name="majorStatus"
-              className="border rounded-lg px-2 py-2"
-              value={formData.majorStatus}
-              onChange={handleChange}
+              min="0" // กำหนดค่า minimum เป็น 0
             />
           </div>
         </div>
 
-        <div>
-          <label className="mb-2">อาจารย์ผู้รับผิดชอบหลักสูตร</label>
-          <input
-            type="text"
-            name="majorSupervisor"
-            className="border rounded-lg px-2 py-2 mb-2 mt-2 block w-full"
-            placeholder="ชื่อ-สกุล อาจารย์"
-            value={formData.majorSupervisor}
-            onChange={handleChange}
-          />
+        <div className="flex flex-col mb-4">
+          <label className="mb-2">สถานะ</label>
+          <div className="flex items-center">
+            <label className="mr-4">
+              <input
+                type="radio"
+                name="status"
+                value="ACTIVE"
+                checked={formData.status === "ACTIVE"}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              ACTIVE
+            </label>
+            <label className="text-gray-400">
+              <input
+                type="radio"
+                name="status"
+                value="INACTIVE"
+                checked={formData.status === "INACTIVE"}
+                onChange={handleChange}
+                className="mr-2"
+                disabled
+              />
+              INACTIVE
+            </label>
+          </div>
         </div>
 
         <div className="mt-6 flex justify-between">

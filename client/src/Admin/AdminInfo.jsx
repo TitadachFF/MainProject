@@ -80,7 +80,7 @@ const AdminInfo = () => {
       }, 1000);
     } catch (error) {
       console.error("Error updating user:", error.message);
-            // กรณีผู้ใช้ซ้ำกับผู้ใช้อื่น
+      // กรณีผู้ใช้ซ้ำกับผู้ใช้อื่น
       setMessage("ชื่อผู้ใช้อาจจะซ้ำกับผู้ใช้อื่น !");
       setMessage("*โปรดตรวจสอบชื่อผู้ใช้");
       setShowModal(true);
@@ -104,7 +104,7 @@ const AdminInfo = () => {
         <p>ข้อมูลส่วนตัว</p>
       </div>
       <div className="min-h-screen flex justify-center p-6 bg-gray-100">
-        <div className="container mx-auto w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-full">
+        <div className="container mx-auto w-full max-w-3xl bg-white rounded-xl-lg shadow-lg p-6 h-full">
           <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
             ข้อมูลส่วนตัว
           </h2>
@@ -114,25 +114,29 @@ const AdminInfo = () => {
                 <label className="block text-gray-700">ชื่อแอดมิน</label>
                 <input
                   type="text"
-                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  className="w-full mt-1 border border-gray-300 rounded-xl p-2"
+                  placeholder="ชื่อ-นามสกุล"
                   value={adminName}
                   onChange={(e) => setAdminName(e.target.value)}
                 />
               </div>
               <div>
                 <label className="block text-gray-700">ตำแหน่ง</label>
-                <input
+                <select
                   type="text"
-                  className="w-full mt-1 border border-gray-300 rounded p-2 text-gray-500 cursor-not-allowed"
-                  value="แอดมิน"
-                  readOnly
-                />
+                  className="w-full mt-1 border border-gray-300 rounded-xl p-2 text-gray-500 cursor-not-allowed"
+                  disabled
+                >
+                  <option disabled selected>
+                    แอดมิน
+                  </option>
+                </select>
               </div>
               <div>
                 <label className="block text-gray-700">ชื่อผู้ใช้</label>
                 <input
                   type="text"
-                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  className="w-full mt-1 border border-gray-300 rounded-xl p-2"
                   placeholder="ชื่อผู้ใช้"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -142,7 +146,7 @@ const AdminInfo = () => {
                 <label className="block text-gray-700">รหัสผ่าน</label>
                 <input
                   type="password"
-                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  className="w-full mt-1 border border-gray-300 rounded-xl p-2"
                   placeholder="รหัสผ่าน"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -152,7 +156,7 @@ const AdminInfo = () => {
                 <label className="block text-gray-700">ยืนยันรหัสผ่าน</label>
                 <input
                   type="password"
-                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  className="w-full mt-1 border border-gray-300 rounded-xl p-2"
                   placeholder="ยืนยันรหัสผ่าน"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -163,14 +167,14 @@ const AdminInfo = () => {
             <div className="mt-6 flex justify-between">
               <button
                 type="button"
-                className="px-6 py-2 bg-gray-100 border rounded-full"
+                className="px-6 py-2 bg-gray-100 border rounded-xl"
                 onClick={() => navigate("/admin")}
               >
                 ย้อนกลับ
               </button>
               <button
                 type="button"
-                className="px-8 py-2 bg-red border text-white rounded-full"
+                className="px-8 py-2 bg-red border text-white rounded-xl"
                 onClick={handleUpdate}
               >
                 บันทึก
@@ -180,7 +184,7 @@ const AdminInfo = () => {
           {/* Modal Component */}
           {showModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white rounded-lg modal-box">
+              <div className="bg-white rounded-xl-lg modal-box">
                 <h3 className="font-bold text-red text-xl pb-4">{message}</h3>
                 <p className="text-lg py-4 text-gray-500">{message2}</p>
               </div>
