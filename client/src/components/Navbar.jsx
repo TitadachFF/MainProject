@@ -13,19 +13,19 @@ const Navbar = () => {
   let roleColor = "";
   let svgRoleColor = "";
 
-  if (displayRole === "ADMIN") {
+  if (displayRole === "admin") {
     displayRole = "แอดมิน";
     svgRoleColor = "text-orange-300";
     roleColor = "bg-orange-300 text-white";
-  } else if (displayRole === "STUDENT") {
+  } else if (displayRole === "student") {
     displayRole = "นักศึกษา";
     svgRoleColor = "text-red";
     roleColor = "bg-red text-white";
-  } else if (displayRole === "ADVISOR") {
+  } else if (displayRole === "advisor") {
     displayRole = "อาจารย์";
     svgRoleColor = "text-blue-500";
     roleColor = "bg-blue-500 text-white";
-  } else if (displayRole === "COURSE_INSTRUCTOR") {
+  } else if (displayRole === "course_in") {
     displayRole = "ตัวแทนหลักสูตร";
     svgRoleColor = "text-green-700";
     roleColor = "bg-green-700 text-white";
@@ -102,16 +102,15 @@ const Navbar = () => {
           SE
         </a>
         <div className="border-l-4">
-  <p className="pl-2 text-sm pt-1 hidden sm:block">
-    Graduated System <br />
-    ระบบกรอกแบบฟอร์มคำร้องขอสำเร็จการศึกษา
-  </p>
-</div>
-
+          <p className="pl-2 text-sm pt-1 hidden sm:block">
+            Graduated System <br />
+            ระบบกรอกแบบฟอร์มคำร้องขอสำเร็จการศึกษา
+          </p>
+        </div>
       </div>
       <div className="navbar-center hidden lg:flex ">
         <ul className="menu menu-horizontal px-1  ">
-          {userData?.decoded.role === "STUDENT" && (
+          {userData?.decoded.role === "student" && (
             <li className="flex-row">
               <a
                 className="font-semibold hover:underline"
@@ -145,7 +144,7 @@ const Navbar = () => {
               </a>
             </li>
           )}
-          {userData?.decoded.role === "COURSE_INSTRUCTOR" && (
+          {userData?.decoded.role === "course_in" && (
             <li className="flex-row">
               <a
                 className="font-semibold hover:underline"
@@ -167,7 +166,7 @@ const Navbar = () => {
               </a>
             </li>
           )}
-          {userData?.decoded.role === "ADVISOR" && (
+          {userData?.decoded.role === "advisor" && (
             <li className="flex-row">
               <a
                 className="font-semibold hover:underline"
@@ -201,10 +200,13 @@ const Navbar = () => {
               </a>
             </li>
           )}
-          {userData?.decoded.role === "ADMIN" && (
+          {userData?.decoded.role === "admin" && (
             <li className="flex-row ">
               <a className="font-semibold hover:underline" href="/admin">
                 เมนูแอดมิน
+              </a>
+              <a className="font-semibold hover:underline" href="/admin">
+                เพิ่มรายชื่อผู้ใช้
               </a>
               <a className="font-semibold hover:underline" href="/alluser">
                 ดูรายชื่อผู้ใช้

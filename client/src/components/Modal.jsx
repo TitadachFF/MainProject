@@ -25,13 +25,13 @@ const Modal = ({ name, onLogin }) => {
       setShowModal(true);
       setTimeout(() => {
         setShowModal(false);
-        if (userData?.decoded.role === "ADMIN") {
+        if (userData?.decoded.role === "admin") {
           navigate("/admin", { replace: true });
-        } else if (userData?.decoded.role === "STUDENT") {
+        } else if (userData?.decoded.role === "student") {
           navigate("/student", { replace: true });
-        } else if (userData?.decoded.role === "COURSE_INSTRUCTOR") {
+        } else if (userData?.decoded.role === "course_in") {
           navigate("/course", { replace: true });
-        } else if (userData?.decoded.role === "ADVISOR") {
+        } else if (userData?.decoded.role === "advisor") {
           navigate("/advice", { replace: true });
         } else {
           navigate(from, { replace: true });

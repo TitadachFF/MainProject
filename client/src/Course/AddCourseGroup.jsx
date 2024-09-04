@@ -116,8 +116,8 @@ const AddCourseGroup = () => {
           },
           body: JSON.stringify({
             group_name: formData.group_name,
-            group_unit: parseInt(formData.group_unit, 10),
-            category_id: parseInt(formData.selectedCategory, 10),
+            group_unit: parseInt(formData.group_unit),
+            category_id: parseInt(formData.selectedCategory),
           }),
         }
       );

@@ -57,8 +57,8 @@ const AddCourseCategory = () => {
         },
         body: JSON.stringify({
           category_name: formData.category_name,
-          category_unit: parseInt(selectedCourse, 10),
-          major_id: parseInt(selectedCourse, 10), // แปลง major_id ให้เป็น Int ก่อนส่งไปยัง backend
+          category_unit: parseInt(formData.category_unit),
+          major_id: parseInt(selectedCourse), // แปลง major_id ให้เป็น Int ก่อนส่งไปยัง backend
         }),
       });
 
