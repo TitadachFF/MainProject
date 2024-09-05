@@ -3,10 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 const AddCourseCategory = () => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedGroup, setSelectedGroup] = useState("");
-  const [instructorName, setInstructorName] = useState("");
   const [courses, setCourses] = useState([]);
+  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState("");
   const [formData, setFormData] = useState({
     category_name: "",
@@ -18,7 +17,7 @@ const AddCourseCategory = () => {
     const { name, value } = e.target;
 
     if (name === "category_unit") {
-      // ตรวจสอบว่าจำนวนหน่วยกิตไม่ติดลบ 
+      // ตรวจสอบว่าจำนวนหน่วยกิตไม่ติดลบ
       if (value >= 0) {
         setFormData({
           ...formData,
@@ -42,7 +41,9 @@ const AddCourseCategory = () => {
 
     // ตรวจสอบให้แน่ใจว่ามีการเลือกหลักสูตรและกรอกข้อมูลครบถ้วน
     if (!selectedCourse || !formData.category_name || !formData.category_unit) {
-      console.error("กรุณากรอกข้อมูลให้ครบถ้วนและเลือกหลักสูตร");
+      document.getElementById("my_modal_1").showModal();
+      setMessage("* กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน");
+      setIsSuccess(false);
       return;
     }
 
@@ -64,12 +65,18 @@ const AddCourseCategory = () => {
 
       if (response.ok) {
         document.getElementById("my_modal_1").showModal();
+        setMessage("เพิ่มหมวดวิชาสำเร็จ !");
+        setIsSuccess(true);
       } else {
         const errorData = await response.json();
         console.error("Error response:", errorData);
+        setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
+        setIsSuccess(false);
       }
     } catch (error) {
       console.error("Error:", error);
+      setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
+      setIsSuccess(false);
     }
   };
 
@@ -93,15 +100,12 @@ const AddCourseCategory = () => {
     fetchCourses();
   }, []);
 
-  const handleInstructorNameChange = (e) => {
-    setInstructorName(e.target.value);
-  };
   const handleCourseChange = (e) => {
     const major_id = e.target.value;
     setSelectedCourse(major_id);
     setFormData({
       ...formData,
-      major_id: major_id, // เก็บ major_id ใน formData ด้วย
+      major_id: major_id,
     });
   };
 
@@ -182,7 +186,7 @@ const AddCourseCategory = () => {
 
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">บันทึกข้อมูลสำเร็จ!</h3>
+          <h3 className="font-bold text-lg">{message}</h3>
           <p className="py-4 text-gray-500">
             กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
           </p>
@@ -191,12 +195,14 @@ const AddCourseCategory = () => {
               <button className="px-10 py-2 bg-white text-red border font-semibold border-red rounded">
                 ปิด
               </button>
-              <button
-                className="px-8 py-2 bg-red border border-red text-white rounded"
-                onClick={() => updateQueryString("addCourseGroup")}
-              >
-                ถัดไป
-              </button>
+              {isSuccess && ( // แสดงปุ่ม "ถัดไป" เฉพาะเมื่อข้อมูลครบถ้วน
+                <button
+                  className="px-8 py-2 bg-red border border-red text-white rounded"
+                  onClick={() => updateQueryString("addCourseGroup")}
+                >
+                  ถัดไป
+                </button>
+              )}
             </form>
           </div>
         </div>

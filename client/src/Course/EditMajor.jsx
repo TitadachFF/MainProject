@@ -10,6 +10,8 @@ const EditMajor = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [groups, setGroups] = useState([]);
   const [courses, setCourses] = useState({});
+  const [totalUnits, setTotalUnits] = useState(0); // State สำหรับเก็บผลรวมของ category_unit
+
   const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +61,15 @@ const EditMajor = () => {
         }
         const data = await response.json();
         console.log("Fetched Categories data:", data);
+
         setCategories(data); // ตั้งค่า categories ตามที่ได้รับจาก API
+
+        // คำนวณผลรวมของ category_unit
+        const totalUnits = data.reduce(
+          (acc, category) => acc + category.category_unit,
+          0
+        );
+        setTotalUnits(totalUnits); // อัพเดต state ของผลรวม
       } catch (error) {
         console.error("Error fetching Categories:", error);
       }
@@ -232,9 +242,12 @@ const EditMajor = () => {
                   />
                 </div>
               </div>
+              <div>
+                <p>หน่วยกิตหลักสูตร{totalUnits}</p>
+                <p>หน่วยกิตหมวดวิชาทั่วไป{totalUnits}</p>
+              </div>
 
               {/* Categories  */}
-
               <div className="">
                 {categories &&
                   categories.length > 0 &&
