@@ -69,6 +69,10 @@ const AllCourse = () => {
     navigate(`/editmajor?editMajor=${id}`);
   };
 
+  const handleView = (id) => {
+    navigate(`/viewmajor?viewMajor=${id}`);
+  };
+
   // แยกหลักสูตรที่ ACTIVE และ INACTIVE
   const activeMajors = majors.filter((major) => major.status === "ACTIVE");
   const inactiveMajors = majors.filter((major) => major.status === "INACTIVE");
@@ -117,7 +121,7 @@ const AllCourse = () => {
                         <td className="px-6 py-4">
                           <div
                             className="flex flex-col"
-                            onClick={() => handleEdit(major.major_code)}
+                            onClick={() => handleView(major.major_code)}
                           >
                             <span className="text-xl flex">
                               {major.major_code} {major.majorNameTH}

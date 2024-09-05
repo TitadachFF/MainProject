@@ -131,9 +131,16 @@ const EditMajor = () => {
   };
 
   const handleCategoryClick = async (category_id) => {
-    setSelectedCategoryId(category_id);
-    await fetchGroups(category_id);
+    if (selectedCategoryId === category_id) {
+      // ถ้าคลิกที่หมวดเดิมจะปิดการเลือก
+      setSelectedCategoryId(null);
+    } else {
+      // ถ้าคลิกที่หมวดใหม่จะเปลี่ยนการเลือก
+      setSelectedCategoryId(category_id);
+      await fetchGroups(category_id);
+    }
   };
+  
 
   const handleGroupClick = async (group_id) => {
     await fetchCourses(group_id);

@@ -148,6 +148,12 @@ const Navbar = () => {
             <li className="flex-row">
               <a
                 className="font-semibold hover:underline"
+                onClick={() => navigate("/course")}
+              >
+                เมนูตัวแทนหลักสูตร
+              </a>
+              <a
+                className="font-semibold hover:underline"
                 onClick={() => navigate("/addcourse")}
               >
                 เพิ่มหลักสูตร

@@ -53,12 +53,12 @@ const AdminMenu = () => {
         {/* Card 2 */}
         <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
-          onClick={() => navigate("/adduser")}
+          onClick={() => navigate("/addteachername")}
           onAuxClick={(e) => {
             if (e.button === 1) {
               // ตรวจสอบว่าคลิกเมาส์กลาง
               e.preventDefault(); // ป้องกันการกระทำเริ่มต้น
-              window.open("/adduser", "_blank");
+              window.open("/addteachername", "_blank");
             }
           }}
         >
@@ -82,7 +82,7 @@ const AdminMenu = () => {
             <h2 className="font-semibold">เพิ่มเพิ่มรายชื่ออาจารย์</h2>
             <p className="border-t py-2">
               เพิ่มรายชื่ออาจารย์เข้ามาในระบบ <br /> เพื่อใช้ในการ
-            กรอกเกรดของนักศึกษา
+              กรอกเกรดของนักศึกษา
             </p>
             <div className="card-actions justify-end"></div>
           </div>
