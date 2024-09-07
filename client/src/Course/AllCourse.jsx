@@ -118,29 +118,28 @@ const AllCourse = () => {
                   <tbody>
                     {activeMajors.map((major) => (
                       <tr key={major.major_code} className="border-t relative">
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 flex justify-between items-center">
                           <div
                             className="flex flex-col"
                             onClick={() => handleView(major.major_code)}
                           >
                             <span className="text-xl flex">
-                              {major.major_code} {major.majorNameTH}
+                              {major.major_code} {major.majorNameTH}{" "}
+                              {major.majorYear}
                               <p className="pl-8">{major.majorUnit} หน่วยกิต</p>
                             </span>
                             <span>{major.majorNameENG}</span>
                           </div>
-                        </td>
-                        <td className="px-6">
-                          <div className="relative">
+                          <div className="relative ml-auto">
                             <svg
                               data-slot="icon"
                               fill="none"
-                              stroke-width="4"
+                              strokeWidth="4"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
                               xmlns="http://www.w3.org/2000/svg"
                               aria-hidden="true"
-                              className="w-6 h-8 text-gray-300 cursor-pointer z-10"
+                              className="w-8 h-8 text-white cursor-pointer z-10 hover:text-gray-300"
                               onClick={() =>
                                 setDropdownOpen(
                                   dropdownOpen === major.major_code
@@ -150,8 +149,8 @@ const AllCourse = () => {
                               }
                             >
                               <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                                 d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
                               ></path>
                             </svg>
@@ -193,29 +192,28 @@ const AllCourse = () => {
                   <tbody>
                     {inactiveMajors.map((major) => (
                       <tr key={major.major_code} className="border-t relative">
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 flex justify-between items-center">
                           <div
                             className="flex flex-col"
-                            onClick={() => handleEdit(major.major_code)}
+                            onClick={() => handleView(major.major_code)}
                           >
                             <span className="text-xl flex">
-                              {major.major_code} {major.majorNameTH}
+                              {major.major_code} {major.majorNameTH}{" "}
+                              {major.majorYear}
                               <p className="pl-8">{major.majorUnit} หน่วยกิต</p>
                             </span>
                             <span>{major.majorNameENG}</span>
                           </div>
-                        </td>
-                        <td className="px-6">
-                          <div className="relative">
+                          <div className="relative ml-auto">
                             <svg
                               data-slot="icon"
                               fill="none"
-                              stroke-width="4"
+                              strokeWidth="4"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
                               xmlns="http://www.w3.org/2000/svg"
                               aria-hidden="true"
-                              className="w-6 h-8 text-gray-500 cursor-pointer z-10"
+                              className="w-8 h-8 text-black cursor-pointer z-10 hover:text-gray-500"
                               onClick={() =>
                                 setDropdownOpen(
                                   dropdownOpen === major.major_code
@@ -225,8 +223,8 @@ const AllCourse = () => {
                               }
                             >
                               <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                                 d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
                               ></path>
                             </svg>
@@ -245,7 +243,6 @@ const AllCourse = () => {
                                 >
                                   จัดเก็บหลักสูตร
                                 </button>
-
                                 <button
                                   onClick={() => handleDelete(major.major_id)}
                                   className="block px-4 py-2 hover:bg-gray-200 w-full text-left"

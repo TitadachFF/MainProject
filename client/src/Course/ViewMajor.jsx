@@ -136,8 +136,10 @@ const ViewMajor = () => {
       setSelectedCategoryId(null);
       setGroups([]);
       setCourses({});
+      setOpenGroupId(null); // ปิดกลุ่มที่เปิดอยู่เมื่อปิด category
     } else {
       setSelectedCategoryId(category_id);
+      setOpenGroupId(null); // ปิดกลุ่มที่เปิดอยู่เมื่อเปลี่ยน category
       await fetchGroups(category_id);
     }
   };
