@@ -9,6 +9,7 @@ const EditMajor = () => {
   const [groupsByCategory, setGroupsByCategory] = useState({});
   const [coursesByGroup, setCoursesByGroup] = useState({});
   const [totalUnits, setTotalUnits] = useState(0);
+  const [openGroups, setOpenGroups] = useState({}); // เพิ่ม state นี้
 
   const navigate = useNavigate();
 
@@ -18,6 +19,47 @@ const EditMajor = () => {
       ...prevMajor,
       [name]: value,
     }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      // ตรวจสอบว่ามีข้อมูล major และ major_id หรือไม่
+      if (!major || !major.major_id) {
+        throw new Error("Major data is not available or missing major_id.");
+      }
+
+      const token = localStorage.getItem("token");
+
+      // การอัพเดตข้อมูลหลักสูตร
+      const response = await fetch(
+        `http://localhost:3000/api/updateMajor/${major.major_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            major_code: major.major_code,
+            majorNameTH: major.majorNameTH,
+            majorNameENG: major.majorNameENG,
+            majorYear: major.majorYear,
+            majorUnit: major.majorUnit,
+            status: major.status,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update Major data");
+      }
+
+      alert("อัพเดตข้อมูลสำเร็จ!");
+      navigate("/allcourse");
+    } catch (error) {
+      console.error("Error updating data:", error);
+      alert("เกิดข้อผิดพลาดในการอัพเดตข้อมูล.");
+    }
   };
 
   useEffect(() => {
@@ -79,7 +121,7 @@ const EditMajor = () => {
 
         setGroupsByCategory(groupsByCategory);
 
-        // ดึงข้อมูลรายวิชา
+        // Fetch courses data
         const coursesData = await Promise.all(
           groupsData.flatMap((item) =>
             item.groups.map((group) => fetchCourses(group.group_id))
@@ -142,7 +184,13 @@ const EditMajor = () => {
         return [];
       }
     };
-
+    const toggleGroup = (categoryId, groupId) => {
+      setOpenGroups((prevOpenGroups) => ({
+        ...prevOpenGroups,
+        [`${categoryId}-${groupId}`]:
+          !prevOpenGroups[`${categoryId}-${groupId}`],
+      }));
+    };
     if (major_code) {
       fetchMajor();
       fetchCategoriesAndGroups();
@@ -172,8 +220,9 @@ const EditMajor = () => {
       </div>
       <div className="flex justify-center p-6 bg-gray-100">
         <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl text-red font-bold">รายละเอียดหลักสูตร</h2>
+          <div className="flex justify-between items-center mb-">
+            <h2 className="text-2xl  text-red  font-bold">แก้ไขหลักสูตร</h2>
+
             <div className="flex items-center">
               <label className="block text-gray-400 pr-2 py-1">
                 สถานะหลักสูตร:
@@ -189,6 +238,9 @@ const EditMajor = () => {
           </div>
 
           <form>
+            <p className="text-red px-2 font-semibold py-2">
+              รายละเอียดหลักสูตร
+            </p>
             <div className="grid grid-cols-1 gap-6">
               <div>
                 <label className="block text-gray-700">
@@ -218,11 +270,14 @@ const EditMajor = () => {
               </div>
 
               <div className="flex">
+                <p></p>
                 <div className="mr-4 w-1/3">
-                  <label className="block text-gray-700">รหัสหลักสูตร</label>
+                  <label className="block text-gray-700">
+                    รหัสหลักสูตร 14 หลัก{" "}
+                  </label>
                   <input
                     type="text"
-                    name="majorCode"
+                    name="major_code"
                     className="w-full mt-1 border border-gray-300 rounded p-2"
                     placeholder="รหัสหลักสูตร"
                     value={major.major_code}
@@ -252,13 +307,11 @@ const EditMajor = () => {
                   />
                 </div>
               </div>
-              <div>
-                <p>หน่วยกิตหลักสูตร {totalUnits}</p>
-              </div>
+
               {/* การแสดงหมวดหมู่และกลุ่มวิชา */}
               {categories.map((category) => (
                 <div key={category.category_id}>
-                  <h3 className="text-lg font-semibold text-gray-700 ">
+                  <h3 className="text-sm font-semibold text-gray-700 ">
                     <div className="flex">
                       {category.category_name}{" "}
                       <p className="ml-4 mr-2">จำนวนไม่น้อยกว่า </p>{" "}
@@ -270,7 +323,7 @@ const EditMajor = () => {
                     <div key={group.group_id} className="ml-4">
                       <input
                         type="text"
-                        className="w-full mt-1 border border-gray-300 rounded p-2"
+                        className="w-full text-sm mt-1 border border-gray-300 rounded p-2"
                         value={group.group_name}
                         readOnly
                       />
@@ -278,9 +331,9 @@ const EditMajor = () => {
                       {coursesByGroup[group.group_id]?.map((course) => (
                         <div
                           key={course.course_id}
-                          className="ml-8 flex border p-1 mb-1 mt-1 "
+                          className="ml-8 flex border p-1 mb-1 mt-1 text-sm"
                         >
-                          <p>{course.courseNameTH}</p>
+                          <p className="text-sm">{course.courseNameTH}</p>
                           <p className="ml-4">หน่วยกิต: {course.courseUnit}</p>
                         </div>
                       ))}
@@ -290,6 +343,15 @@ const EditMajor = () => {
               ))}
             </div>
           </form>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              className="bg-red  transition duration-300 ease-in-out text-white px-4 py-2 rounded hover:bg-gray-300 "
+              onClick={handleSubmit}
+            >
+              บันทึก
+            </button>
+          </div>
         </div>
       </div>
     </div>
