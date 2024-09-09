@@ -78,6 +78,7 @@ const Modal = ({ name, onLogin }) => {
                     <span className="label-text">Password</span>
                   </label>
                   {/* qweqe */}
+                  {/* qewewq */}
                   <input
                     type="password"
                     placeholder="Password"
