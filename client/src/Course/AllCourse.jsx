@@ -114,7 +114,7 @@ const AllCourse = () => {
               <div className="text-gray-500 text-center">{error}</div>
             ) : majors.length > 0 ? (
               <>
-                <table className="w-full rounded-lg border bg-red  shadow-md h-full text-white cursor-pointer mb-4">
+                <table className="w-full rounded-lg border bg-red  shadow-md h-full text-white cursor-pointer mb-4" >
                   <tbody>
                     {activeMajors.map((major) => (
                       <tr key={major.major_code} className="border-t relative">
