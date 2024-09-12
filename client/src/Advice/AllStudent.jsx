@@ -120,8 +120,8 @@ const AllStudent = () => {
       id: student.student_id,
       firstname: student.firstname,
       lastname: student.lastname,
-      phone: student.S_phone,
-      email: student.S_email,
+      phone: student.phone,
+      email: student.email,
       room:
         // หาชื่อห้อง (sec_name) ที่ตรงกับ sec_id ของนักเรียนจากรายการห้องที่มี
         roomOptions.find((room) => room.sec_id === student.sec_id)?.sec_name ||

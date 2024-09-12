@@ -6,19 +6,12 @@ const AddTeacherName = () => {
   const [message, setMessage] = useState("");
   const [message2, setMessage2] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [apiEndpoint, setApiEndpoint] = useState(""); // เก็บ endpoint ที่จะใช้ยิง API
 
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
-    email: "",
+    titlename: "",
   });
-
-  console.log("Form Data:", formData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,27 +21,10 @@ const AddTeacherName = () => {
     });
   };
 
-  const handleRoleChange = (e) => {
-    const selectedRole = e.target.value;
-    if (selectedRole === "TEACHER") {
-      setApiEndpoint("http://localhost:3000/api/createTeacher");
-    } else if (selectedRole === "INSTRUCTOR") {
-      setApiEndpoint("http://localhost:3000/api/createCourseIn");
-    }
-  };
-
   const handleSubmit = async () => {
-    const {
-      firstname,
-      lastname,
-      username,
-      password,
-      confirmPassword,
-      phone,
-      email,
-    } = formData;
+    const { firstname, lastname, titlename } = formData;
 
-    if (!firstname || !lastname || !username || !password || !confirmPassword) {
+    if (!firstname || !lastname || !titlename) {
       setMessage("กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน !");
       setMessage2("*โปรดตรวจสอบข้อมูลให้ครบถ้วน");
       setShowModal(true);
@@ -58,28 +34,15 @@ const AddTeacherName = () => {
       return;
     }
 
-    if (password !== confirmPassword) {
-      setMessage("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน !");
-      setMessage2("*โปรดตรวจสอบรหัสผ่านและยืนยันรหัสผ่าน");
-      setShowModal(true);
-      setTimeout(() => {
-        setShowModal(false);
-      }, 2000);
-      return;
-    }
-
     const submissionData = {
+      titlename,
       firstname,
       lastname,
-      username,
-      password,
-      phone: phone || null, // ถ้าไม่กรอกจะเป็น null
-      email: email || null, // ถ้าไม่กรอกจะเป็น null
     };
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(apiEndpoint, {
+      const response = await fetch("http://localhost:3000/api/createTeacher", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -89,8 +52,8 @@ const AddTeacherName = () => {
       });
 
       if (response.ok) {
-        setMessage("เพิ่มผู้ใช้สำเร็จ");
-        setMessage2("*เพิ่มผู้ใช้เข้าสู่ระบบสำเร็จ");
+        setMessage("เพิ่มอาจารย์สำเร็จ");
+        setMessage2("*อาจารย์เข้าสู่ระบบสำเร็จ");
         setShowModal(true);
         setTimeout(() => {
           setShowModal(false);
@@ -98,18 +61,22 @@ const AddTeacherName = () => {
         }, 1000);
       } else {
         const errorData = await response.json();
-        console.log("Response data:", errorData);
-        setMessage("โปรดเลือกตำแหน่ง");
-        setMessage2("*โปรดตรวจสอบว่าเลือกตำแหน่งแล้ว");
+        if (errorData.message === "already Teacher") {
+          setMessage("มีอาจารย์คนนี้แล้ว");
+          setMessage2("*กรุณาตรวจสอบข้อมูลอีกครั้ง");
+        } else {
+          setMessage("มีข้อผิดพลาดในการเพิ่มอาจารย์ !");
+          setMessage2("*โปรดลองใหม่อีกครั้ง");
+        }
         setShowModal(true);
         setTimeout(() => {
           setShowModal(false);
         }, 2000);
       }
     } catch (error) {
-      console.error("Error adding user:", error);
-      setMessage("มีข้อผิดพลาดในการเพิ่มผู้ใช้ !");
-      setMessage2("*มีคนใช้ชื่อผู้ใช้นี้แล้ว");
+      console.error("Error adding teacher:", error);
+      setMessage("มีข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์ !");
+      setMessage2("*โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ");
       setShowModal(true);
       setTimeout(() => {
         setShowModal(false);
@@ -132,9 +99,28 @@ const AddTeacherName = () => {
       </div>
       <div className="min-h-screen flex justify-center p-6">
         <div className="container mx-auto w-full max-w-3xl bg-white h-full rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl text-red font-bold mb-6">เพิ่มรายชื่ออาจารย์</h2>
+          <h2 className="text-2xl text-red font-bold mb-6">
+            เพิ่มรายชื่ออาจารย์
+          </h2>
 
           <div className="grid grid-cols-1 gap-6">
+            <div>
+              <label className="block text-gray-700">คำนำหน้าชื่อ</label>
+              <select
+                name="titlename"
+                className="w-full mt-1 border border-gray-300 rounded p-2"
+                value={formData.titlename}
+                onChange={handleChange}
+              >
+                <option value="">คำนำหน้า</option>
+                <option value="Mr.">Mr.</option>
+                <option value="Mrs.">Mrs.</option>
+                <option value="Ms.">Ms.</option>
+                <option value="Miss.">Miss.</option>
+                <option value="Dr.">Dr.</option>
+                <option value="Asst. Prof.">Asst. Prof.</option>
+              </select>
+            </div>
             <div>
               <label className="block text-gray-700">ชื่อ</label>
               <input
@@ -157,7 +143,7 @@ const AddTeacherName = () => {
                 onChange={handleChange}
               />
             </div>
-            </div>
+          </div>
           <div className="mt-6 flex justify-between">
             <button
               type="button"

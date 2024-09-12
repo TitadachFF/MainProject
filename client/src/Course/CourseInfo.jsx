@@ -6,6 +6,10 @@ const CourseInfo = () => {
   const navigate = useNavigate();
   const [coursename, setCoursename] = useState("");
   const [username, setUsername] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -23,8 +27,25 @@ const CourseInfo = () => {
           setIsLoggedIn(true);
           const parsedUserData = JSON.parse(storedUserData);
           setUserData(parsedUserData);
-          setCoursename(parsedUserData?.decoded?.name || "");
-          setUsername(parsedUserData?.decoded?.username || "");
+          const courseinstructorId = parsedUserData?.decoded?.id;
+
+          if (courseinstructorId) {
+            const response = await axios.get(
+              `http://localhost:3000/api/getCourseInById/${courseinstructorId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            const courseData = response.data;
+            setCoursename(courseData.name || "");
+            setUsername(courseData.username || "");
+            setPhone(courseData.phone || "");
+            setEmail(courseData.email || "");
+            setFirstname(courseData.firstname || "");
+            setLastname(courseData.lastname || "");
+          }
         }
       } catch (error) {
         console.error("Error fetching user data:", error.message);
@@ -37,11 +58,18 @@ const CourseInfo = () => {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      const updatedUserData = { name: coursename, password };
+      const updatedCourseData = {
+        name: coursename,
+        phone,
+        email,
+        firstname,
+        lastname,
+        password,
+      };
 
       const response = await axios.put(
         `http://localhost:3000/api/updateUser/${userData.decoded.id}`,
-        updatedUserData,
+        updatedCourseData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -70,7 +98,6 @@ const CourseInfo = () => {
     }
   };
 
-
   return (
     <div className="bg-gray-100">
       <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28">
@@ -92,12 +119,32 @@ const CourseInfo = () => {
           <form>
             <div className="grid grid-cols-1 gap-6">
               <div>
-                <label className="block text-gray-700">ชื่อ-นามสกุล</label>
+                <label className="block text-gray-700">ชื่อ</label>
                 <input
                   type="text"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
-                  value={coursename}
-                  onChange={(e) => setCoursename(e.target.value)}
+                  value={firstname}
+                  onChange={(e) => setFirstname(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">นามสกุล</label>
+                <input
+                  type="text"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">
+                  ชื่อ-นามสกุล (เต็ม)
+                </label>
+                <input
+                  type="text"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  value={`${firstname} ${lastname}`}
+                  readOnly
                 />
               </div>
               <div>
@@ -117,6 +164,26 @@ const CourseInfo = () => {
                   className="w-full mt-1 border border-gray-300 rounded p-2 text-gray-500 cursor-not-allowed"
                   value={username}
                   readOnly
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">เบอร์โทรศัพท์</label>
+                <input
+                  type="text"
+                  placeholder="เบอร์โทรศัพท์"
+                  className="w-full mt-1 border border-gray-300 rounded p-2 text-black"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">อีเมล</label>
+                <input
+                  type="email"
+                  placeholder="อีเมล"
+                  className="w-full mt-1 border border-gray-300 rounded p-2 text-black"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div>

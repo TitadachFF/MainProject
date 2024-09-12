@@ -10,11 +10,14 @@ import CourseMenu from "../Course/CourseMenu";
 import AddStudent from "../Advice/AddStudent";
 import AdviceInfo from "../Advice/AdviceInfo";
 import AllStudent from "../Advice/AllStudent";
+
 import AddTeacherName from "../Admin/AddTeacherName";
+
 import AddCourse from "../Course/AddCourse";
 import AddCourseCategory from "../Course/AddCourseCategory";
 import AddCourseGroup from "../Course/AddCourseGroup";
 import AddTeacher from "../Course/AddTeacher";
+
 import CourseInfo from "../Course/CourseInfo";
 import Fillgrade from "../Student/Fillgrade";
 import Documents from "../Student/Documents";
@@ -22,9 +25,14 @@ import Documentres from "../Student/Documentres";
 import Adduser from "../Admin/Adduser";
 import Alluser from "../Admin/Alluser";
 import AllCourse from "../Course/AllCourse";
+
 import CourseCategory from "../Course/CourseCategory";
+
+
+
 import ViewMajor from "../Course/ViewMajor";
 import EditCategory from "../Course/EditCategory";
+
 import DocumentStudent from "../Advice/DocumentStudent";
 import StudentPlan from "../Advice/StudentPlan";
 import AddStudentplan from "../Advice/AddStudentplan";
@@ -32,8 +40,17 @@ import AdminInfo from "../Admin/AdminInfo";
 import EditMajor from "../Course/EditMajor";
 import NavigateMenu from "../components/NavigateMenu";
 import EditStudentPlan from "../Advice/EditStudentPlan";
+
+import AddAdvisor from "../Course/AddAdvisor";
+import AddClasses from "../Course/AddClasses";
+import AddTeacherName from "../Admin/AddTeacherName";
+import AllTeacher from "../Course/AllTeacher";
+import AddListplan from "../Advice/AddListplan";
+
+
 import EditGroup from "../Course/EditGroup";
 import EditCourse from "../Course/EditCourse";
+
 const Router = createBrowserRouter([
   {
     path: "/",
@@ -68,10 +85,6 @@ const Router = createBrowserRouter([
 
       },
       {
-        path: "/addteachername",
-        element: <AddTeacherName />,
-      },
-      {
         path: "/studentinfo",
         element: <StudentInfo />,
       },
@@ -102,10 +115,6 @@ const Router = createBrowserRouter([
       {
         path: "/course",
         element: <CourseMenu />,
-      },
-      {
-        path: "/viewmajor",
-        element: <ViewMajor />,
       },
       {
         path: "/addstudent",
@@ -159,6 +168,26 @@ const Router = createBrowserRouter([
         path: "/editstudentplan",
         element: <EditStudentPlan />,
       },
+      {
+        path: "/addadvisor",
+        element: <AddAdvisor />,
+      },
+      {
+        path: "/addclass",
+        element: <AddClasses />,
+      },
+      {
+        path: "/addteachername",
+        element: <AddTeacherName />,
+      },
+      {
+        path: "/allteacher",
+        element: <AllTeacher/>
+      },
+      {
+        path: "/addlistplan",
+        element: <AddListplan/>
+      }
     ],
   },
 ]);

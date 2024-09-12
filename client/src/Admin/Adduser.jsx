@@ -6,7 +6,6 @@ const Adduser = () => {
   const [message, setMessage] = useState("");
   const [message2, setMessage2] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [apiEndpoint, setApiEndpoint] = useState(""); // เก็บ endpoint ที่จะใช้ยิง API
 
   const [formData, setFormData] = useState({
     firstname: "",
@@ -26,15 +25,6 @@ const Adduser = () => {
       ...formData,
       [name]: value,
     });
-  };
-
-  const handleRoleChange = (e) => {
-    const selectedRole = e.target.value;
-    if (selectedRole === "TEACHER") {
-      setApiEndpoint("http://localhost:3000/api/createTeacher");
-    } else if (selectedRole === "INSTRUCTOR") {
-      setApiEndpoint("http://localhost:3000/api/createCourseIn");
-    }
   };
 
   const handleSubmit = async () => {
@@ -79,7 +69,7 @@ const Adduser = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(apiEndpoint, {
+      const response = await fetch("http://localhost:3000/api/createCourseIn", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -99,8 +89,8 @@ const Adduser = () => {
       } else {
         const errorData = await response.json();
         console.log("Response data:", errorData);
-        setMessage("โปรดเลือกตำแหน่ง");
-        setMessage2("*โปรดตรวจสอบว่าเลือกตำแหน่งแล้ว");
+        setMessage("เกิดข้อผิดพลาดในการเพิ่มผู้ใช้");
+        setMessage2("*โปรดตรวจสอบข้อมูลที่กรอก");
         setShowModal(true);
         setTimeout(() => {
           setShowModal(false);
@@ -156,17 +146,6 @@ const Adduser = () => {
                 value={formData.lastname}
                 onChange={handleChange}
               />
-            </div>
-            <div>
-              <label className="block text-gray-700">ตำแหน่ง</label>
-              <select
-                onChange={handleRoleChange}
-                className="select select-bordered w-full max-w-xs"
-              >
-                <option value="">เลือกตำแหน่ง</option>
-                <option value="TEACHER">อาจารย์</option>
-                <option value="INSTRUCTOR">ตัวแทนหลักสูตร</option>
-              </select>
             </div>
             <div>
               <label className="block text-gray-700">ชื่อผู้ใช้</label>

@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AddStudent = () => {
+const AddAdvisor = () => {
   const navigate = useNavigate();
   const [sections, setSections] = useState([]);
   const [message, setMessage] = useState("");
   const [message2, setMessage2] = useState("");
 
   const [formData, setFormData] = useState({
-    student_id: "",
     username: "",
     password: "",
     confirmPassword: "",
@@ -64,12 +63,11 @@ const AddStudent = () => {
     }
 
     const requestBody = {
-      student_id: formData.student_id, // Keeping it as string
       username: formData.username,
       password: formData.password,
       firstname: formData.firstname,
       lastname: formData.lastname,
-      sec_id: parseInt(formData.sec_id, 10), // Section ID should be integer
+      sec_id: parseInt(formData.sec_id, 10),
     };
 
     if (formData.phone) {
@@ -81,7 +79,7 @@ const AddStudent = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/createStudent", {
+      const response = await fetch("http://localhost:3000/api/createAdvisor", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -91,12 +89,12 @@ const AddStudent = () => {
       });
 
       if (response.ok) {
-        setMessage("เพิ่มนักศึกษาสำเร็จ");
-        setMessage2("*เพิ่มผู้นักศึกษาเข้าสู่ระบบสำเร็จ");
+        setMessage("เพิ่มที่ปรึกษาสำเร็จ");
+        setMessage2("*เพิ่มที่ปรึกษาสำเร็จ");
         setShowModal(true);
         setTimeout(() => {
           setShowModal(false);
-          navigate("/advice");
+          navigate("/course");
         }, 1000);
       } else {
         const errorData = await response.json();
@@ -108,8 +106,8 @@ const AddStudent = () => {
         }, 3000);
       }
     } catch (error) {
-      setMessage("มีข้อผิดพลาดในการเพิ่มนักศึกษา !");
-      setMessage2("*มีคนใช้ชื่อผู้ใช้นี้แล้ว");
+      setMessage("มีข้อผิดพลาดในการเพิ่มที่ปรึกษา !");
+      setMessage2("*มีข้อผิดพลาดในการเพิ่มที่ปรึกษา");
       setShowModal(true);
       setTimeout(() => {
         setShowModal(false);
@@ -128,12 +126,12 @@ const AddStudent = () => {
           เมนูอาจารย์
         </p>
         <span className="mx-1">&gt;</span>
-        <p>เพิ่มนักศึกษา</p>
+        <p>เพิ่มที่ปรึกษา</p>
       </div>
       <div className="min-h-screen flex justify-center p-6 bg-gray-100">
         <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-[900px]">
           <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
-            เพิ่มนักศึกษา
+            เพิ่มที่ปรึกษา
           </h2>
           <form>
             <div className="grid grid-cols-1 gap-6">
@@ -162,13 +160,35 @@ const AddStudent = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-gray-700">รหัสนักศึกษา</label>
+                <label className="block text-gray-700">ชื่อผู้ใช้</label>
                 <input
                   type="text"
-                  name="student_id"
+                  name="username"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
-                  placeholder="รหัสนักศึกษา"
-                  value={formData.student_id}
+                  placeholder="ชื่อผู้ใช้"
+                  value={formData.username}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">รหัสผ่าน</label>
+                <input
+                  type="password"
+                  name="password"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  placeholder="รหัสผ่าน"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">ยืนยันรหัสผ่าน</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  placeholder="ยืนยันรหัสผ่าน"
+                  value={formData.confirmPassword}
                   onChange={handleChange}
                 />
               </div>
@@ -212,39 +232,6 @@ const AddStudent = () => {
                   onChange={handleChange}
                 />
               </div>
-              <div>
-                <label className="block text-gray-700">ชื่อผู้ใช้</label>
-                <input
-                  type="text"
-                  name="username"
-                  className="w-full mt-1 border border-gray-300 rounded p-2"
-                  placeholder="ชื่อผู้ใช้"
-                  value={formData.username}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">รหัสผ่าน</label>
-                <input
-                  type="password"
-                  name="password"
-                  className="w-full mt-1 border border-gray-300 rounded p-2"
-                  placeholder="รหัสผ่าน"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">ยืนยันรหัสผ่าน</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  className="w-full mt-1 border border-gray-300 rounded p-2"
-                  placeholder="ยืนยันรหัสผ่าน"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
-              </div>
             </div>
 
             <div className="mt-6 flex justify-between">
@@ -279,4 +266,4 @@ const AddStudent = () => {
   );
 };
 
-export default AddStudent;
+export default AddAdvisor;

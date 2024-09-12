@@ -123,9 +123,11 @@ const AllCourse = () => {
                             className="flex flex-col"
                             onClick={() => handleView(major.major_code)}
                           >
+
                             <span className="text-xl flex">
                               {major.major_code} {major.majorNameTH}{" "}
                               {major.majorYear}
+
                               <p className="pl-8">{major.majorUnit} หน่วยกิต</p>
                             </span>
                             <span>{major.majorNameENG}</span>
