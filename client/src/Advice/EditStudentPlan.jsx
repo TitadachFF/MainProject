@@ -308,9 +308,7 @@ const EditStudentPlan = () => {
                   })
                 ) : (
                   <tr key={plan.studentplan_id}>
-                    <td colSpan="6" className="py-2 px-4 text-center border-b">
-                      ไม่มีรายการแผนการเรียน
-                    </td>
+                    
                   </tr>
                 )
               )

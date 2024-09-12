@@ -28,8 +28,6 @@ import AllCourse from "../Course/AllCourse";
 
 import CourseCategory from "../Course/CourseCategory";
 
-
-
 import ViewMajor from "../Course/ViewMajor";
 import EditCategory from "../Course/EditCategory";
 
@@ -43,10 +41,8 @@ import EditStudentPlan from "../Advice/EditStudentPlan";
 
 import AddAdvisor from "../Course/AddAdvisor";
 import AddClasses from "../Course/AddClasses";
-import AddTeacherName from "../Admin/AddTeacherName";
 import AllTeacher from "../Course/AllTeacher";
 import AddListplan from "../Advice/AddListplan";
-
 
 import EditGroup from "../Course/EditGroup";
 import EditCourse from "../Course/EditCourse";
@@ -80,10 +76,7 @@ const Router = createBrowserRouter([
         path: "/fillgrade",
         element: <Fillgrade />,
       },
-      {path: "/editcourse",
-        element: <EditCourse/>,
-
-      },
+      { path: "/editcourse", element: <EditCourse /> },
       {
         path: "/studentinfo",
         element: <StudentInfo />,
@@ -182,12 +175,12 @@ const Router = createBrowserRouter([
       },
       {
         path: "/allteacher",
-        element: <AllTeacher/>
+        element: <AllTeacher />,
       },
       {
         path: "/addlistplan",
-        element: <AddListplan/>
-      }
+        element: <AddListplan />,
+      },
     ],
   },
 ]);
