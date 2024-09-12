@@ -11,7 +11,7 @@ import AddStudent from "../Advice/AddStudent";
 import AdviceInfo from "../Advice/AdviceInfo";
 import AllStudent from "../Advice/AllStudent";
 
-import AddTeacherName from "../Admin/AddTeacherName";
+
 
 import AddCourse from "../Course/AddCourse";
 import AddCourseCategory from "../Course/AddCourseCategory";
@@ -83,6 +83,10 @@ const Router = createBrowserRouter([
       {path: "/editcourse",
         element: <EditCourse/>,
 
+      },
+      {
+        path:"/viewmajor",
+        element:<ViewMajor/>,
       },
       {
         path: "/studentinfo",
