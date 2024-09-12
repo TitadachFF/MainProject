@@ -65,12 +65,12 @@ const EditGroup = () => {
     }
   };
 
-  const handleDelete = async (categoryId) => {
-    if (window.confirm("คุณแน่ใจว่าต้องการลบหมวดหมู่นี้?")) {
+  const handleDeleteGroup = async (groupId) => {
+    if (window.confirm("คุณแน่ใจว่าต้องการลบกลุ่มนี้?")) {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/api/deleteCategory/${categoryId}`,
+          `http://localhost:3000/api/deleteGroupMajor/${groupId}`,
           {
             method: "DELETE",
             headers: {
@@ -79,18 +79,16 @@ const EditGroup = () => {
           }
         );
         if (!response.ok) {
-          throw new Error(`Failed to delete Category ${categoryId}`);
+          throw new Error(`Failed to delete Group ${groupId}`);
         }
-        // Remove deleted category from state
-        setCategories((prevCategories) =>
-          prevCategories.filter(
-            (category) => category.category_id !== categoryId
-          )
+        // Remove deleted group from state
+        setGroups((prevGroups) =>
+          prevGroups.filter((group) => group.group_id !== groupId)
         );
-        alert("ลบหมวดวิชาเรียบร้อยแล้ว!");
+        alert("ลบกลุ่มวิชาเรียบร้อยแล้ว!");
       } catch (error) {
-        console.error("Error deleting category:", error);
-        alert("เกิดข้อผิดพลาดในการลบหมวดวิชา.");
+        console.error("Error deleting group:", error);
+        alert("เกิดข้อผิดพลาดในการลบกลุ่มวิชา.");
       }
     }
   };
@@ -260,13 +258,22 @@ const EditGroup = () => {
                         จำนวนไม่น้อยกว่า: {group.group_unit}หน่วยกิต
                       </span>
                     </div>
-                    <button
-                      type="button"
-                      className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-600"
-                      onClick={() => handleEditGroupClick(group)}
-                    >
-                      แก้ไข
-                    </button>
+                    <div className="flex space-x-2">
+                      <button
+                        type="button"
+                        className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-600"
+                        onClick={() => handleEditGroupClick(group)}
+                      >
+                        แก้ไข
+                      </button>
+                      <button
+                        type="button"
+                        className="bg-red text-white px-4 py-2 rounded hover:bg-gray-400 ml-2"
+                        onClick={() => handleDeleteGroup(group.group_id)}
+                      >
+                        ลบ
+                      </button>{" "}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -388,7 +395,7 @@ const EditGroup = () => {
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 font-semibold mb-2">
-                หน่วยกิต
+                จำนวนหน่วยกิต
               </label>
               <input
                 type="number"
@@ -398,7 +405,7 @@ const EditGroup = () => {
                 onChange={handleNewGroupChange}
               />
             </div>
-            
+
             <div className="flex justify-end space-x-2">
               <button
                 type="button"

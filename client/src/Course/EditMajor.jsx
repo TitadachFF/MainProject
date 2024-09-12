@@ -61,7 +61,9 @@ const EditMajor = () => {
   const handleGroupEdit = (id) => {
     navigate(`/editgroup?editMajor=${major_code}`);
   };
-
+  const handleCourseEdit = (id) => {
+    navigate(`/editcourse?editMajor=${major_code}`);
+  };
   useEffect(() => {
     const fetchMajor = async () => {
       try {
@@ -208,7 +210,7 @@ const EditMajor = () => {
               type="button"
               className="bg-gray-200 border transition duration-300 ease-in-out text-black px-4 py-2 rounded hover:bg-gray-200 "
               onClick={() => navigate("/allcourse")}
-              >
+            >
               ย้อนกลับ
             </button>
             <button
@@ -237,7 +239,7 @@ const EditMajor = () => {
             <button
               type="button"
               className="bg-red  transition duration-300 ease-in-out text-white px-4 py-2 rounded hover:bg-gray-300 "
-              onClick={() => navigate("/editcategory")}
+              onClick={() => handleCourseEdit(major.major_code)}
             >
               แก้ไขรายวิชาในหลักสูตรนี้
             </button>

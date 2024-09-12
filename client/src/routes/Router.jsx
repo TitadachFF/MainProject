@@ -33,7 +33,7 @@ import EditMajor from "../Course/EditMajor";
 import NavigateMenu from "../components/NavigateMenu";
 import EditStudentPlan from "../Advice/EditStudentPlan";
 import EditGroup from "../Course/EditGroup";
-
+import EditCourse from "../Course/EditCourse";
 const Router = createBrowserRouter([
   {
     path: "/",
@@ -62,6 +62,10 @@ const Router = createBrowserRouter([
       {
         path: "/fillgrade",
         element: <Fillgrade />,
+      },
+      {path: "/editcourse",
+        element: <EditCourse/>,
+
       },
       {
         path: "/addteachername",
