@@ -10,8 +10,7 @@ import CourseMenu from "../Course/CourseMenu";
 import AddStudent from "../Advice/AddStudent";
 import AdviceInfo from "../Advice/AdviceInfo";
 import AllStudent from "../Advice/AllStudent";
-
-
+import RegistePlan from "../Student/RegistePlan";
 
 import AddCourse from "../Course/AddCourse";
 import AddCourseCategory from "../Course/AddCourseCategory";
@@ -27,8 +26,6 @@ import Alluser from "../Admin/Alluser";
 import AllCourse from "../Course/AllCourse";
 
 import CourseCategory from "../Course/CourseCategory";
-
-
 
 import ViewMajor from "../Course/ViewMajor";
 import EditCategory from "../Course/EditCategory";
@@ -46,7 +43,6 @@ import AddClasses from "../Course/AddClasses";
 import AddTeacherName from "../Admin/AddTeacherName";
 import AllTeacher from "../Course/AllTeacher";
 import AddListplan from "../Advice/AddListplan";
-
 
 import EditGroup from "../Course/EditGroup";
 import EditCourse from "../Course/EditCourse";
@@ -80,13 +76,14 @@ const Router = createBrowserRouter([
         path: "/fillgrade",
         element: <Fillgrade />,
       },
-      {path: "/editcourse",
-        element: <EditCourse/>,
-
+      { path: "/editcourse", element: <EditCourse /> },
+      {
+        path: "/registerplan",
+        element: <RegistePlan />,
       },
       {
-        path:"/viewmajor",
-        element:<ViewMajor/>,
+        path: "/viewmajor",
+        element: <ViewMajor />,
       },
       {
         path: "/studentinfo",
@@ -186,12 +183,12 @@ const Router = createBrowserRouter([
       },
       {
         path: "/allteacher",
-        element: <AllTeacher/>
+        element: <AllTeacher />,
       },
       {
         path: "/addlistplan",
-        element: <AddListplan/>
-      }
+        element: <AddListplan />,
+      },
     ],
   },
 ]);

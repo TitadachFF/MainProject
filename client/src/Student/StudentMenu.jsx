@@ -15,7 +15,34 @@ const StudentMenu = () => {
       </div>
 
       <div className="py-20 flex flex-wrap justify-center gap-4 p-4">
-        <div  
+        <div
+          className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
+          onClick={() => navigate("/registerplan")}
+        >
+          <figure>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className=" my-10 size-40"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0-3-3m3 3 3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"
+              />
+            </svg>
+          </figure>
+          <div className="card-body text-center">
+            <h2 className="font-semibold">ลงทะเบียนเรียนแผนการเรียน</h2>
+            <p className="border-t py-2">ลงทะเบียนดึงแผนการเรียน</p>
+            <div className="card-actions justify-end"></div>
+          </div>
+        </div>
+
+        <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/fillgrade")}
         >

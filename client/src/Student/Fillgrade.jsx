@@ -247,97 +247,129 @@ const Fillgrade = () => {
                 </tr>
               </thead>
               <tbody>
-                {allCourses
-                  .filter((course) => {
-                    if (!courseSemesterMap.has(course.course_id)) {
-                      return false;
-                    }
-                    if (
-                      selectedYear &&
-                      !courses.find(
-                        (c) =>
-                          c.course_id === course.course_id &&
-                          c.year === parseInt(selectedYear, 10)
-                      )
-                    ) {
-                      return false;
-                    }
-                    if (
-                      semester !== "ทั้งหมด" &&
-                      parseInt(courseSemesterMap.get(course.course_id), 10) !==
-                        parseInt(semester, 10)
-                    ) {
-                      return false;
-                    }
-                    return true;
-                  })
-                  .map((course) => (
-                    <tr key={course.course_id}>
-                      <td>{course.course_id}</td>
-                      <td>{course.courseNameTH}</td>
-                      <td>{course.courseUnit}</td>
-                      <td>{courseSemesterMap.get(course.course_id)}</td>
-                      <td>
-                        <div className="relative">
+                {allCourses.filter((course) => {
+                  if (!courseSemesterMap.has(course.course_id)) {
+                    return false;
+                  }
+                  if (
+                    selectedYear &&
+                    !courses.find(
+                      (c) =>
+                        c.course_id === course.course_id &&
+                        c.year === parseInt(selectedYear, 10)
+                    )
+                  ) {
+                    return false;
+                  }
+                  if (
+                    semester !== "ทั้งหมด" &&
+                    parseInt(courseSemesterMap.get(course.course_id), 10) !==
+                      parseInt(semester, 10)
+                  ) {
+                    return false;
+                  }
+                  return true;
+                }).length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="text-center">
+                      ไม่มีแผนการเรียน <a className="text-blue-500 hover:underline" href="/registerplan"> โปรดลงทะเบียนแผนการเรียน</a>
+                    </td>
+                  </tr>
+                ) : (
+                  allCourses
+                    .filter((course) => {
+                      if (!courseSemesterMap.has(course.course_id)) {
+                        return false;
+                      }
+                      if (
+                        selectedYear &&
+                        !courses.find(
+                          (c) =>
+                            c.course_id === course.course_id &&
+                            c.year === parseInt(selectedYear, 10)
+                        )
+                      ) {
+                        return false;
+                      }
+                      if (
+                        semester !== "ทั้งหมด" &&
+                        parseInt(
+                          courseSemesterMap.get(course.course_id),
+                          10
+                        ) !== parseInt(semester, 10)
+                      ) {
+                        return false;
+                      }
+                      return true;
+                    })
+                    .map((course) => (
+                      <tr key={course.course_id}>
+                        <td>{course.course_id}</td>
+                        <td>{course.courseNameTH}</td>
+                        <td>{course.courseUnit}</td>
+                        <td>{courseSemesterMap.get(course.course_id)}</td>
+                        <td>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              value={teacherSearchTerm[course.course_id] || ""}
+                              onChange={(e) =>
+                                handleSearchChange(course.course_id, e)
+                              }
+                              className="input input-bordered w-full"
+                              placeholder="ค้นหาชื่อผู้สอน"
+                            />
+                            {teacherSearchTerm[course.course_id] && (
+                              <div
+                                className="absolute bg-white border border-gray-300 rounded shadow-lg mt-1 w-full"
+                                style={{ zIndex: 10 }}
+                              >
+                                {filteredTeachers[course.course_id]?.map(
+                                  (teacher) => (
+                                    <div
+                                      key={teacher.id}
+                                      className="p-2 cursor-pointer hover:bg-gray-100"
+                                      onClick={() =>
+                                        handleTeacherSelect(
+                                          course.course_id,
+                                          teacher
+                                        )
+                                      }
+                                    >
+                                      {teacher.fullName}
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+
+                        <td>
+                          <select
+                            className="select select-bordered w-full max-w-xs"
+                            defaultValue=""
+                          >
+                            <option disabled value="">
+                              กรอกผลการเรียน
+                            </option>
+                            {grades.map((grade) => (
+                              <option key={grade} value={grade}>
+                                {grade}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+
+                        <td>
                           <input
                             type="text"
-                            value={teacherSearchTerm[course.course_id] || ""}
-                            onChange={(e) =>
-                              handleSearchChange(course.course_id, e)
-                            }
                             className="input input-bordered w-full"
-                            placeholder="ค้นหาชื่อผู้สอน"
                           />
-                          {teacherSearchTerm[course.course_id] && (
-                            <div
-                              className="absolute bg-white border border-gray-300 rounded shadow-lg mt-1 w-full"
-                              style={{ zIndex: 10 }} // เพิ่ม z-index เพื่อให้อยู่ด้านบน
-                            >
-                              {filteredTeachers[course.course_id]?.map(
-                                (teacher) => (
-                                  <div
-                                    key={teacher.id}
-                                    className="p-2 cursor-pointer hover:bg-gray-100"
-                                    onClick={() =>
-                                      handleTeacherSelect(
-                                        course.course_id,
-                                        teacher
-                                      )
-                                    }
-                                  >
-                                    {teacher.fullName}
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-
-                      <td>
-                        <select
-                          className="select select-bordered w-full max-w-xs"
-                          defaultValue="" // ตั้งค่า default เป็นค่าว่าง
-                        >
-                          <option disabled value="">
-                            กรอกผลการเรียน {/* ข้อความเริ่มต้น */}
-                          </option>
-                          {grades.map((grade) => (
-                            <option key={grade} value={grade}>
-                              {grade}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-
-                      <td>
-                        <input
-                          type="text"
-                          className="input input-bordered w-full"
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                      </tr>
+                    ))
+                )}
               </tbody>
             </table>
           </div>
