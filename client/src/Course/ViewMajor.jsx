@@ -136,8 +136,10 @@ const ViewMajor = () => {
       setSelectedCategoryId(null);
       setGroups([]);
       setCourses({});
+      setOpenGroupId(null); // ปิดกลุ่มที่เปิดอยู่เมื่อปิด category
     } else {
       setSelectedCategoryId(category_id);
+      setOpenGroupId(null); // ปิดกลุ่มที่เปิดอยู่เมื่อเปลี่ยน category
       await fetchGroups(category_id);
     }
   };
@@ -303,7 +305,7 @@ const ViewMajor = () => {
             <div className="mt-6 flex justify-between">
               <button
                 type="button"
-                className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                className="px-6 py-2 bg-gray-100 border  rounded"
                 onClick={() => navigate("/allcourse")}
               >
                 ย้อนกลับ
