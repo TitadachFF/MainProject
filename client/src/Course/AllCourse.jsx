@@ -123,7 +123,7 @@ const AllCourse = () => {
                             className="flex flex-col"
                             onClick={() => handleView(major.major_code)}
                           >
-                            <span className="text-xl flex">
+                            <span id="majornameth" className="text-xl flex">
                               {major.major_code} {major.majorNameTH}
                               <p className="pl-8">{major.majorUnit} หน่วยกิต</p>
                             </span>

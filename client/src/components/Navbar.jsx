@@ -273,6 +273,7 @@ const Navbar = () => {
           </div>
         ) : (
           <a
+            id="signin-button"
             className="btn rounded-full p-2 pr-5 pl-5 bg-red text-white cursor-pointer"
             onClick={() => document.getElementById("login").showModal()}
           >

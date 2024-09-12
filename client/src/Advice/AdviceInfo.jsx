@@ -1,16 +1,18 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const AdviceInfo = () => {
   const navigate = useNavigate();
-  const [advisorname, setAdvisorname] = useState("");
-  const [username, setUsername] = useState(""); // Initialize with empty string
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [username, setUsername] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [advisorId, setAdvisorId] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -20,14 +22,27 @@ const AdviceInfo = () => {
         const storedUserData = localStorage.getItem("userData");
 
         if (token && storedUserData) {
-          setIsLoggedIn(true);
           const parsedUserData = JSON.parse(storedUserData);
-          setUserData(parsedUserData);
-          setAdvisorname(parsedUserData?.decoded?.name || "");
-          setUsername(parsedUserData?.decoded?.username || ""); // Fetch username
+          setAdvisorId(parsedUserData.decoded.id);
+
+          const response = await axios.get(
+            `http://localhost:3000/api/getAdvisorById/${parsedUserData.decoded.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const advisorData = response.data;
+          setFirstname(advisorData.firstname || "");
+          setLastname(advisorData.lastname || "");
+          setUsername(advisorData.username || "");
+          setPhone(advisorData.phone || "");
+          setEmail(advisorData.email || "");
         }
       } catch (error) {
-        console.error("Error fetching user data:", error.message);
+        console.error("Error fetching advisor data:", error.message);
       }
     };
 
@@ -37,11 +52,19 @@ const AdviceInfo = () => {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      const updatedUserData = { name: advisorname, password };
+      if (!advisorId) throw new Error("Advisor ID not found");
+
+      const updatedAdvisorData = {
+        firstname,
+        lastname,
+        phone,
+        email,
+        password,
+      };
 
       const response = await axios.put(
-        `http://localhost:3000/api/updateUser/${userData.decoded.id}`,
-        updatedUserData,
+        `http://localhost:3000/api/updateAdvisor/${advisorId}`,
+        updatedAdvisorData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,22 +75,18 @@ const AdviceInfo = () => {
       setMessage(response.data.message);
       setShowModal(true);
 
-      setUserData({
-        ...userData,
-        decoded: {
-          ...userData.decoded,
-          name: advisorname,
-        },
-      });
-
       setTimeout(() => {
         setShowModal(false);
         navigate("/advice");
       }, 1000);
     } catch (error) {
-      console.error("Error updating user:", error.message);
-      setMessage("Error updating user");
+      console.error(
+        "Error updating advisor:",
+        error.response?.data?.message || error.message
+      );
+      setMessage("Error updating advisor");
     }
+
   };
 
   return (
@@ -91,12 +110,21 @@ const AdviceInfo = () => {
           <form>
             <div className="grid grid-cols-1 gap-6">
               <div>
-                <label className="block text-gray-700">ชื่อ-นามสกุล</label>
+                <label className="block text-gray-700">ชื่อ</label>
                 <input
                   type="text"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
-                  value={advisorname}
-                  onChange={(e) => setAdvisorname(e.target.value)}
+                  value={firstname}
+                  onChange={(e) => setFirstname(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">นามสกุล</label>
+                <input
+                  type="text"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
                 />
               </div>
               <div>
@@ -116,6 +144,24 @@ const AdviceInfo = () => {
                   className="w-full mt-1 border border-gray-300 rounded p-2 text-gray-500 cursor-not-allowed"
                   value={username}
                   readOnly
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">โทรศัพท์</label>
+                <input
+                  type="text"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">อีเมล</label>
+                <input
+                  type="email"
+                  className="w-full mt-1 border border-gray-300 rounded p-2"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div>
