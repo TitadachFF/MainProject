@@ -111,16 +111,13 @@ const Fillgrade = () => {
           const initialGrades = {};
           const initialTeachers = {};
 
-          // กรองเฉพาะรายวิชาที่อยู่ใน register.listcourseregister
           subjectsResponse.data.forEach((register) => {
             yearSet.add(register.year);
             register.listcourseregister.forEach((course) => {
-              // หาข้อมูลรายวิชาเต็มจาก allCourses
               const fullCourseData = allCoursesResponse.data.find(
                 (c) => c.course_id === course.course_id
               );
 
-              // ถ้าพบข้อมูลรายวิชาที่ตรงกัน
               if (fullCourseData) {
                 const enhancedCourse = {
                   ...course,
@@ -131,7 +128,6 @@ const Fillgrade = () => {
                 coursesList.push(enhancedCourse);
                 courseSemesterMapping.set(course.course_id, register.semester);
 
-                // ถ้ามีข้อมูลเกรดและชื่ออาจารย์อยู่แล้ว ให้เก็บไว้ใน initial state
                 if (course.grade) {
                   initialGrades[course.course_id] = course.grade;
                 }
@@ -145,8 +141,8 @@ const Fillgrade = () => {
           setCourses(coursesList);
           setCourseSemesterMap(courseSemesterMapping);
           setYears(Array.from(yearSet));
-          setCourseGrades(initialGrades); // ตั้งค่าเกรดที่มีอยู่แล้ว
-          setCourseTeachers(initialTeachers); // ตั้งค่าชื่ออาจารย์ที่มีอยู่แล้ว
+          setCourseGrades(initialGrades);
+          setCourseTeachers(initialTeachers);
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -190,7 +186,7 @@ const Fillgrade = () => {
   };
 
   const handleSemesterChange = (e) => {
-    setSemester(e.target.value ? parseInt(e.target.value, 10) : null); 
+    setSemester(e.target.value ? parseInt(e.target.value, 10) : null);
   };
 
   const handleSearchChange = (courseId, e) => {
@@ -205,26 +201,23 @@ const Fillgrade = () => {
     let hasError = false;
 
     for (const course of courses) {
-      const grade = courseGrades[course.course_id]; // เกรดที่เลือก
-      const teacherName = courseTeachers[course.course_id] || ""; // ใช้ชื่ออาจารย์เดิมถ้าไม่มีการเลือกใหม่
+      const grade = courseGrades[course.course_id];
+      const teacherName = courseTeachers[course.course_id] || "";
 
       if (grade) {
-        // ตรวจสอบว่าเกรดถูกเลือกหรือไม่
         try {
-          // Log ข้อมูลที่กำลังจะส่ง
           console.log({
-            grade, // เกรดที่ส่งไป
-            teacher_name: teacherName, // ชื่ออาจารย์ที่ส่งไป
-            course_id: course.course_id, // รหัสวิชา
-            listcourseregister_id: course.listcourseregister_id, // รหัสการลงทะเบียนวิชา
+            grade,
+            teacher_name: teacherName,
+            course_id: course.course_id,
+            listcourseregister_id: course.listcourseregister_id,
           });
 
-          // ส่งข้อมูลไปยัง API
           await axios.put(
             `http://localhost:3000/api/updateRegister/${course.listcourseregister_id}`,
             {
-              grade, // ส่งเกรด
-              teacher_name: teacherName, // ส่งชื่ออาจารย์
+              grade,
+              teacher_name: teacherName,
             },
             {
               headers: { Authorization: `Bearer ${token}` },
@@ -239,7 +232,7 @@ const Fillgrade = () => {
 
     if (!hasError) {
       alert("บันทึกสำเร็จ");
-      window.location.reload(); // รีเฟรชหน้า
+      window.location.reload();
     } else {
       alert("เกิดข้อผิดพลาดในการบันทึก");
     }
@@ -351,8 +344,10 @@ const Fillgrade = () => {
                   <tr key={index}>
                     <th>{course.course_id}</th>
                     <td>{course.courseNameTH}</td>
-                    <td>{course.courseUnit}</td>
-                    <td>{courseSemesterMap.get(course.course_id)}</td>
+                    <td className="px-8">{course.courseUnit}</td>
+                    <td className="px-8">
+                      {courseSemesterMap.get(course.course_id)}
+                    </td>
                     <td>
                       <input
                         type="text"
@@ -400,7 +395,13 @@ const Fillgrade = () => {
                         ))}
                       </select>
                     </td>
-                    <td></td>
+                    <td>
+                      <input
+                        className="input input-bordered input-sm"
+                        type="text"
+                        placeholder="หมายเหตุ"
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>
