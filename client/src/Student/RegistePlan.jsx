@@ -59,12 +59,7 @@ const RegistePlan = () => {
       const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://localhost:3000/api/createRegister",
-        {
-          student_id: studentData.student_id,
-          studentplan_id: studentplanId,
-          year: year,
-          semester: semester,
-        },
+        {},
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -118,8 +113,16 @@ const RegistePlan = () => {
             </div>
           )}
 
+          <button
+            type="button"
+            className="px-12 py-4 bg-red text-white rounded-lg text-xl font-bold mx-auto block mt-8 transition-transform duration-300 ease-in-out transform hover:scale-105 hover:bg-slate-600"
+            onClick={handleSubmit}
+          >
+            ลงทะเบียนแผนการเรียน
+          </button>
+
           {/* Registration Form */}
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <div className="flex flex-col space-y-1">
               <label className="text-gray-400 text-sm ">
                 *เลือกแผนการเรียน
@@ -154,7 +157,7 @@ const RegistePlan = () => {
                 onChange={(e) => setSemester(e.target.value)}
               />
             </div>
-          </div>
+          </div> */}
 
           <div className="mt-6 flex justify-between">
             <button
@@ -166,13 +169,13 @@ const RegistePlan = () => {
             </button>
 
             <div className="flex space-x-4">
-              <button
+              {/* <button
                 type="button"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
                 onClick={handleSubmit}
               >
                 บันทึก
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

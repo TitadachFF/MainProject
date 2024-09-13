@@ -229,7 +229,7 @@ const Navbar = () => {
           <div className="dropdown dropdown-end flex">
             <div className="pt-3 flex">
               <p className="font-bold pr-2">ยินดีต้อนรับ !</p>
-              <span className="pr-2">{userData?.decoded.name}</span>
+              <span className="pr-2">{userData?.decoded.firstname} {userData?.decoded.lastname}</span>
               <span className={`h-6 badge ${roleColor}`}>{displayRole}</span>
             </div>
             <div
