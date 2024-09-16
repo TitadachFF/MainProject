@@ -73,7 +73,7 @@ const Fillgrade = () => {
             parsedUserData.decoded.academic.academic_name || "";
 
           const response = await axios.get(
-            `http://localhost:3000/api/getStudentById/${studentId}`,
+            `http://localhost:3000/api/getRegisters/${studentId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -135,6 +135,34 @@ const Fillgrade = () => {
                 if (course.teacher_name) {
                   initialTeachers[course.course_id] = course.teacher_name;
                 }
+              }
+            });
+          });
+
+          response.data.forEach((register) => {
+            register.listcourseregister.forEach((course) => {
+              const enhancedCourse = {
+                ...course,
+                courseNameTH: course.course.courseNameTH || "",
+                year: register.year, // Add year to course data
+                course_id: course.listcourseregister_id, // Assuming course_id is unique
+              };
+
+              coursesList.push(enhancedCourse);
+              courseSemesterMapping.set(
+                course.listcourseregister_id,
+                register.semester
+              );
+
+              if (course.grade) {
+                initialGrades[course.listcourseregister_id] = course.grade;
+              }
+              if (course.teacher) {
+                initialTeachers[course.listcourseregister_id] = `${
+                  course.teacher.titlename || ""
+                } ${course.teacher.firstname || ""} ${
+                  course.teacher.lastname || ""
+                }`;
               }
             });
           });
@@ -411,7 +439,14 @@ const Fillgrade = () => {
                 ) : (
                   <tr>
                     <td colSpan="7" className="text-center">
-                      คุณยังไม่ได้ลงทะเบียน <a className="text-blue-500 hover:underline" href="/registerplan"> โปรดลงทะเบียนแผนการเรียน</a>
+                      คุณยังไม่ได้ลงทะเบียน{" "}
+                      <a
+                        className="text-blue-500 hover:underline"
+                        href="/registerplan"
+                      >
+                        {" "}
+                        โปรดลงทะเบียนแผนการเรียน
+                      </a>
                     </td>
                   </tr>
                 )}

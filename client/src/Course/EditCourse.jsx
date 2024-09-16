@@ -7,9 +7,11 @@ const EditCourse = () => {
   const [major, setMajor] = useState(null);
   const [categories, setCategories] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [groups, setGroups] = useState([]); // เพิ่ม state สำหรับ groups
   const [editingCourse, setEditingCourse] = useState(null);
 
   const navigate = useNavigate();
+
   const handleDeleteCourse = async (course_id) => {
     const confirmDelete = window.confirm("คุณต้องการลบวิชานี้หรือไม่?");
     if (!confirmDelete) return;
@@ -37,6 +39,7 @@ const EditCourse = () => {
       alert("เกิดข้อผิดพลาดในการลบวิชา.");
     }
   };
+
   useEffect(() => {
     const fetchCoursesByCategoryId = async (category_id) => {
       try {
@@ -56,6 +59,28 @@ const EditCourse = () => {
         return data || [];
       } catch (error) {
         console.error("Error fetching Courses:", error);
+        return [];
+      }
+    };
+
+    const fetchGroupsByCategoryId = async (category_id) => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `http://localhost:3000/api/getGroupsByCategoryId/${category_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch Groups");
+        }
+        const data = await response.json();
+        return data || [];
+      } catch (error) {
+        console.error("Error fetching Groups:", error);
         return [];
       }
     };
@@ -91,13 +116,20 @@ const EditCourse = () => {
         const categoriesData = await categoriesResponse.json();
         setCategories(categoriesData);
 
-        // Fetch courses for each category
+        // Fetch courses and groups for each category
         const allCourses = await Promise.all(
           categoriesData.map((category) =>
             fetchCoursesByCategoryId(category.category_id)
           )
         );
-        setCourses(allCourses.flat()); // Combine all courses into one array
+        const allGroups = await Promise.all(
+          categoriesData.map((category) =>
+            fetchGroupsByCategoryId(category.category_id)
+          )
+        );
+
+        setCourses(allCourses.flat());
+        setGroups(allGroups.flat()); // Combine all groups into one array
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -169,40 +201,61 @@ const EditCourse = () => {
         <p>แก้ไขหมวดวิชา</p>
       </div>
       <div className="flex justify-center p-6 bg-gray-100">
-        <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
+        <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-2xl text-red font-bold">แก้ไขวิชา</h2>
           <p className="text-red px-2 font-semibold py-2">
             หลักสูตร {major.major_code} {major.majorNameTH}
           </p>
           <div className="grid grid-cols-1 py-2 gap-2">
-            {courses.map((course) => (
-              <div
-                key={course.course_id}
-                className="border border-gray-300 rounded-md p-1"
-              >
-                <div className="flex justify-between items-center">
-                  <div className="flex space-x-">
-                    <span className="text-gray-700 font-semibold">
-                      {course.course_id}
-                    </span>
-                    <span className="text-gray-700 ">
-                      {course.courseNameTH}
-                      <p> {course.courseNameENG}</p>
-                    </span>
-                    <span className="text-gray-500">
-                      น(ท-ป-ค): {course.courseUnit}({course.courseTheory}-
-                      {course.coursePractice}-{course.categoryResearch})
-                    </span>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      type="button"
-                      className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-600"
-                      onClick={() => handleEditCourseClick(course)}
-                    >
-                      แก้ไข
-                    </button>
+            {courses.map((course) => {
+              // หาหมวดหมู่และกลุ่มที่เกี่ยวข้องกับรายวิชา
+              const courseCategory = categories.find(
+                (category) => category.category_id === course.category_id
+              );
+              const courseGroup = groups.find(
+                (group) => group.group_id === course.group_id
+              ); // ค้นหากลุ่มตาม group_id
+
+              return (
+                <div
+                  key={course.course_id}
+                  className="border border-gray-300 rounded-md p-1"
+                >
+                  <div className="flex justify-between items-center">
                     <div className="flex space-x-2">
+                      <span className="text-gray-700 font-semibold">
+                        {course.course_id}
+                      </span>
+                      <span className="text-gray-700 ">
+                        {course.courseNameTH}
+                        <p>{course.courseNameENG}</p>
+                      </span>
+                      <span className="text-gray-500">
+                        น(ท-ป-ค): {course.courseUnit}({course.courseTheory}-
+                        {course.coursePractice}-{course.categoryResearch})
+                      </span>
+                    </div>
+                    {/* เพิ่ม badge สำหรับหมวดหมู่และกลุ่ม */}
+                    <div className="flex space-x-2">
+                      {courseCategory && (
+              <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">
+                          {courseCategory.category_name}
+                        </span>
+                      )}
+                      {courseGroup && (
+              <span className="bg-green-700 text-white px-2 py-1 rounded-full text-xs">
+                          กลุ่ม {courseGroup.group_name}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        type="button"
+                        className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-600"
+                        onClick={() => handleEditCourseClick(course)}
+                      >
+                        แก้ไข
+                      </button>
                       <button
                         type="button"
                         className="bg-red text-white px-4 py-2 rounded hover:bg-orange-700"
@@ -213,9 +266,10 @@ const EditCourse = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
+
           <div className="flex justify-between py-2">
             <button
               type="button"
