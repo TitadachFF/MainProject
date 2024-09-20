@@ -73,7 +73,7 @@ const Fillgrade = () => {
             parsedUserData.decoded.academic.academic_name || "";
 
           const response = await axios.get(
-            `http://localhost:3000/api/getRegisters/${studentId}`,
+            `http://localhost:3000/api/getStudentById/${studentId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -113,56 +113,35 @@ const Fillgrade = () => {
 
           subjectsResponse.data.forEach((register) => {
             yearSet.add(register.year);
-            register.listcourseregister.forEach((course) => {
+            register.listcourseregister.forEach((listRegister) => {
               const fullCourseData = allCoursesResponse.data.find(
-                (c) => c.course_id === course.course_id
+                (c) => c.course_id === listRegister.course.course_id
               );
 
               if (fullCourseData) {
                 const enhancedCourse = {
-                  ...course,
-                  courseNameTH: fullCourseData.courseNameTH || "",
-                  courseUnit: fullCourseData.courseUnit || "",
-                  year: register.year, // Add year to course data
+                  ...listRegister.course,
+                  courseNameTH: listRegister.course.courseNameTH || "",
+                  courseUnit: listRegister.course.courseUnit || "",
+                  listcourseregister_id: listRegister.listcourseregister_id,
+                  grade: listRegister.grade, // เพิ่มเกรดจาก listcourseregister
+                  teacher: listRegister.teacher, // เพิ่ม teacher จาก listcourseregister
                 };
 
                 coursesList.push(enhancedCourse);
-                courseSemesterMapping.set(course.course_id, register.semester);
+                courseSemesterMapping.set(
+                  listRegister.course.course_id,
+                  register.semester
+                );
 
-                if (course.grade) {
-                  initialGrades[course.course_id] = course.grade;
+                if (listRegister.grade) {
+                  initialGrades[listRegister.course.course_id] =
+                    listRegister.grade;
                 }
-                if (course.teacher_name) {
-                  initialTeachers[course.course_id] = course.teacher_name;
+                if (listRegister.teacher && listRegister.teacher.teacher_name) {
+                  initialTeachers[listRegister.course.course_id] =
+                    listRegister.teacher.teacher_name;
                 }
-              }
-            });
-          });
-
-          response.data.forEach((register) => {
-            register.listcourseregister.forEach((course) => {
-              const enhancedCourse = {
-                ...course,
-                courseNameTH: course.course.courseNameTH || "",
-                year: register.year, // Add year to course data
-                course_id: course.listcourseregister_id, // Assuming course_id is unique
-              };
-
-              coursesList.push(enhancedCourse);
-              courseSemesterMapping.set(
-                course.listcourseregister_id,
-                register.semester
-              );
-
-              if (course.grade) {
-                initialGrades[course.listcourseregister_id] = course.grade;
-              }
-              if (course.teacher) {
-                initialTeachers[course.listcourseregister_id] = `${
-                  course.teacher.titlename || ""
-                } ${course.teacher.firstname || ""} ${
-                  course.teacher.lastname || ""
-                }`;
               }
             });
           });
@@ -183,39 +162,38 @@ const Fillgrade = () => {
 
   useEffect(() => {
     const filterTeachers = () => {
-      Object.keys(teacherSearchTerm).forEach((courseId) => {
-        const searchTerm = teacherSearchTerm[courseId] || "";
-        const filtered = teachers.filter((teacher) =>
-          (teacher.firstname || "")
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-        );
-        setFilteredTeachers((prev) => ({
-          ...prev,
-          [courseId]: filtered.map((teacher) => ({
-            ...teacher,
-            fullName: `${teacher.titlename || ""} ${teacher.firstname || ""} ${
-              teacher.lastname || ""
-            }`,
-          })),
-        }));
-      });
+      if (teachers.length > 0) {
+        // ตรวจสอบว่าข้อมูล teacher ถูกโหลดแล้ว
+        Object.keys(teacherSearchTerm).forEach((courseId) => {
+          const searchTerm = teacherSearchTerm[courseId] || "";
+          const filtered = teachers.filter((teacher) =>
+            (teacher.firstname || "")
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())
+          );
+          setFilteredTeachers((prev) => ({
+            ...prev,
+            [courseId]: filtered.map((teacher) => ({
+              ...teacher,
+              fullName: `${teacher.titlename || ""} ${
+                teacher.firstname || ""
+              } ${teacher.lastname || ""}`,
+            })),
+          }));
+        });
+      }
     };
 
     filterTeachers();
   }, [teacherSearchTerm, teachers]);
 
-  // Filter courses based on selected year and semester
   const filteredCourses = courses.filter(
     (course) =>
-      (semester === null ||
-        courseSemesterMap.get(course.course_id) === semester) &&
-      (selectedYear === "" || course.year === selectedYear)
+      semester === null || courseSemesterMap.get(course.course_id) === semester
   );
 
   const handleYearChange = (e) => {
-    const year = e.target.value;
-    setSelectedYear(year);
+    setSelectedYear(e.target.value);
   };
 
   const handleSemesterChange = (e) => {
@@ -235,15 +213,24 @@ const Fillgrade = () => {
 
     for (const course of courses) {
       const grade = courseGrades[course.course_id];
-      const teacherName = courseTeachers[course.course_id] || "";
+      const selectedTeacherObj = selectedTeacher[course.course_id] || {};
+      const teacherId = selectedTeacherObj.teacher_id || ""; // ดึง teacher_id
 
-      if (grade) {
+      if (grade && teacherId) {
+        // ตรวจสอบว่ามีเกรดและ teacher_id
         try {
+          console.log({
+            grade,
+            teacher_id: teacherId, // ส่งค่า teacher_id
+            course_id: course.course_id,
+            listcourseregister_id: course.listcourseregister_id,
+          });
+
           await axios.put(
             `http://localhost:3000/api/updateRegister/${course.listcourseregister_id}`,
             {
               grade,
-              teacher_name: teacherName,
+              teacher_id: teacherId, // ใช้ teacher_id แทน teacher_name
             },
             {
               headers: { Authorization: `Bearer ${token}` },
@@ -366,90 +353,71 @@ const Fillgrade = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredCourses.length > 0 ? (
-                  filteredCourses.map((course, index) => (
-                    <tr key={index}>
-                      <th>{course.course_id}</th>
-                      <td>{course.courseNameTH}</td>
-                      <td className="px-8">{course.courseUnit}</td>
-                      <td className="px-8">
-                        {courseSemesterMap.get(course.course_id)}
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={
-                            teacherSearchTerm[course.course_id] ||
-                            courseTeachers[course.course_id] ||
-                            ""
-                          }
-                          onChange={(e) =>
-                            handleSearchChange(course.course_id, e)
-                          }
-                          placeholder="ค้นหาผู้สอน"
-                          className="input input-bordered input-sm"
-                        />
-                        <ul className="mt-2">
-                          {filteredTeachers[course.course_id] &&
-                            filteredTeachers[course.course_id].map(
-                              (teacher) => (
-                                <li
-                                  key={teacher.fullName}
-                                  className="cursor-pointer hover:bg-gray-200 p-2 rounded"
-                                  onClick={() =>
-                                    handleTeacherSelect(
-                                      course.course_id,
-                                      teacher
-                                    )
-                                  }
-                                >
-                                  {teacher.fullName}
-                                </li>
-                              )
-                            )}
-                        </ul>
-                      </td>
-                      <td>
-                        <select
-                          className="select select-sm select-bordered"
-                          value={courseGrades[course.course_id] || ""}
-                          onChange={(e) =>
-                            handleGradeChange(course.course_id, e.target.value)
-                          }
-                        >
-                          <option disabled value="">
-                            เลือกเกรด
-                          </option>
-                          {grades.map((grade) => (
-                            <option key={grade} value={grade}>
-                              {gradeDisplayMap[grade] || grade}
-                            </option>
+                {filteredCourses.map((course, index) => (
+                  <tr key={index}>
+                    <th>{course.course_id}</th>
+                    <td>{course.courseNameTH}</td>
+                    <td className="px-8">{course.courseUnit}</td>
+                    <td className="px-8">
+                      {courseSemesterMap.get(course.course_id)}
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={
+                          teacherSearchTerm[course.course_id] ||
+                          courseTeachers[course.course_id] ||
+                          ""
+                        }
+                        onChange={(e) =>
+                          handleSearchChange(course.course_id, e)
+                        }
+                        placeholder="ค้นหาผู้สอน"
+                        className="input input-bordered input-sm"
+                      />
+
+                      <ul className="mt-2">
+                        {filteredTeachers[course.course_id] &&
+                          filteredTeachers[course.course_id].map((teacher) => (
+                            <li
+                              key={teacher.fullName}
+                              className="cursor-pointer hover:bg-gray-200 p-2 rounded"
+                              onClick={() =>
+                                handleTeacherSelect(course.course_id, teacher)
+                              }
+                            >
+                              {teacher.fullName}
+                            </li>
                           ))}
-                        </select>
-                      </td>
-                      <td>
-                        <input
-                          className="input input-bordered input-sm"
-                          type="text"
-                          placeholder="หมายเหตุ"
-                        />
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="text-center">
-                      คุณยังไม่ได้ลงทะเบียน{" "}
-                      <a
-                        className="text-blue-500 hover:underline"
-                        href="/registerplan"
+                      </ul>
+                    </td>
+                    <td>
+                      <select
+                        className="select select-sm select-bordered"
+                        value={courseGrades[course.course_id] || ""}
+                        onChange={(e) =>
+                          handleGradeChange(course.course_id, e.target.value)
+                        }
                       >
-                        {" "}
-                        โปรดลงทะเบียนแผนการเรียน
-                      </a>
+                        <option disabled value="">
+                          เลือกเกรด
+                        </option>
+                        {grades.map((grade) => (
+                          <option key={grade} value={grade}>
+                            {gradeDisplayMap[grade] || grade}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        className="input input-bordered input-sm"
+                        type="text"
+                        placeholder="หมายเหตุ"
+                      />
                     </td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>

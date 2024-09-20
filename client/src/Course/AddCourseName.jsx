@@ -171,7 +171,7 @@ const AddCourseName = () => {
             <p className="font-semibold">Inactive</p>
             <input
               type="checkbox"
-              className="toggle toggle-info mr-2  ml-2"
+              className="toggle toggle-info text-red mr-2  ml-2"
               checked={formData.status === "ACTIVE"}
               onChange={handleToggle}
             />
