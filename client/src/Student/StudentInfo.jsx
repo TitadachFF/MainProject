@@ -36,7 +36,7 @@ const StudentInfo = () => {
         <span className="mx-1">&gt;</span>
         <p>ข้อมูลส่วนตัว</p>
       </div>
-      <div className=" min-h-screen flex justify-center bg-gray-100 ">
+      <div className="h-100% flex justify-center bg-gray-100 pb-10 ">
         <div className="container mx-auto w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-full ">
           <h2 className="text-2xl font-bold mb-6 text-red">ข้อมูลส่วนตัว</h2>
           <div className="border-b mb-6 pb-3">
@@ -96,8 +96,9 @@ const StudentInfo = () => {
                     type="text"
                     className="w-20 mt-1 border border-gray-300 rounded p-2"
                     placeholder="XX"
-                  /> / 
-                    <input
+                  />{" "}
+                  /
+                  <input
                     type="text"
                     className="w-20 mt-1 ml-1 border border-gray-300 rounded p-2"
                     placeholder="XX"
@@ -140,21 +141,35 @@ const StudentInfo = () => {
           )}
           {currentForm === "infotodocument" && (
             <form>
-              <div className="grid grid-cols-1 gap-6" >
-                <div>
+              <div className="grid grid-cols-1 gap-2">
+                <div className="space-y-2">
                   <label className="block text-gray-700">ชื่อ</label>
                   <input
                     type="text"
                     className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="ชื่อ-นามสกุล"
+                    placeholder="ชื่อ"
                   />
-                </div>
-                <div>
-                  <label className="block text-gray-700">ชื่ออังกฤษ</label>
+
+                  <label className="block text-gray-700">นามสกุล</label>
                   <input
                     type="text"
                     className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="ชื่ออังกฤษ"
+                    placeholder="นามสกุล"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-gray-700">ชื่อภาษาอังกฤษ</label>
+                  <input
+                    type="text"
+                    className="w-full mt-1 border border-gray-300 rounded p-2"
+                    placeholder="ชื่อภาษาอังกฤษ"
+                  />
+
+                  <label className="block text-gray-700">นามสกุลภาษาอังกฤษ</label>
+                  <input
+                    type="text"
+                    className="w-full mt-1 border border-gray-300 rounded p-2"
+                    placeholder="นามสกุลภาษาอังกฤษ"
                   />
                 </div>
                 <div>
@@ -287,14 +302,14 @@ const StudentInfo = () => {
               <div className="mt-6 flex justify-between ">
                 <button
                   type="button"
-                  className="px-6 py-2 bg-gray-100 border   rounded-full"
+                  className="px-6 py-2 bg-gray-100 border   rounded-lg"
                   onClick={() => navigate("/student")}
                 >
                   ย้อนกลับ
                 </button>
                 <button
                   type="submit"
-                  className="px-8 py-2 bg-red border border-red text-white rounded-full"
+                  className="px-8 py-2 bg-red border border-red text-white rounded-lg"
                 >
                   บันทึก
                 </button>

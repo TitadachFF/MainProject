@@ -46,6 +46,7 @@ import AddListplan from "../Advice/AddListplan";
 
 import EditGroup from "../Course/EditGroup";
 import EditCourse from "../Course/EditCourse";
+import GraduateCheck from "../Student/GraduateCheck";
 
 const Router = createBrowserRouter([
   {
@@ -188,6 +189,10 @@ const Router = createBrowserRouter([
       {
         path: "/addlistplan",
         element: <AddListplan />,
+      },
+      {
+        path: "/graduate_check",
+        element: <GraduateCheck/>,
       },
     ],
   },
