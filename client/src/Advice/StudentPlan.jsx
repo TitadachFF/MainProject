@@ -4,9 +4,7 @@ import axios from "axios";
 
 const StudentPlan = () => {
   const [studentPlans, setStudentPlans] = useState([]);
-  const [courses, setCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [expandedYear, setExpandedYear] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [planToDelete, setPlanToDelete] = useState(null);
@@ -36,15 +34,18 @@ const StudentPlan = () => {
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
+  
 
-  // Group by year
-  const groupByYear = (plans) => {
+  // Group by year and semester
+  const groupByYearAndSemester = (plans) => {
     return plans.reduce((acc, plan) => {
       const year = plan.year || "Unknown Year";
-      if (!acc[year]) {
-        acc[year] = [];
+      const semester = plan.semester || "Unknown Semester";
+      const key = `${year} - ${semester}`;
+      if (!acc[key]) {
+        acc[key] = [];
       }
-      acc[year].push(plan);
+      acc[key].push(plan);
       return acc;
     }, {});
   };
@@ -55,27 +56,25 @@ const StudentPlan = () => {
       (plan.nameeng || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const groupedPlans = groupByYear(filteredPlans);
+  const groupedPlans = groupByYearAndSemester(filteredPlans);
 
-  const courseMap = courses.reduce((map, course) => {
-    map[course.course_id] = {
-      nameTH: course.courseNameTH,
-      unit: course.courseUnit,
-    };
-    return map;
-  }, {});
-
-  const handleDropdownClick = (year) => {
-    setDropdownOpen(dropdownOpen === year ? null : year);
+  const handleDropdownClick = (key) => {
+    setDropdownOpen(dropdownOpen === key ? null : key);
   };
 
-  const handleEdit = (year, plans) => {
-    navigate("/editstudentplan", { state: { year, plans } });
+  const handleEdit = (key, plans) => {
+    navigate("/editstudentplan", {
+      state: {
+        year: key.split(" - ")[0],
+        plans,
+        studentplan_id: plans[0]?.studentplan_id,
+      },
+    });
   };
 
 
-  const handleDelete = async (year, plans) => {
-    setPlanToDelete({ year, plans });
+  const handleDelete = (key, plans) => {
+    setPlanToDelete({ key, plans });
     setIsDeleteModalOpen(true);
   };
 
@@ -87,8 +86,7 @@ const StudentPlan = () => {
 
     try {
       const token = localStorage.getItem("token");
-      // Assuming the ID is stored in the first plan object in the list
-      const planId = planToDelete.plans[0]?.studentplan_id; // Adjust to match actual property name
+      const planId = planToDelete.plans[0]?.studentplan_id;
 
       if (!planId) {
         console.error("Plan ID is missing");
@@ -105,7 +103,9 @@ const StudentPlan = () => {
       );
 
       setStudentPlans(
-        studentPlans.filter((plan) => plan.year !== planToDelete.year)
+        studentPlans.filter(
+          (plan) => `${plan.year} - ${plan.semester}` !== planToDelete.key
+        )
       );
       setIsDeleteModalOpen(false);
     } catch (error) {
@@ -113,14 +113,13 @@ const StudentPlan = () => {
     }
   };
 
-
   const cancelDelete = () => {
     setIsDeleteModalOpen(false);
     setPlanToDelete(null);
   };
 
   return (
-    <div className="bg-gray-100 h-[839px]">
+    <div className="bg-gray-100 min-h-screen flex flex-col">
       <div className="px-2 text-gray-400 text-sm flex items-center pt-28">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
@@ -132,11 +131,9 @@ const StudentPlan = () => {
         <span className="mx-1">&gt;</span>
         <p>แผนการเรียน</p>
       </div>
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8 flex-grow">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl text-red font-bold text-red-600">
-            แผนการเรียน
-          </h1>
+          <h1 className="text-2xl font-bold text-red-600">แผนการเรียน</h1>
           <input
             type="text"
             className="border rounded-full px-2 py-2 w-60"
@@ -148,20 +145,19 @@ const StudentPlan = () => {
         <div className="mt-8">
           {Object.keys(groupedPlans).length > 0 ? (
             <div>
-              {Object.entries(groupedPlans).map(([year, plans]) => {
+              {Object.entries(groupedPlans).map(([key, plans]) => {
+                const [year, semester] = key.split(" - "); // แยกปีและเทอม
                 return (
-                  <div key={year} className="mb-4 relative">
+                  <div key={key} className="mb-4 relative">
                     <div className="flex items-center">
                       <button
                         type="button"
                         className="w-full text-left bg-red text-white py-4 px-4 rounded flex items-center justify-between"
-                        onClick={() =>
-                          setExpandedYear(expandedYear === year ? null : year)
-                        }
                       >
-                        <span>แผนการเรียน ปีการศึกษา {year}</span>
+                        <span>
+                          แผนการเรียน ปีการศึกษา {year} เทอม {semester}
+                        </span>
                         <svg
-                          data-slot="icon"
                           fill="none"
                           strokeWidth="4"
                           stroke="currentColor"
@@ -171,7 +167,7 @@ const StudentPlan = () => {
                           className="w-6 h-6 text-gray-300 ml-2 cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDropdownClick(year);
+                            handleDropdownClick(key);
                           }}
                         >
                           <path
@@ -181,18 +177,16 @@ const StudentPlan = () => {
                           ></path>
                         </svg>
                       </button>
-                      {dropdownOpen === year && (
-                        <div className="absolute right-6 mt-24 bg-white text-black border rounded shadow-lg w-48 z-50">
+                      {dropdownOpen === key && (
+                        <div className="absolute right-6 mt-2 bg-white text-black border rounded shadow-lg w-48 z-50">
                           <button
-                            onClick={() => handleEdit(year, groupedPlans[year])}
+                            onClick={() => handleEdit(key, plans)}
                             className="block px-4 py-2 hover:bg-gray-200 w-full text-left"
                           >
                             แก้ไขแผนการเรียน
                           </button>
                           <button
-                            onClick={() =>
-                              handleDelete(year, groupedPlans[year])
-                            }
+                            onClick={() => handleDelete(key, plans)}
                             className="block px-4 py-2 hover:bg-gray-200 w-full text-left"
                           >
                             ลบแผนการเรียน
@@ -239,7 +233,7 @@ const StudentPlan = () => {
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red border border-red text-white rounded"
+                className="px-4 py-2 bg-red text-white rounded"
               >
                 ยืนยัน
               </button>

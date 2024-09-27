@@ -123,6 +123,7 @@ const Fillgrade = () => {
                   ...course,
                   courseNameTH: fullCourseData.courseNameTH || "",
                   courseUnit: fullCourseData.courseUnit || "",
+                  year: register.year, // Add year to course data
                 };
 
                 coursesList.push(enhancedCourse);
@@ -176,13 +177,17 @@ const Fillgrade = () => {
     filterTeachers();
   }, [teacherSearchTerm, teachers]);
 
+  // Filter courses based on selected year and semester
   const filteredCourses = courses.filter(
     (course) =>
-      semester === null || courseSemesterMap.get(course.course_id) === semester
+      (semester === null ||
+        courseSemesterMap.get(course.course_id) === semester) &&
+      (selectedYear === "" || course.year === selectedYear)
   );
 
   const handleYearChange = (e) => {
-    setSelectedYear(e.target.value);
+    const year = e.target.value;
+    setSelectedYear(year);
   };
 
   const handleSemesterChange = (e) => {
@@ -206,13 +211,6 @@ const Fillgrade = () => {
 
       if (grade) {
         try {
-          console.log({
-            grade,
-            teacher_name: teacherName,
-            course_id: course.course_id,
-            listcourseregister_id: course.listcourseregister_id,
-          });
-
           await axios.put(
             `http://localhost:3000/api/updateRegister/${course.listcourseregister_id}`,
             {
@@ -340,70 +338,90 @@ const Fillgrade = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredCourses.map((course, index) => (
-                  <tr key={index}>
-                    <th>{course.course_id}</th>
-                    <td>{course.courseNameTH}</td>
-                    <td className="px-8">{course.courseUnit}</td>
-                    <td className="px-8">
-                      {courseSemesterMap.get(course.course_id)}
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={
-                          teacherSearchTerm[course.course_id] ||
-                          courseTeachers[course.course_id] ||
-                          ""
-                        }
-                        onChange={(e) =>
-                          handleSearchChange(course.course_id, e)
-                        }
-                        placeholder="ค้นหาผู้สอน"
-                        className="input input-bordered input-sm"
-                      />
-                      <ul className="mt-2">
-                        {filteredTeachers[course.course_id] &&
-                          filteredTeachers[course.course_id].map((teacher) => (
-                            <li
-                              key={teacher.fullName}
-                              className="cursor-pointer hover:bg-gray-200 p-2 rounded"
-                              onClick={() =>
-                                handleTeacherSelect(course.course_id, teacher)
-                              }
-                            >
-                              {teacher.fullName}
-                            </li>
-                          ))}
-                      </ul>
-                    </td>
-                    <td>
-                      <select
-                        className="select select-sm select-bordered"
-                        value={courseGrades[course.course_id] || ""}
-                        onChange={(e) =>
-                          handleGradeChange(course.course_id, e.target.value)
-                        }
-                      >
-                        <option disabled value="">
-                          เลือกเกรด
-                        </option>
-                        {grades.map((grade) => (
-                          <option key={grade} value={grade}>
-                            {gradeDisplayMap[grade] || grade}
+                {filteredCourses.length > 0 ? (
+                  filteredCourses.map((course, index) => (
+                    <tr key={index}>
+                      <th>{course.course_id}</th>
+                      <td>{course.courseNameTH}</td>
+                      <td className="px-8">{course.courseUnit}</td>
+                      <td className="px-8">
+                        {courseSemesterMap.get(course.course_id)}
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          value={
+                            teacherSearchTerm[course.course_id] ||
+                            courseTeachers[course.course_id] ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            handleSearchChange(course.course_id, e)
+                          }
+                          placeholder="ค้นหาผู้สอน"
+                          className="input input-bordered input-sm"
+                        />
+                        <ul className="mt-2">
+                          {filteredTeachers[course.course_id] &&
+                            filteredTeachers[course.course_id].map(
+                              (teacher) => (
+                                <li
+                                  key={teacher.fullName}
+                                  className="cursor-pointer hover:bg-gray-200 p-2 rounded"
+                                  onClick={() =>
+                                    handleTeacherSelect(
+                                      course.course_id,
+                                      teacher
+                                    )
+                                  }
+                                >
+                                  {teacher.fullName}
+                                </li>
+                              )
+                            )}
+                        </ul>
+                      </td>
+                      <td>
+                        <select
+                          className="select select-sm select-bordered"
+                          value={courseGrades[course.course_id] || ""}
+                          onChange={(e) =>
+                            handleGradeChange(course.course_id, e.target.value)
+                          }
+                        >
+                          <option disabled value="">
+                            เลือกเกรด
                           </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td>
-                      <input
-                        className="input input-bordered input-sm"
-                        type="text"
-                        placeholder="หมายเหตุ"
-                      />
+                          {grades.map((grade) => (
+                            <option key={grade} value={grade}>
+                              {gradeDisplayMap[grade] || grade}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          className="input input-bordered input-sm"
+                          type="text"
+                          placeholder="หมายเหตุ"
+                        />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="text-center">
+                      คุณยังไม่ได้ลงทะเบียน{" "}
+                      <a
+                        className="text-blue-500 hover:underline"
+                        href="/registerplan"
+                      >
+                        {" "}
+                        โปรดลงทะเบียนแผนการเรียน
+                      </a>
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

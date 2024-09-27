@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import AddListplan from "./AddListplan"; // Make sure you import the AddListplan component
+import AddListplan from "./AddListplan";
 
 const AddStudentplan = () => {
   const navigate = useNavigate();
@@ -8,12 +8,30 @@ const AddStudentplan = () => {
   const [currentForm, setCurrentForm] = useState("");
   const [selectedTerm, setSelectedTerm] = useState("");
   const [year, setYear] = useState("");
+  const [majors, setMajors] = useState([]); // State for storing majors
+  const [selectedMajor, setSelectedMajor] = useState(""); // State for selected major
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const form = query.get("form") || "addCourse";
     setCurrentForm(form);
+
+    // Fetch majors when the component is mounted
+    fetchMajors();
   }, [location.search]);
+
+  const fetchMajors = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/getAllMajors"); // Fetch majors from API
+      if (!response.ok) {
+        throw new Error("Failed to fetch majors");
+      }
+      const data = await response.json();
+      setMajors(data); 
+    } catch (error) {
+      console.error("Error fetching majors:", error);
+    }
+  };
 
   const updateQueryString = (form) => {
     navigate(`?form=${form}`);
@@ -27,16 +45,15 @@ const AddStudentplan = () => {
     setYear(e.target.value);
   };
 
+  const handleMajorChange = (e) => {
+    setSelectedMajor(e.target.value);
+  };
+
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      console.log("Submitting student plan with data:", {
-        year: year,
-        semester: selectedTerm,
-      });
-
-      if (!year || !selectedTerm) {
+      if (!year || !selectedTerm || !selectedMajor) {
         throw new Error("กรุณากรอกข้อมูลให้ครบถ้วน");
       }
 
@@ -51,6 +68,7 @@ const AddStudentplan = () => {
           body: JSON.stringify({
             year: year,
             semester: parseInt(selectedTerm, 10),
+            major_id: parseInt(selectedMajor, 10),
           }),
         }
       );
@@ -119,7 +137,7 @@ const AddStudentplan = () => {
           {currentForm === "addCourse" && (
             <form className="grid grid-cols-3 gap-4 mb-4">
               <div className="col-span-3 flex space-x-4">
-                <div className="flex flex-col w-1/2">
+                <div className="flex flex-col w-1/3">
                   <label className="mb-2">ปีการศึกษา</label>
                   <input
                     type="text"
@@ -129,7 +147,7 @@ const AddStudentplan = () => {
                     onChange={handleYearChange}
                   />
                 </div>
-                <div className="flex flex-col w-1/2">
+                <div className="flex flex-col w-1/3">
                   <label className="mb-2">เทอม</label>
                   <select
                     className="border rounded-full px-2 py-2 text-sm"
@@ -141,9 +159,23 @@ const AddStudentplan = () => {
                     <option value="2">เทอม 2</option>
                   </select>
                 </div>
+                <div className="flex flex-col w-1/3">
+                  <label className="mb-2">สาขาวิชา</label>
+                  <select
+                    className="border rounded-full px-2 py-2 text-sm"
+                    value={selectedMajor}
+                    onChange={handleMajorChange}
+                  >
+                    <option value="">เลือกสาขาวิชา</option>
+                    {majors.map((major) => (
+                      <option key={major.major_id} value={major.major_id}>
+                        {major.majorNameTH}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              {/* Buttons at left and right corners */}
               <div className="col-span-3 mt-6 flex justify-between">
                 <button
                   type="button"
@@ -163,8 +195,7 @@ const AddStudentplan = () => {
             </form>
           )}
 
-          {currentForm === "addlistplan" && <AddListplan />}{" "}
-
+          {currentForm === "addlistplan" && <AddListplan />}
         </div>
       </div>
     </div>

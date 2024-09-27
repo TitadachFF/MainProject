@@ -5,39 +5,50 @@ import { useNavigate, useLocation } from "react-router-dom";
 const EditStudentPlan = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [plans, setPlans] = useState([]);
   const [courses, setCourses] = useState([]);
-  const [editingPlan, setEditingPlan] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [plan, setPlan] = useState(null);
   const [formData, setFormData] = useState({
     course_id: "",
     year: "",
     semester: "",
   });
 
-  // Modal state
   const [modalMessage, setModalMessage] = useState("");
   const [modalDescription, setModalDescription] = useState("");
   const [showModal, setShowModal] = useState(false);
-
-  // Confirmation modal state
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
   const [planToDelete, setPlanToDelete] = useState(null);
 
   useEffect(() => {
-    fetchStudentPlans();
-    fetchCourses(); // Fetch courses when component mounts
-  }, []);
+    const studentPlanId = location.state.studentplan_id;
+    fetchStudentPlanById(studentPlanId);
+    fetchCourses();
+    fetchCategories();
+    fetchGroups();
+  }, [location.state.studentplan_id]);
 
-  const fetchStudentPlans = async () => {
+  const fetchStudentPlanById = async (studentPlanId) => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/getStudentPlans"
+        `http://localhost:3000/api/getStudentplanById/${studentPlanId}`
       );
-      console.log("Student Plans data:", response.data); // Log all student plans data
-      setPlans(response.data);
+      setPlan(response.data);
+      if (response.data.Listcoursestudentplan.length > 0) {
+        setFormData({
+          course_id: response.data.Listcoursestudentplan[0]?.course_id || "",
+          year: response.data.year || "",
+          semester: response.data.semester || "",
+        });
+      }
     } catch (error) {
-      console.error("Error fetching student plans:", error);
+      console.error("Error fetching student plan:", error);
     }
+  };
+
+  const getCourseDetails = (courseId) => {
+    return courses.find((course) => course.course_id === courseId) || {};
   };
 
   const fetchCourses = async () => {
@@ -45,189 +56,70 @@ const EditStudentPlan = () => {
       const response = await axios.get(
         "http://localhost:3000/api/getAllCourses"
       );
-      console.log("All Courses data:", response.data); // Log all courses data
       setCourses(response.data);
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
   };
 
-  const handleEditClick = (plan) => {
-    setEditingPlan(plan);
-    setFormData({
-      course_id: plan.Listcoursestudentplan[0]?.course?.course_id || "",
-      year: plan.year || "",
-      semester: plan.semester || "",
-    });
-  };
-
-  const handleDeleteClick = (plan, course_id) => {
-    setPlanToDelete(plan);
-    setFormData((prevData) => ({
-      ...prevData,
-      course_id: course_id, // Make sure this is correctly set
-    }));
-    setConfirmDeleteModal(true);
-  };
-
-  const handleConfirmDelete = async () => {
+  const fetchCategories = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("ไม่พบโทเค็นการยืนยันตัวตน");
-      }
-
-      const { course_id } = formData;
-      if (!course_id) {
-        throw new Error("รหัสวิชาไม่ถูกต้อง");
-      }
-
-      // Log the plan and form data
-      console.log("Plan to delete:", planToDelete);
-      console.log("Form Data:", formData);
-
-      // Find the correct Listcoursestudentplan_id
-      const plan = plans.find(
-        (p) => p.studentplan_id === planToDelete.studentplan_id
-      );
-      const courseToDelete = plan?.Listcoursestudentplan.find(
-        (course) => course.course_id === course_id
-      );
-
-      if (!courseToDelete) {
-        throw new Error("ไม่พบรหัส Listcoursestudentplan");
-      }
-
-      // Ensure the Listcoursestudentplan_id is valid
-      const { Listcoursestudentplan_id } = courseToDelete;
-      if (!Listcoursestudentplan_id) {
-        throw new Error("รหัส Listcoursestudentplan ไม่ถูกต้อง");
-      }
-
-      // Log the ID being sent to the API
-      console.log("Listcoursestudentplan_id:", Listcoursestudentplan_id);
-
-      // Perform the deletion
-      const response = await axios.delete(
-        `http://localhost:3000/api/deleteListStudentplan/${Listcoursestudentplan_id}`,
+      const response = await fetch(
+        "http://localhost:3000/api/getAllCategories",
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-
-      console.log("Delete response:", response.data);
-
-      // Update the plans state to reflect deletion
-      setPlans((prevPlans) =>
-        prevPlans.map((plan) =>
-          plan.studentplan_id === planToDelete.studentplan_id
-            ? {
-                ...plan,
-                Listcoursestudentplan: plan.Listcoursestudentplan.filter(
-                  (courseDetail) => courseDetail.course_id !== course_id
-                ),
-              }
-            : plan
-        )
-      );
-
-      showModalSuccess("ลบสำเร็จ", "แผนการเรียนได้รับการลบเรียบร้อยแล้ว");
+      const data = await response.json();
+      setCategories(data);
     } catch (error) {
-      console.error("Error deleting student plans:", error);
-      showModalError("ข้อผิดพลาดในการลบ", error.message);
-    } finally {
-      setConfirmDeleteModal(false);
-      setPlanToDelete(null);
+      console.error("Error fetching categories:", error.message);
     }
+  };
+
+  const fetchGroups = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/getAllGroupMajors"
+      );
+      setGroups(response.data);
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    }
+  };
+
+  const handleEditClick = (courseDetail) => {
+    setFormData({
+      course_id: courseDetail.course_id,
+      year: plan.year,
+      semester: plan.semester,
+    });
+  };
+
+  const handleDeleteClick = (courseDetail) => {
+    setPlanToDelete(courseDetail);
+    setConfirmDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    // Add logic for deletion
+    setConfirmDeleteModal(false);
   };
 
   const handleCancelDelete = () => {
     setConfirmDeleteModal(false);
-    setPlanToDelete(null);
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("ไม่พบโทเค็นการยืนยันตัวตน");
-      }
-
-      const studentPlanId = editingPlan ? editingPlan.studentplan_id : null;
-
-      if (!studentPlanId) {
-        throw new Error("รหัสแผนการเรียนไม่ถูกกำหนด");
-      }
-
-      const payload = {
-        course_id: formData.course_id,
-        year: formData.year,
-        semester: parseInt(formData.semester),
-      };
-
-      const response = await axios.put(
-        `http://localhost:3000/api/updateStudentPlan/${studentPlanId}`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log("Update response:", response.data);
-
-      await fetchStudentPlans();
-
-      setEditingPlan(null);
-      setFormData({
-        course_id: "",
-        year: "",
-        semester: "",
-      });
-
-      showModalSuccess(
-        "อัพเดตสำเร็จ",
-        "แผนการเรียนได้รับการอัพเดตเรียบร้อยแล้ว"
-      );
-    } catch (error) {
-      console.error("Error updating student plans:", error);
-      showModalError("ข้อผิดพลาดในการอัพเดต", error.message);
-    }
-  };
-
-  const showModalError = (message, description) => {
-    setModalMessage(message);
-    setModalDescription(description);
-    setShowModal(true);
-    setTimeout(() => {
-      setShowModal(false);
-    }, 3000);
-  };
-
-  const showModalSuccess = (message, description) => {
-    setModalMessage(message);
-    setModalDescription(description);
-    setShowModal(true);
-    setTimeout(() => {
-      setShowModal(false);
-    }, 2000);
-  };
-
-  const getCourseDetails = (course_id) => {
-    return courses.find((course) => course.course_id === course_id) || {};
-  };
+  // คำนวณหน่วยกิตรวม
+  const totalCredits = plan
+    ? plan.Listcoursestudentplan.reduce((total, courseDetail) => {
+        const course = getCourseDetails(courseDetail.course_id);
+        return total + (course.courseUnit || 0);
+      }, 0)
+    : 0;
 
   return (
     <div className="bg-gray-100 min-h-screen p-6">
@@ -247,7 +139,7 @@ const EditStudentPlan = () => {
         <p>แก้ไขแผนการเรียน</p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto mt-10">
+      <div className="bg-white rounded-lg shadow-lg p-6 max-w-7xl mx-auto mt-10">
         <h1 className="text-2xl font-bold text-red mb-6">แก้ไขแผนการเรียน</h1>
 
         <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm">
@@ -262,65 +154,82 @@ const EditStudentPlan = () => {
             </tr>
           </thead>
           <tbody>
-            {plans.length > 0 ? (
-              plans.map((plan) =>
-                plan.Listcoursestudentplan.length > 0 ? (
-                  plan.Listcoursestudentplan.map((courseDetail) => {
-                    const course = getCourseDetails(courseDetail.course_id);
-                    return (
-                      <tr
-                        key={courseDetail.course_id}
-                        className="hover:bg-gray-100"
+            {plan && plan.Listcoursestudentplan.length > 0 ? (
+              plan.Listcoursestudentplan.map((courseDetail) => {
+                const course = getCourseDetails(courseDetail.course_id);
+                const category = categories.find(
+                  (cat) => cat.category_id === course.category_id
+                );
+                const group = groups.find(
+                  (grp) => grp.group_id === course.group_id
+                );
+                return (
+                  <tr
+                    key={courseDetail.course_id}
+                    className="hover:bg-gray-100"
+                  >
+                    <td className="py-2 px-4 border-b text-left">
+                      {course.course_id || "N/A"}
+                    </td>
+
+                    <td className="py-2 px-4 border-b text-left">
+                      <div className="flex items-center">
+                        <span>{course.courseNameTH || "N/A"}</span>
+                        <span className="bg-red text-white text-xs px-2 py-1 ml-2 rounded-xl">
+                          {category ? category.category_name : "ทั่วไป"} (
+                          {group ? group.group_name : "ทั่วไป"})
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="py-2 px-4 border-b text-left">
+                      {plan.year || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border-b text-left">
+                      {plan.semester || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border-b text-left">
+                      {course.courseUnit || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border-b text-left">
+                      <button
+                        className="bg-orange-300 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                        onClick={() => handleEditClick(courseDetail)}
                       >
-                        <td className="py-2 px-4 border-b text-left">
-                          {course.course_id || "N/A"}
-                        </td>
-                        <td className="py-2 px-4 border-b text-left">
-                          {course.courseNameTH || "N/A"}
-                        </td>
-                        <td className="py-2 px-4 border-b text-left">
-                          {plan.year || "N/A"}
-                        </td>
-                        <td className="py-2 px-4 border-b text-left">
-                          {plan.semester || "N/A"}
-                        </td>
-                        <td className="py-2 px-4 border-b text-left">
-                          {course.courseUnit || "N/A"}
-                        </td>
-                        <td className="py-2 px-4 border-b text-left">
-                          <button
-                            className="bg-orange-300 text-white px-4 py-2 rounded hover:bg-yellow-600"
-                            onClick={() => handleEditClick(plan)}
-                          >
-                            แก้ไข
-                          </button>
-                          <button
-                            className="bg-red text-white px-4 py-2 rounded hover:bg-red-600 ml-2"
-                            onClick={() =>
-                              handleDeleteClick(plan, courseDetail.course_id)
-                            }
-                          >
-                            ลบ
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr key={plan.studentplan_id}>
-                    
+                        แก้ไข
+                      </button>
+                      <button
+                        className="bg-red text-white px-4 py-2 rounded hover:bg-red-600 ml-2"
+                        onClick={() => handleDeleteClick(courseDetail)}
+                      >
+                        ลบ
+                      </button>
+                    </td>
                   </tr>
-                )
-              )
+                );
+              })
             ) : (
               <tr>
                 <td colSpan="6" className="py-2 px-4 text-center border-b">
-                  ไม่มีรายการแผนการเรียน
+                  ไม่มีรายวิชาสำหรับแผนการเรียนนี้
                 </td>
               </tr>
             )}
           </tbody>
+          {/* แถวแสดงหน่วยกิตรวม */}
+          <tfoot>
+            <tr>
+              <td colSpan="4" className="py-2 px-4 text-right font-bold">
+                หน่วยกิตรวม:
+              </td>
+              <td className="py-2 px-4 border-b text-left font-bold">
+                {totalCredits} หน่วยกิต
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
         </table>
+
         <div className="mt-6 flex justify-between py-12">
           <button
             type="button"
@@ -337,88 +246,45 @@ const EditStudentPlan = () => {
             เพิ่มรายวิชา
           </button>
         </div>
-        {/* Edit form */}
-        {editingPlan && (
-          <form onSubmit={handleSubmit} className="mt-6">
-            <div className="mb-4">
-              <label className="block text-gray-700">รหัสวิชา:</label>
-              <select
-                name="course_id"
-                value={formData.course_id}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded p-2"
+
+        {showModal && (
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-4">
+              <h2 className="text-xl font-bold">{modalMessage}</h2>
+              <p>{modalDescription}</p>
+              <button
+                onClick={() => setShowModal(false)}
+                className="mt-4 bg-gray-300 text-black px-4 py-2 rounded"
               >
-                <option value="">เลือกวิชา</option>
-                {courses.map((course) => (
-                  <option key={course.course_id} value={course.course_id}>
-                    {course.course_id} - {course.courseNameTH}
-                  </option>
-                ))}
-              </select>
+                ปิด
+              </button>
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">ปีการศึกษา:</label>
-              <input
-                type="text"
-                name="year"
-                value={formData.year}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded p-2"
-              />
+          </div>
+        )}
+
+        {confirmDeleteModal && (
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-4">
+              <h2 className="text-xl font-bold">ยืนยันการลบ</h2>
+              <p>คุณต้องการลบแผนการเรียนนี้หรือไม่?</p>
+              <div className="mt-4">
+                <button
+                  onClick={handleConfirmDelete}
+                  className="bg-red-500 text-white px-4 py-2 rounded"
+                >
+                  ยืนยัน
+                </button>
+                <button
+                  onClick={handleCancelDelete}
+                  className="ml-2 bg-gray-300 text-black px-4 py-2 rounded"
+                >
+                  ยกเลิก
+                </button>
+              </div>
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">เทอม:</label>
-              <input
-                type="number"
-                name="semester"
-                value={formData.semester}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded p-2"
-              />
-            </div>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-red border border-red text-white rounded"
-            >
-              บันทึก
-            </button>
-          </form>
+          </div>
         )}
       </div>
-
-      {/* Confirmation Modal */}
-      {confirmDeleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-xl">
-            <h1 className="text-lg font-bold mb-4">ยืนยันการลบ</h1>
-            <p className="mb-4">คุณต้องการลบแผนการเรียนนี้ใช่หรือไม่?</p>
-            <div className="flex justify-between">
-              <button
-                className="bg-gray-300 text-black px-4 py-2 rounded"
-                onClick={handleCancelDelete}
-              >
-                ยกเลิก
-              </button>
-              <button
-                className="bg-red text-white px-4 py-2 rounded"
-                onClick={handleConfirmDelete}
-              >
-                ยืนยันการลบ
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Error and Success Modal */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-xl">
-            <h1 className="text-lg font-bold mb-4">{modalMessage}</h1>
-            <p>{modalDescription}</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
