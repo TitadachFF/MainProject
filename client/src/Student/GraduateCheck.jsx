@@ -8,6 +8,10 @@ const GraduateCheck = () => {
   const [academicName, setAcademicName] = useState("");
   const [majorUnit, setMajorUnit] = useState(null);
   const [totalGPA, setTotalGPA] = useState(0);
+  const [categoryData, setCategoryData] = useState([]);
+  const [groupData, setGroupData] = useState([]);
+  const [courseData, setCourseData] = useState([]);
+  const [courseGroupedData, setCourseGroupedData] = useState({});
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -39,8 +43,10 @@ const GraduateCheck = () => {
           );
 
           const registerData = registerResponse.data;
+          console.log(registerData);
+          
 
-          const gradeToGPA = (grade) => {
+          const gradeToValue = (grade) => {
             switch (grade) {
               case "A":
                 return 4.0;
@@ -57,22 +63,86 @@ const GraduateCheck = () => {
               case "D":
                 return 1.0;
               default:
-                return null;
+                return 0;
             }
           };
-          console.log(registerData);
-          // Logเกรดออกมาดู
           if (registerData.length > 0) {
+            const categories_id = registerData[0].listcourseregister.map(
+              (course) => course.course.category_id
+            );
+
+            const group_id = registerData[0].listcourseregister.map(
+              (course) => course.course.group_id
+            );
+
+            const course_id = registerData[0].listcourseregister.map(
+              (course) => course.course.course_id
+            );
+
             const grades = registerData[0].listcourseregister.map(
               (course) => course.grade
             );
-            const gpaValues = grades.map(gradeToGPA).filter((value) => value);
-            const total = gpaValues.reduce((acc, gpa) => acc + gpa, 0);
-            setTotalGPA(total);
-            console.log("Total GPA:", totalGPA);
-          } else {
-            console.log("ไม่มีข้อมูลการลงทะเบียน");
+
+            const categoryPromises = categories_id.map((id) =>
+              axios.get(`http://localhost:3000/api/getCategoryById/${id}`)
+            );
+            const categoryResponses = await Promise.all(categoryPromises);
+            const categoryData = categoryResponses.map((res) => res.data);
+            setCategoryData(categoryData);
+
+            const groupPromises = group_id.map((id) =>
+              axios.get(`http://localhost:3000/api/getGroupMajorById/${id}`)
+            );
+            const groupResponses = await Promise.all(groupPromises);
+            const groupData = groupResponses.map((res) => res.data);
+            setGroupData(groupData);
+
+            const coursePromises = course_id.map((id) =>
+              axios.get(`http://localhost:3000/api/getCourseById/${id}`)
+            );
+            const courseResponses = await Promise.all(coursePromises);
+            const courseData = courseResponses.map((res) => res.data);
+            setCourseData(courseData);
+
+            // Group courses by category and then by group
+            const groupedCourses = {};
+            courseResponses.forEach((courseResponse, index) => {
+              const course = courseResponse.data;
+              const categoryId = categories_id[index];
+              const groupId = group_id[index];
+
+              if (!groupedCourses[categoryId]) {
+                groupedCourses[categoryId] = {
+                  categoryName:
+                    categoryData.find((cat) => cat.category_id === categoryId)
+                      ?.category_name || "ไม่ทราบ",
+                  groups: {},
+                };
+              }
+
+              if (!groupedCourses[categoryId].groups[groupId]) {
+                groupedCourses[categoryId].groups[groupId] = {
+                  groupName:
+                    groupData.find((g) => g.group_id === groupId)?.group_name ||
+                    "กลุ่มที่ไม่มีชื่อ",
+                  courses: [],
+                };
+              }
+
+              groupedCourses[categoryId].groups[groupId].courses.push(course);
+            });
+
+            setCourseGroupedData(groupedCourses);
           }
+          // รวมเกรดจากทุก register_id
+          let totalSum = 0;
+          registerData.forEach((register) => {
+            register.listcourseregister.forEach((course) => {
+              const gradeValue = gradeToValue(course.grade);
+              totalSum += gradeValue;
+            });
+          });
+          setTotalGPA(totalSum);
         } else {
           console.error("No token or user data found");
         }
@@ -125,22 +195,27 @@ const GraduateCheck = () => {
                   </label>
                   <label className="block text-gray-700">
                     หน่วยกิตที่ต้องการ:{" "}
-                    <span className="font-bold">{majorUnit || "ไม่ทราบ"}</span>
+                    <span className="font-bold">{majorUnit} </span>
+                    หน่วยกิต
                   </label>
                   <label className="block text-gray-700">
                     หน่วยกิตปัจจุบัน:{" "}
-                    <span className="font-bold">{totalGPA.toFixed(1)}</span>
+                    <span className="font-bold">{totalGPA.toFixed(1)} </span>
+                    หน่วยกิต
                   </label>
                   <label className="flex text-gray-700 items-center">
                     <p className="mr-1"> ต้องการอีก: </p>
 
-                    <span className="font-bold text-red ">
-                      {remainingCredits < majorUnit ? (
-                        remainingCredits.toFixed(1)
-                      ) : (
-                        <p className="text-green-600">หน่วยกิตครบแล้ว</p>
-                      )}
-                    </span>
+                    {totalGPA >= majorUnit ? (
+                      <span className="text-green-600 font-bold">
+                        หน่วยกิตครบแล้ว
+                      </span>
+                    ) : (
+                      <span className="flex font-bold text-red">
+                        {remainingCredits.toFixed(1)}{" "}
+                        <p className="ml-1 font-normal text-black"> หน่วยกิต</p>
+                      </span>
+                    )}
                   </label>
                 </div>
                 <div className="flex space-x-4">
@@ -166,72 +241,51 @@ const GraduateCheck = () => {
           <div className="p-4">
             {/* First Category */}
 
-            <div className="border border-black rounded-lg p-4 mb-6">
-              <div className="grid grid-cols-7 text-center font-bold">
-                <div className="border border-r-0 border-black p-2">
-                  รหัสวิชา
-                </div>
-                <div className="border border-r-0 border-black p-2 col-span-2">
-                  ชื่อวิชา
-                </div>
-                <div className="border border-r-0 border-black p-2">
-                  นก./ชม.
-                </div>
-                <div className="border border-r-0 border-black p-2">
-                  ภาคเรียน
-                </div>
-                <div className="border border-r-0 border-black p-2">
-                  ชื่อผู้สอน
-                </div>
-                <div className="border border-black p-2">ผลการเรียน</div>
-              </div>
-
-              <div className="border border-black border-t-0 flex items-center justify-between p-2">
-                <div className="text-black font-bold mb-2">category_name</div>
-                <div className="flex text-center">
-                  ไม่ต่ำกว่า <p>category_unit</p> หน่วยกิต
-                </div>
-              </div>
-              <div className="border border-t-0 border-black flex items-center justify-between p-2">
-                <div className="ml-8 mb-1">group_name</div>
-                <div className="flex text-center">
-                  จำนวนไม่น้อยกว่า <p>group_unit</p> หน่วยกิต
-                </div>
-              </div>
-              <div className="mb-2">
-                <div className="grid grid-cols-7 text-center ">
-                  <div className="border border-r-0 border-t-0 border-black p-2">
-                    course_id
+            {Object.keys(courseGroupedData).length > 0 ? (
+              Object.entries(courseGroupedData).map(
+                ([categoryId, { categoryName, groups }]) => (
+                  <div key={categoryId} className="mb-6">
+                    <div className="font-semibold text-lg">{categoryName}</div>
+                    {Object.entries(groups).map(
+                      ([groupId, { groupName, courses, group_unit }]) => (
+                        <div key={groupId} className="mt-4">
+                          <div className="font-semibold">
+                            {groupName}
+                            {group_unit}
+                          </div>
+                          {courses.map((course, index) => (
+                            <div
+                              key={index}
+                              className="grid grid-cols-7 text-center border border-black p-2"
+                            >
+                              <div className="border border-r-0 border-black p-2">
+                                {course.course_id}
+                              </div>
+                              <div className="border border-r-0 border-black p-2 col-span-2">
+                                {course.courseNameTH}
+                              </div>
+                              <div className="border border-r-0 border-black p-2">
+                                {course.courseUnit}({course.courseTheory}-
+                                {course.coursePractice}-
+                                {course.categoryResearch})
+                              </div>
+                              <div className="border border-r-0 border-black p-2">
+                                {course.semester}
+                              </div>
+                              <div className="border border-r-0 border-black p-2">
+                                {course.grade}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    )}
                   </div>
-                  <div className="border border-r-0 border-t-0 border-black p-2 col-span-2">
-                    courseNameTH
-                  </div>
-                  <div className="border border-r-0 border-t-0 border-black p-2">
-                    courseUnit
-                  </div>
-                  <div className="border border-r-0 border-t-0 border-black p-2">
-                    semester
-                  </div>
-                  <div className="border border-r-0 border-t-0 border-black p-2">
-                    teacher.firstname
-                  </div>
-                  <div className="border border-t-0 border-black p-2 text-center">
-                    grade
-                  </div>
-                </div>
-
-                <div className="text-right pr-2 border border-t-0 border-black">
-                  รวม.....................หน่วยกิต
-                </div>
-              </div>
-
-              {/* Summary Section */}
-              <div className="mt-4">
-                <div className="col-span-6 text-end">
-                  รวมหน่วยกิตตลอดหลักสูตร.......หน่วยกิต
-                </div>
-              </div>
-            </div>
+                )
+              )
+            ) : (
+              <p>กำลังโหลดข้อมูล...</p>
+            )}
           </div>
 
           <div className="mt-6 flex justify-between">

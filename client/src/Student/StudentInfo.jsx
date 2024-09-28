@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import DocumentInfo from "./DocumentInfo";
 
 const StudentInfo = () => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const StudentInfo = () => {
         <p>ข้อมูลส่วนตัว</p>
       </div>
       <div className="h-100% flex justify-center bg-gray-100 pb-10 ">
-        <div className="container mx-auto w-full max-w-3xl bg-white rounded-lg shadow-lg p-6 h-full ">
+        <div className="container mx-auto w-full max-w-7xl bg-white rounded-lg shadow-lg p-6 h-full ">
           <h2 className="text-2xl font-bold mb-6 text-red">ข้อมูลส่วนตัว</h2>
           <div className="border-b mb-6 pb-3">
             <ul className="flex">
@@ -139,183 +140,7 @@ const StudentInfo = () => {
               </div>
             </form>
           )}
-          {currentForm === "infotodocument" && (
-            <form>
-              <div className="grid grid-cols-1 gap-2">
-                <div className="space-y-2">
-                  <label className="block text-gray-700">ชื่อ</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="ชื่อ"
-                  />
-
-                  <label className="block text-gray-700">นามสกุล</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="นามสกุล"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-gray-700">ชื่อภาษาอังกฤษ</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="ชื่อภาษาอังกฤษ"
-                  />
-
-                  <label className="block text-gray-700">นามสกุลภาษาอังกฤษ</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="นามสกุลภาษาอังกฤษ"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">รหัสประจำตัว</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="รหัสประจำตัว"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">เลขบัตรประชาชน</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="เลขบัตรประชาชน"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">คณะ</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="คณะ"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">ศูนย์</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="ศูนย์"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">สาขาวิชา</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="สาขาวิชา"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">วิชาโท</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="วิชาโท"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">ชื่อปริญญา</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="ชื่อปริญญา"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">
-                    ปีการศึกษาที่เข้า
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="ปีการศึกษา"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">สถานภาพ</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="สภานภาพ"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">วิธีรับเข้า</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="วิธีรับเข้า"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">
-                    วุฒิก่อนเข้ารับการศึกษา
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="วุฒิก่อนเข้ารับการศึกษา"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">
-                    สถานะส่งวุฒิการศึกษา
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="สถานะ"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">จบการศึกษาจาก</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="จบการศึกษาจาก"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">อ.ที่ปรึกษา</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="อาจารย์ที่ปรึกษา"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">ที่อยู่</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 border border-gray-300 rounded p-2"
-                    placeholder="ที่อยู่"
-                  />
-                </div>
-              </div>
-              <div className="mt-6 flex justify-between ">
-                <button
-                  type="button"
-                  className="px-6 py-2 bg-gray-100 border   rounded-lg"
-                  onClick={() => navigate("/student")}
-                >
-                  ย้อนกลับ
-                </button>
-                <button
-                  type="submit"
-                  className="px-8 py-2 bg-red border border-red text-white rounded-lg"
-                >
-                  บันทึก
-                </button>
-              </div>
-            </form>
-          )}
+          {currentForm === "infotodocument" && <DocumentInfo />}
         </div>
       </div>
     </div>
