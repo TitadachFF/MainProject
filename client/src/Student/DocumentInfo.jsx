@@ -6,7 +6,6 @@ const DocumentInfo = () => {
   const navigate = useNavigate();
   const [studentId, setStudentId] = useState(null);
   const [academicName, setAcademicName] = useState("");
-
   const [studentData, setStudentData] = useState({
     student_id: "",
     titlenameTh: "",
