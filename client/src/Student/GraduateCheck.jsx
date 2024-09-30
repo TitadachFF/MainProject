@@ -12,6 +12,7 @@ const GraduateCheck = () => {
   const [groupData, setGroupData] = useState([]);
   const [courseData, setCourseData] = useState([]);
   const [courseGroupedData, setCourseGroupedData] = useState({});
+  const [isLoading, setIsLoading] = useState(true); // เช็คสถานะการโหลด
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -44,7 +45,6 @@ const GraduateCheck = () => {
 
           const registerData = registerResponse.data;
           console.log(registerData);
-          
 
           const gradeToValue = (grade) => {
             switch (grade) {
@@ -143,6 +143,7 @@ const GraduateCheck = () => {
             });
           });
           setTotalGPA(totalSum);
+          setIsLoading(false); // ข้อมูลโหลดเสร็จแล้ว
         } else {
           console.error("No token or user data found");
         }
@@ -200,20 +201,32 @@ const GraduateCheck = () => {
                   </label>
                   <label className="block text-gray-700">
                     หน่วยกิตปัจจุบัน:{" "}
-                    <span className="font-bold">{totalGPA.toFixed(1)} </span>
+                    {isLoading ? (
+                      <span className="font-bold text-gray-300">
+                        กำลังโหลด...
+                      </span>
+                    ) : (
+                      <span className="font-bold">
+                        {totalGPA ? totalGPA.toFixed(1) : "N/A"}{" "}
+                      </span>
+                    )}
                     หน่วยกิต
                   </label>
                   <label className="flex text-gray-700 items-center">
-                    <p className="mr-1"> ต้องการอีก: </p>
+                    <p className="mr-1">ต้องการอีก: </p>
 
-                    {totalGPA >= majorUnit ? (
+                    {isLoading ? (
+                      <span className="font-bold text-gray-300">
+                        กำลังโหลด...
+                      </span>
+                    ) : totalGPA >= majorUnit ? (
                       <span className="text-green-600 font-bold">
                         หน่วยกิตครบแล้ว
                       </span>
                     ) : (
                       <span className="flex font-bold text-red">
                         {remainingCredits.toFixed(1)}{" "}
-                        <p className="ml-1 font-normal text-black"> หน่วยกิต</p>
+                        <p className="ml-1 font-normal text-black">หน่วยกิต</p>
                       </span>
                     )}
                   </label>
@@ -222,17 +235,21 @@ const GraduateCheck = () => {
                   <label className=" text-gray-700 flex items-center">
                     <p className="mr-2"> ผลการตรวจสอบ: </p>
                     <span className="text-lg font-bold ">
-                      {remainingCredits <= 0 ? (
-                        <p className="text-green-600">ผ่าน</p>
+                      {isLoading ? (
+                        <span className="font-bold text-gray-300">
+                          กำลังโหลด...
+                        </span>
+                      ) : remainingCredits <= 0 ? (
+                        <p className="text-green-600">ผ่านการตรวจสอบหน่วยกิต</p>
                       ) : (
-                        <p className="text-red">ไม่ผ่าน</p>
+                        <p className="text-red">ไม่ผ่านการตรวจสอบหน่วยกิต</p>
                       )}
                     </span>
                   </label>
                 </div>
               </>
             ) : (
-              <p>กำลังโหลดข้อมูล...</p>
+              <p className="text-gray-300 font-bold">กำลังโหลด...</p>
             )}
           </div>
 
@@ -272,7 +289,7 @@ const GraduateCheck = () => {
                               <div className="border border-r-0 border-black p-2">
                                 {course.semester}
                               </div>
-                              <div className="border border-r-0 border-black p-2">
+                              <div className="border  border-black  p-2">
                                 {course.grade}
                               </div>
                             </div>
@@ -284,7 +301,7 @@ const GraduateCheck = () => {
                 )
               )
             ) : (
-              <p>กำลังโหลดข้อมูล...</p>
+              <p className="text-gray-300 font-bold">กำลังโหลด...</p>
             )}
           </div>
 

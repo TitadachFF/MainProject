@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 const DocumentInfo = () => {
   const navigate = useNavigate();
   const [studentId, setStudentId] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [message, setMessage] = useState("");
   const [academicName, setAcademicName] = useState("");
   const [studentData, setStudentData] = useState({
     student_id: "",
@@ -32,7 +34,7 @@ const DocumentInfo = () => {
     subdistrict: "",
     district: "",
     province: "",
-    advisor: { titlename: "", firstname: "", lastname: "" }, // เพิ่มฟิลด์อาจารย์ที่ปรึกษา
+    advisor: { titlename: "", firstname: "", lastname: "" },
     wanttoend: "",
     yeartoend: "",
   });
@@ -77,7 +79,6 @@ const DocumentInfo = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // สำหรับข้อมูลอาจารย์ที่ปรึกษา
     if (name === "advisor") {
       // ส่งข้อมูลอาจารย์ที่ปรึกษาเป็น string
       setStudentData((prevData) => ({
@@ -93,7 +94,7 @@ const DocumentInfo = () => {
   };
 
   const handleUpdate = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault(); // ป้องกันการ submit ฟอร์มแบบปกติ
     try {
       const token = localStorage.getItem("token");
 
@@ -111,11 +112,18 @@ const DocumentInfo = () => {
         );
 
         console.log("Update response:", response.data);
-        // Optionally navigate to another page or show a success message
-        navigate("/student");
+
+        if (response.status === 200) {
+          document.getElementById("my_modal_1").showModal();
+          setMessage("อัพเดตข้อมูลสำเร็จ!");
+          setIsSuccess(true);
+        }
       }
     } catch (error) {
       console.error("Error updating student data:", error.message);
+      document.getElementById("my_modal_1").showModal();
+      setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
+      setIsSuccess(false);
     }
   };
 
@@ -547,18 +555,46 @@ const DocumentInfo = () => {
       <div className="mt-6 flex justify-between ">
         <button
           type="button"
-          className="px-6 py-2 bg-gray-100 border   rounded-lg"
+          className="p-4 py-2 bg-gray-100 border rounded hover:bg-gray-200 hover:shadow-md"
           onClick={() => navigate("/student")}
         >
           ย้อนกลับ
         </button>
         <button
           type="submit"
-          className="px-8 py-2 bg-red border border-red text-white rounded-lg"
+          className="p-6 py-2 bg-red border text-white rounded hover:bg-gray-400 hover:shadow-md"
         >
           บันทึก
         </button>
       </div>
+      <dialog id="my_modal_1" className="modal">
+        <div className="modal-box">
+          <h3 id="alertmodal" className="font-bold text-lg">
+            {message}
+          </h3>
+          <p className="py-4 text-gray-500">
+            กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
+          </p>
+          <div className="modal-action flex justify-between">
+            <form method="dialog" className="w-full flex justify-between">
+              <button
+                id="close-alertmodal"
+                className="px-10 py-2 bg-white text-red border font-semibold border-red rounded"
+              >
+                ปิด
+              </button>
+              {isSuccess && (
+                <button
+                  className="px-8 py-2 bg-red border border-red text-white rounded"
+                  onClick={() => navigate("/student")}
+                >
+                  หน้าแรก
+                </button>
+              )}
+            </form>
+          </div>
+        </div>
+      </dialog>
     </form>
   );
 };

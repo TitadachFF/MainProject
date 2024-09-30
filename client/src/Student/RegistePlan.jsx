@@ -8,6 +8,8 @@ const RegistePlan = () => {
   const [academicName, setAcademicName] = useState("");
   const [studentplanId, setStudentplanId] = useState(""); // State for selected student plan ID
   const [year, setYear] = useState(""); // State for year
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [message, setMessage] = useState("");
   const [semester, setSemester] = useState(""); // State for semester
   const [studentPlans, setStudentPlans] = useState([]); // State to store the fetched student plans
 
@@ -64,12 +66,16 @@ const RegistePlan = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      console.log("Update response:", response.data);
 
-      alert("ลงทะเบียนสำเร็จ!");
-      navigate("/student");
+      document.getElementById("my_modal_1").showModal();
+      setMessage("ลงทะเบียนสำเร็จ !");
+      setIsSuccess(true);
     } catch (error) {
       console.error("Error registering plan:", error);
-      alert("เกิดข้อผิดพลาดในการลงทะเบียน");
+      document.getElementById("my_modal_1").showModal();
+      setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
+      setIsSuccess(false);
     }
   };
 
@@ -95,19 +101,20 @@ const RegistePlan = () => {
           {studentData && (
             <div className="grid grid-cols-1 gap-6">
               <div className="flex space-x-4">
-                <label className="flex text-gray-700">
-                  ชื่อ:{" "}
+                <label className="flex text-gray-700 font-">
+                  <p className="font-bold"> ชื่อ: </p>
                   <p className=" ml-2">
                     {studentData.firstname} {studentData.lastname}
                   </p>
                 </label>
-                <label className="block text-gray-700">
-                  รหัสนักศึกษา: {studentData.student_id}
+                <label className="flex text-gray-700">
+                  <p className="font-bold mr-2">รหัสนักศึกษา:</p>{" "}
+                  {studentData.student_id}
                 </label>
               </div>
               <div className="flex space-x-4">
-                <label className="block text-gray-700">
-                  สาขาวิชา: {academicName}
+                <label className="flex text-gray-700">
+                  <p className="font-bold mr-2">สาขาวิชา: </p> {academicName}
                 </label>
               </div>
             </div>
@@ -180,6 +187,34 @@ const RegistePlan = () => {
           </div>
         </div>
       </div>
+      <dialog id="my_modal_1" className="modal">
+        <div className="modal-box">
+          <h3 id="alertmodal" className="font-bold text-lg">
+            {message}
+          </h3>
+          <p className="py-4 text-gray-500">
+            กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
+          </p>
+          <div className="modal-action flex justify-between">
+            <form method="dialog" className="w-full flex justify-between">
+              <button
+                id="close-alertmodal"
+                className="px-10 py-2 bg-white text-red border font-semibold border-red rounded"
+              >
+                ปิด
+              </button>
+              {isSuccess && (
+                <button
+                  className="px-8 py-2 bg-red border border-red text-white rounded"
+                  onClick={() => navigate("/student")}
+                >
+                  หน้าแรก
+                </button>
+              )}
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };

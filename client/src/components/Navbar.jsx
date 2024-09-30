@@ -135,15 +135,15 @@ const Navbar = () => {
               </a>
               <a
                 className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/studentinfo")}
+                onClick={() => navigate("/graduate_check")}
               >
-                ข้อมูลส่วนตัว
+                ตรวจสอบจบ
               </a>
               <a
                 className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/documentresponse")}
+                onClick={() => navigate("/studentinfo")}
               >
-                คำตอบกลับเอกสาร
+                ข้อมูลส่วนตัว
               </a>
             </li>
           )}
@@ -269,7 +269,9 @@ const Navbar = () => {
               </li>
 
               <li>
-                <a className="font-bold" onClick={handleLogout}>Logout</a>
+                <a className="font-bold" onClick={handleLogout}>
+                  Logout
+                </a>
               </li>
             </ul>
           </div>

@@ -8,14 +8,16 @@ const StudentInfo = () => {
   const [studentId, setStudentId] = useState(null);
   const [academicName, setAcademicName] = useState("");
   const [sections, setSections] = useState([]);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [message, setMessage] = useState("");
 
   const location = useLocation();
   const [studentData, setStudentData] = useState({
     username: "",
     password: "",
   });
-  const [confirmPassword, setConfirmPassword] = useState(""); // เพิ่มสถานะสำหรับยืนยันรหัสผ่าน
-  const [passwordError, setPasswordError] = useState(""); // สถานะสำหรับแสดงข้อผิดพลาด
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,19 +54,25 @@ const StudentInfo = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    
+  
+    // ตรวจสอบว่ามีการกรอกยืนยันรหัสผ่านหรือไม่
+    if (!confirmPassword) {
+      setPasswordError("โปรดยืนยันรหัสผ่าน");
+      return;
+    }
+  
     // ตรวจสอบว่ารหัสผ่านและยืนยันรหัสผ่านตรงกันหรือไม่
     if (studentData.password !== confirmPassword) {
       setPasswordError("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน");
       return;
     }
-
+  
     try {
       const token = localStorage.getItem("token");
-
+  
       if (studentId) {
         console.log("Student data to update:", studentData);
-
+  
         const response = await axios.put(
           `http://localhost:3000/api/updateStudent/${studentId}`,
           studentData,
@@ -74,13 +82,20 @@ const StudentInfo = () => {
             },
           }
         );
-
+  
         console.log("Update response:", response.data);
-        // Optionally navigate to another page or show a success message
-        navigate("/student");
+  
+        if (response.status === 200) {
+          document.getElementById("my_modal_1").showModal();
+          setMessage("อัพเดตข้อมูลสำเร็จ!");
+          setIsSuccess(true);
+        }
       }
     } catch (error) {
       console.error("Error updating student data:", error.message);
+      document.getElementById("my_modal_1").showModal();
+      setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
+      setIsSuccess(false);
     }
   };
 
@@ -219,9 +234,7 @@ const StudentInfo = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700">
-                    ยืนยันรหัสผ่าน
-                  </label>
+                  <label className="block text-gray-700">ยืนยันรหัสผ่าน</label>
                   <input
                     type="password"
                     value={confirmPassword}
@@ -238,14 +251,14 @@ const StudentInfo = () => {
               <div className="mt-6 flex justify-between">
                 <button
                   type="button"
-                  className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+                  className="p-4 py-2 bg-gray-100 border rounded hover:bg-gray-200 hover:shadow-md"
                   onClick={() => navigate("/student")}
                 >
                   ย้อนกลับ
                 </button>
                 <button
                   type="submit"
-                  className="px-8 py-2 bg-red border border-red-600 text-white rounded"
+                  className="p-6 py-2 bg-red border text-white rounded  hover:shadow-md"
                 >
                   บันทึก
                 </button>
@@ -255,6 +268,34 @@ const StudentInfo = () => {
           {currentForm === "infotodocument" && <DocumentInfo />}
         </div>
       </div>
+      <dialog id="my_modal_1" className="modal">
+        <div className="modal-box">
+          <h3 id="alertmodal" className="font-bold text-lg">
+            {message}
+          </h3>
+          <p className="py-4 text-gray-500">
+            กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
+          </p>
+          <div className="modal-action flex justify-between">
+            <form method="dialog" className="w-full flex justify-between">
+              <button
+                id="close-alertmodal"
+                className="px-10 py-2 bg-white text-red border font-semibold border-red rounded"
+              >
+                ปิด
+              </button>
+              {isSuccess && (
+                <button
+                  className="px-8 py-2 bg-red border border-red text-white rounded"
+                  onClick={() => navigate("/student")}
+                >
+                  หน้าแรก
+                </button>
+              )}
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };
