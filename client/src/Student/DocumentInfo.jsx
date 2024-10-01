@@ -34,12 +34,18 @@ const DocumentInfo = () => {
     subdistrict: "",
     district: "",
     province: "",
-    advisor: { titlename: "", firstname: "", lastname: "" },
+    advisor_id: "",
     wanttoend: "",
     yeartoend: "",
   });
-  const [sections, setSections] = useState([]);
+  const [sections, setSections] = useState({
+    sec_name: "",
+  });
   const [teachers, setTeachers] = useState([]);
+  const [advisor, setAdvisor] = useState({
+    firstname: "",
+    lastname: "",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,24 +55,38 @@ const DocumentInfo = () => {
 
         if (token && storedUserData) {
           const parsedUserData = JSON.parse(storedUserData);
-          setStudentId(parsedUserData.decoded.id);
+          const studentId = parsedUserData.decoded.id;
           const academicNameFromToken =
             parsedUserData.decoded.academic.academic_name || "";
-          const [studentResponse, sectionResponse, teacherResponse] =
-            await Promise.all([
-              axios.get(
-                `http://localhost:3000/api/getStudentById/${parsedUserData.decoded.id}`,
-                {
-                  headers: { Authorization: `Bearer ${token}` },
-                }
-              ),
-              axios.get("http://localhost:3000/api/getSections"), // ดึงข้อมูลหมู่เรียน
-              axios.get("http://localhost:3000/api/getTeachers"), // ดึงข้อมูลอาจารย์
-            ]);
           setAcademicName(academicNameFromToken);
-          setStudentData(studentResponse.data); // อัปเดตข้อมูลนักศึกษา
-          setSections(sectionResponse.data); // อัปเดตข้อมูลหมู่เรียน
-          setTeachers(teacherResponse.data); // อัปเดตข้อมูลอาจารย์
+          const studentResponse = await axios.get(
+            `http://localhost:3000/api/getStudentById/${studentId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          setStudentData(studentResponse.data);
+
+          const sectionResponse = await axios.get(
+            `http://localhost:3000/api/getSectionById/${studentResponse.data.sec_id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setSections(sectionResponse.data);
+
+          const advisorResponse = await axios.get(
+            `http://localhost:3000/api/getAdvisorById/${studentResponse.data.advisor_id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setAdvisor(advisorResponse.data);
+
+          console.log(advisorResponse.data);
+          console.log(studentResponse.data);
+          console.log(sectionResponse.data);
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -78,19 +98,10 @@ const DocumentInfo = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "advisor") {
-      // ส่งข้อมูลอาจารย์ที่ปรึกษาเป็น string
-      setStudentData((prevData) => ({
-        ...prevData,
-        advisor: value, // อัปเดตข้อมูลอาจารย์เป็น string
-      }));
-    } else {
-      setStudentData((prevData) => ({
-        ...prevData,
-        [name]: name === "sec_id" ? parseInt(value) : value,
-      }));
-    }
+    setStudentData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleUpdate = async (e) => {
@@ -98,11 +109,12 @@ const DocumentInfo = () => {
     try {
       const token = localStorage.getItem("token");
 
-      if (studentId) {
+      // เช็คว่ามี studentId หรือไม่
+      if (studentData.student_id) {
         console.log("Student data to update:", studentData); // ตรวจสอบค่าที่จะถูกส่งไปยัง API
 
         const response = await axios.put(
-          `http://localhost:3000/api/updateStudent/${studentId}`,
+          `http://localhost:3000/api/updateStudent/${studentData.student_id}`,
           studentData,
           {
             headers: {
@@ -317,21 +329,15 @@ const DocumentInfo = () => {
         <div className="flex items-center space-x-2">
           <div className="flex-shrink-0">
             <label className="block text-gray-700">หมู่เรียน</label>
-            <select
-              name="sec_id"
-              value={studentData.sec_id}
+            <input
+              type="text"
+              name="sec_name"
+              disabled
+              value={sections.sec_name}
               onChange={handleChange}
-              className="w-full mt-1 border border-gray-300 rounded p-2"
-            >
-              <option value="" disabled>
-                เลือกหมู่เรียน
-              </option>
-              {sections.map((section) => (
-                <option key={section.sec_id} value={section.sec_id}>
-                  {section.sec_name}
-                </option>
-              ))}
-            </select>
+              className="w-24 mt-1 border border-gray-300 rounded p-2 hover:cursor-text"
+              placeholder="หลักสูตร"
+            />
           </div>
           <div className="flex-grow">
             <label className="block text-gray-700">สาขาวิชา</label>
@@ -345,7 +351,6 @@ const DocumentInfo = () => {
             />
           </div>
         </div>
-
         <div className="flex items-center space-x-2">
           <div className="flex-shrink-0">
             <label className="flex text-gray-700">
@@ -396,18 +401,16 @@ const DocumentInfo = () => {
             />
           </div>
         </div>
-
         <div>
           <label className="flex text-gray-700">
             เมื่อสำเร็จแล้วติดต่อข้าพเจ้าได้ที่
             <p className="text-xs text-gray-400 pl-1">
-              {" "}
-              ตัวอย่าง เช่น หมายเลขโทรศัพท์{" "}
+              ตัวอย่าง เช่น หมายเลขโทรศัพท์
             </p>
           </label>
           <input
             type="text"
-            name="afterendcontact "
+            name="afterendcontact"
             value={studentData.afterendcontact}
             onChange={handleChange}
             className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -419,7 +422,7 @@ const DocumentInfo = () => {
             <label className="block text-gray-700">ตำบล</label>
             <input
               type="text"
-              name="subdistrict  "
+              name="subdistrict"
               value={studentData.subdistrict}
               onChange={handleChange}
               className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -430,7 +433,7 @@ const DocumentInfo = () => {
             <label className="block text-gray-700">อำเภอ</label>
             <input
               type="text"
-              name="district "
+              name="district"
               value={studentData.district}
               onChange={handleChange}
               className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -454,7 +457,7 @@ const DocumentInfo = () => {
             <label className="block text-gray-700">บ้านเลขที่</label>
             <input
               type="text"
-              name="homenumber "
+              name="homenumber"
               value={studentData.homenumber}
               onChange={handleChange}
               className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -465,7 +468,7 @@ const DocumentInfo = () => {
             <label className="block text-gray-700">ถนน</label>
             <input
               type="text"
-              name="road "
+              name="road"
               value={studentData.road}
               onChange={handleChange}
               className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -495,35 +498,17 @@ const DocumentInfo = () => {
             />
           </div>
         </div>
-
         <div>
           <label className="block text-gray-700">อาจารย์ที่ปรึกษา</label>
-
           <input
             type="text"
-            name="advisor"
-            value={studentData.advisor}
+            name="firstname"
+            disabled
+            value={`${advisor.firstname} ${advisor.lastname}`}
             onChange={handleChange}
             className="w-full mt-1 border border-gray-300 rounded p-2"
-            placeholder="ชื่ออาจารย์ที่ปรึกษา (titlename|firstname|lastname)"
+            placeholder="รหัสไปรษณีย์"
           />
-          {/* <select
-            name="advisor"
-            onChange={handleChange}
-            className="w-full mt-1 border border-gray-300 rounded p-2"
-          >
-            <option value="" disabled>
-              เลือกอาจารย์ที่ปรึกษา
-            </option>
-            {teachers.map((teacher) => (
-              <option
-                key={teacher.teacher_id}
-                value={`${teacher.titlename} ${teacher.firstname} ${teacher.lastname}`}
-              >
-                {teacher.titlename} {teacher.firstname} {teacher.lastname}
-              </option>
-            ))}
-          </select> */}
         </div>
         <div className="flex items-center space-x-2">
           <div className="flex-shrink-0">
