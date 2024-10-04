@@ -4,61 +4,50 @@ import { useNavigate } from "react-router-dom";
 
 const Fillgrade = () => {
   const navigate = useNavigate();
-  const [studentData, setStudentData] = useState(null);
   const [academicName, setAcademicName] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
-  const [semester, setSemester] = useState(null);
-  const [courses, setCourses] = useState([]);
-  const [allCourses, setAllCourses] = useState([]);
-  const [courseSemesterMap, setCourseSemesterMap] = useState({});
-  const [years, setYears] = useState([]);
+  const [selectedTeachers, setSelectedTeachers] = useState({}); // State to hold selected teachers for each course
+  const [grades, setGrades] = useState({}); // State to hold grades for each course
+
+  const [studentData, setStudentData] = useState({
+    student_id: "",
+    titlenameTh: "",
+    firstname: "",
+    lastname: "",
+    titlenameEng: "",
+    firstnameEng: "",
+    lastnameEng: "",
+    birthdate: "",
+    monthdate: "",
+    yeardate: "",
+    phone: "",
+    sector_status: "",
+    corps: "",
+    sec_id: "",
+    academic_id: "",
+    pre_educational: "",
+    graduated_from: "",
+    pregraduatedyear: "",
+    afterendcontact: "",
+    homenumber: "",
+    road: "",
+    alley: "",
+    subdistrict: "",
+    district: "",
+    province: "",
+    advisor_id: "",
+    wanttoend: "",
+    yeartoend: "",
+  });
+  const [sections, setSections] = useState({
+    sec_name: "",
+  });
+  const [advisor, setAdvisor] = useState({
+    titlename: "",
+    firstname: "",
+    lastname: "",
+  });
+  const [registers, setRegisters] = useState([]);
   const [teachers, setTeachers] = useState([]);
-  const [filteredTeachers, setFilteredTeachers] = useState({});
-  const [teacherSearchTerm, setTeacherSearchTerm] = useState({});
-  const [selectedTeacher, setSelectedTeacher] = useState({});
-  const [courseGrades, setCourseGrades] = useState({});
-  const [courseTeachers, setCourseTeachers] = useState({});
-
-  const grades = [
-    "A",
-    "B_plus",
-    "B",
-    "C_plus",
-    "C",
-    "D_plus",
-    "D",
-    "E",
-    "PASS",
-    "FAIL",
-  ];
-
-  const gradeDisplayMap = {
-    B_plus: "B+",
-    C_plus: "C+",
-    D_plus: "D+",
-  };
-
-  const handleGradeChange = (courseId, grade) => {
-    setCourseGrades((prev) => ({
-      ...prev,
-      [courseId]: grade,
-    }));
-  };
-
-  const handleTeacherSelect = (courseId, teacher) => {
-    setSelectedTeacher((prev) => ({
-      ...prev,
-      [courseId]: teacher,
-    }));
-    setCourseTeachers((prev) => ({
-      ...prev,
-      [courseId]: teacher.fullName,
-    }));
-    setTeacherSearchTerm((prev) => ({
-      ...prev,
-      [courseId]: teacher.fullName,
-    }));
-  };
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -71,86 +60,63 @@ const Fillgrade = () => {
           const studentId = parsedUserData.decoded.id;
           const academicNameFromToken =
             parsedUserData.decoded.academic.academic_name || "";
-
-          const response = await axios.get(
+          // Get StudentData
+          const studentResponse = await axios.get(
             `http://localhost:3000/api/getStudentById/${studentId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
-
-          setStudentData(response.data);
+          setStudentData(studentResponse.data);
           setAcademicName(academicNameFromToken);
-
-          const subjectsResponse = await axios.get(
-            `http://localhost:3000/api/getRegisters/${studentId}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-
-          const allCoursesResponse = await axios.get(
-            `http://localhost:3000/api/getAllCourses`,
+          console.log(studentResponse.data);
+          // Get Sec
+          const sectionResponse = await axios.get(
+            `http://localhost:3000/api/getSectionById/${studentResponse.data.sec_id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
+          setSections(sectionResponse.data);
+          console.log(sectionResponse.data);
 
-          setAllCourses(allCoursesResponse.data);
-
-          const teachersResponse = await axios.get(
-            `http://localhost:3000/api/getTeachers`,
+          const advisorResponse = await axios.get(
+            `http://localhost:3000/api/getAdvisorById/${studentResponse.data.advisor_id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
+          setAdvisor(advisorResponse.data);
+          console.log(advisorResponse.data);
 
-          setTeachers(teachersResponse.data);
+          const registerResponse = await axios.get(
+            `http://localhost:3000/api/getRegisters/${studentResponse.data.student_id}`,
+            {
+              headers: { Authorization: `Bearer${token}` },
+            }
+          );
+          setRegisters(registerResponse.data);
+          console.log(registerResponse.data);
+          const teachersMap = {};
+          const gradesMap = {};
 
-          const coursesList = [];
-          const courseSemesterMapping = new Map();
-          const yearSet = new Set();
-          const initialGrades = {};
-          const initialTeachers = {};
-
-          subjectsResponse.data.forEach((register) => {
-            yearSet.add(register.year);
-            register.listcourseregister.forEach((listRegister) => {
-              const fullCourseData = allCoursesResponse.data.find(
-                (c) => c.course_id === listRegister.course.course_id
-              );
-
-              if (fullCourseData) {
-                const enhancedCourse = {
-                  ...listRegister.course,
-                  courseNameTH: listRegister.course.courseNameTH || "",
-                  courseUnit: listRegister.course.courseUnit || "",
-                  listcourseregister_id: listRegister.listcourseregister_id,
-                  grade: listRegister.grade, // เพิ่มเกรดจาก listcourseregister
-                  teacher: listRegister.teacher, // เพิ่ม teacher จาก listcourseregister
-                };
-
-                coursesList.push(enhancedCourse);
-                courseSemesterMapping.set(
-                  listRegister.course.course_id,
-                  register.semester
-                );
-
-                if (listRegister.grade) {
-                  initialGrades[listRegister.course.course_id] =
-                    listRegister.grade;
-                }
-                if (listRegister.teacher && listRegister.teacher.teacher_name) {
-                  initialTeachers[listRegister.course.course_id] =
-                    listRegister.teacher.teacher_name;
-                }
-              }
+          registerResponse.data.forEach((register) => {
+            register.listcourseregister.forEach((course) => {
+              teachersMap[course.listcourseregister_id] = course.teacher_id || ""; // ตรวจสอบการตั้งค่า teacher_id
+              gradesMap[course.listcourseregister_id] = course.grade || ""; // ตรวจสอบการตั้งค่า grade
             });
           });
-
-          setCourses(coursesList);
-          setCourseSemesterMap(courseSemesterMapping);
-          setYears(Array.from(yearSet));
-          setCourseGrades(initialGrades);
-          setCourseTeachers(initialTeachers);
+  
+          setSelectedTeachers(teachersMap);
+          setGrades(gradesMap);
+          const teacherResponse = await axios.get(
+            `http://localhost:3000/api/getTeachers`,
+            {
+              headers: { Authorization: `Bearer${token}` },
+            }
+          );
+          setTeachers(teacherResponse.data);
+          console.log(teacherResponse.data);
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -160,94 +126,60 @@ const Fillgrade = () => {
     fetchStudentData();
   }, []);
 
-  useEffect(() => {
-    const filterTeachers = () => {
-      if (teachers.length > 0) {
-        // ตรวจสอบว่าข้อมูล teacher ถูกโหลดแล้ว
-        Object.keys(teacherSearchTerm).forEach((courseId) => {
-          const searchTerm = teacherSearchTerm[courseId] || "";
-          const filtered = teachers.filter((teacher) =>
-            (teacher.firstname || "")
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase())
+  const handleTeacherChange = (listcourseregister_id, teacher_id) => {
+    setSelectedTeachers({
+      ...selectedTeachers,
+      [listcourseregister_id]: parseInt(teacher_id, 10), // ใช้ teacher_id ในการเก็บค่า
+    });
+    console.log("Updated selectedTeachers:", selectedTeachers);
+  };
+
+  const handleGradeChange = (listcourseregister_id, grade) => {
+    setGrades({ ...grades, [listcourseregister_id]: grade });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      console.log("Selected teachers:", selectedTeachers); // ตรวจสอบ selectedTeachers ก่อนส่ง
+      await Promise.all(
+        Object.keys(selectedTeachers).map(async (listcourseregister_id) => {
+          const teacher_id = selectedTeachers[listcourseregister_id];
+          const grade = grades[listcourseregister_id];
+
+          if (!teacher_id) {
+            console.error(
+              `Missing teacher_id for course ID ${listcourseregister_id}`
+            );
+            return; // ข้ามถ้าไม่มี teacher_id
+          }
+
+          const body = {
+            freesubject: "false",
+            teacher_id: teacher_id,
+            grade: grade || null, // ถ้าไม่มี grade จะส่ง null
+          };
+
+          console.log(
+            `Updating register for course ID ${listcourseregister_id}:`,
+            body
           );
-          setFilteredTeachers((prev) => ({
-            ...prev,
-            [courseId]: filtered.map((teacher) => ({
-              ...teacher,
-              fullName: `${teacher.titlename || ""} ${
-                teacher.firstname || ""
-              } ${teacher.lastname || ""}`,
-            })),
-          }));
-        });
-      }
-    };
 
-    filterTeachers();
-  }, [teacherSearchTerm, teachers]);
-
-  const filteredCourses = courses.filter(
-    (course) =>
-      semester === null || courseSemesterMap.get(course.course_id) === semester
-  );
-
-  const handleYearChange = (e) => {
-    setSelectedYear(e.target.value);
-  };
-
-  const handleSemesterChange = (e) => {
-    setSemester(e.target.value ? parseInt(e.target.value, 10) : null);
-  };
-
-  const handleSearchChange = (courseId, e) => {
-    setTeacherSearchTerm((prev) => ({
-      ...prev,
-      [courseId]: e.target.value,
-    }));
-  };
-
-  const handleSave = async () => {
-    const token = localStorage.getItem("token");
-    let hasError = false;
-
-    for (const course of courses) {
-      const grade = courseGrades[course.course_id];
-      const selectedTeacherObj = selectedTeacher[course.course_id] || {};
-      const teacherId = selectedTeacherObj.teacher_id || ""; // ดึง teacher_id
-
-      if (grade && teacherId) {
-        // ตรวจสอบว่ามีเกรดและ teacher_id
-        try {
-          console.log({
-            grade,
-            teacher_id: teacherId, // ส่งค่า teacher_id
-            course_id: course.course_id,
-            listcourseregister_id: course.listcourseregister_id,
-          });
-
-          await axios.put(
-            `http://localhost:3000/api/updateRegister/${course.listcourseregister_id}`,
-            {
-              grade,
-              teacher_id: teacherId, // ใช้ teacher_id แทน teacher_name
-            },
+          // เรียก API เพื่ออัปเดตข้อมูล
+          const response = await axios.put(
+            `http://localhost:3000/api/updateRegister/${listcourseregister_id}`,
+            body,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
-        } catch (error) {
-          hasError = true;
-          console.error(`Error updating course ${course.course_id}:`, error);
-        }
-      }
-    }
-
-    if (!hasError) {
-      alert("บันทึกสำเร็จ");
-      window.location.reload();
-    } else {
-      alert("เกิดข้อผิดพลาดในการบันทึก");
+          console.log("Response from API:", response.data);
+        })
+      );
+      alert("บันทึกผลการเรียนเรียบร้อยแล้ว");
+    } catch (error) {
+      console.error("Error updating registers:", error.message);
+      alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + error.message);
     }
   };
 
@@ -270,157 +202,103 @@ const Fillgrade = () => {
             กรอกแบบบันทึกผลการเรียน
           </h2>
 
-          {studentData && (
-            <div className="grid grid-cols-1 gap-6">
-              <div className="flex space-x-4">
-                <label className="flex text-gray-700">
-                  ชื่อ:{" "}
-                  <p className="font-bold ml-2">
-                    {studentData.firstname} {studentData.lastname}
-                  </p>
-                </label>
-                <label className="block text-gray-700">
-                  รหัสนักศึกษา: {studentData.student_id}
-                </label>
-              </div>
-              <div className="flex space-x-4">
-                <label className="block text-gray-700">
-                  สาขาวิชา: {academicName}
-                </label>
-              </div>
-              <label className="block text-gray-700 flex">
-                ปีการศึกษา :
-                <select
-                  className="select select-bordered select-xs max-w-xs ml-2"
-                  value={selectedYear}
-                  onChange={handleYearChange}
-                >
-                  <option disabled value="">
-                    เลือกปีการศึกษา
-                  </option>
-                  {years.map((year) => (
-                    <option key={year} value={year}>
-                      ปีการศึกษา {year}
-                    </option>
-                  ))}
-                </select>
+          <div className="grid grid-cols-1 gap-6">
+            <div className="flex space-x-2">
+              <label className="flex text-gray-700">
+                <p className="font-bold">{studentData.student_id}</p>
               </label>
-
-              <div className="flex">
-                <label className="block text-gray-700 mr-2">เทอม :</label>
-                <input
-                  type="radio"
-                  name="radio-1"
-                  className="radio mr-2"
-                  checked={semester === null}
-                  onChange={() => setSemester(null)}
-                />
-                <p className="mr-2">ทั้งหมด</p>
-                <input
-                  type="radio"
-                  name="radio-1"
-                  className="radio mr-2"
-                  checked={semester === 1}
-                  onChange={() => setSemester(1)}
-                />
-                <p className="mr-2">1</p>
-                <input
-                  type="radio"
-                  name="radio-1"
-                  className="radio mr-2"
-                  checked={semester === 2}
-                  onChange={() => setSemester(2)}
-                />
-                <p className="mr-2">2</p>
-              </div>
+              <label className="flex text-gray-700">
+                <p className="ml-2 font-bold">
+                  {studentData.titlenameTh} {""}
+                  {studentData.firstname}
+                  {""} {studentData.lastname}
+                </p>
+              </label>
+              <label className="flex text-gray-700">
+                <p className="ml-2 font-bold">
+                  {studentData.titlenameEng} {""}
+                  {studentData.firstnameEng}
+                  {""} {studentData.lastnameEng}
+                </p>
+              </label>
             </div>
-          )}
+            <div className="flex space-x-4">
+              <label className="flex text-gray-700">
+                <p className="font-bold">สาขาวิชา:</p>
+                <p className="ml-2">{academicName}</p>
+              </label>
+              <label className="flex text-gray-700">
+                <p className="font-bold">หมู่เรียน:</p>
+                <p className="ml-2">{sections.sec_name}</p>
+              </label>
+              <label className="flex text-gray-700">
+                <p className="font-bold">อาจารย์ที่ปรึกษา:</p>
+                <p className="ml-2">{`${advisor.titlename}${advisor.firstname} ${advisor.lastname}`}</p>
+              </label>
+            </div>
+          </div>
+          {/* Create table here */}
 
-          <br />
-          {/* Table */}
-          <div className="overflow-x-auto border">
-            <table className="table">
-              {/* head */}
+          <div className="mt-6">
+            <table className="min-w-full bg-white">
               <thead>
-                <tr className="bg-base-300">
-                  <th>รหัสวิชา</th>
-                  <th>ชื่อวิชา</th>
-                  <th>นก./ชม.</th>
-                  <th>ภาคเรียน</th>
-                  <th>ชื่อผู้สอน</th>
-                  <th>ผลการเรียน</th>
-                  <th>หมายเหตุ</th>
+                <tr>
+                  <th className="py-2">รหัสวิชา</th>
+                  <th className="py-2">ชื่อวิชา</th>
+                  <th className="py-2">นก/ชม.</th>
+                  <th className="py-2">ภาคเรียน</th>
+                  <th className="py-2">ชื่อผู้สอน</th>
+                  <th className="py-2">ผลการเรียน</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredCourses.map((course, index) => (
-                  <tr key={index}>
-                    <th>{course.course_id}</th>
-                    <td>{course.courseNameTH}</td>
-                    <td className="px-8">{course.courseUnit}</td>
-                    <td className="px-8">
-                      {courseSemesterMap.get(course.course_id)}
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={
-                          teacherSearchTerm[course.course_id] ||
-                          courseTeachers[course.course_id] ||
-                          ""
-                        }
-                        onChange={(e) =>
-                          handleSearchChange(course.course_id, e)
-                        }
-                        placeholder="ค้นหาผู้สอน"
-                        className="input input-bordered input-sm"
-                      />
+  {registers.map((register) =>
+    register.listcourseregister.map((course) => (
+      <tr key={course.listcourseregister_id}>
+        <td className="py-2">{course.course.course_id}</td>
+        <td className="py-2">{course.course.courseNameTH}</td>
+        <td className="py-2">{course.course.courseUnit}</td>
+        <td className="py-2">{register.semester}</td>
 
-                      <ul className="mt-2">
-                        {filteredTeachers[course.course_id] &&
-                          filteredTeachers[course.course_id].map((teacher) => (
-                            <li
-                              key={teacher.fullName}
-                              className="cursor-pointer hover:bg-gray-200 p-2 rounded"
-                              onClick={() =>
-                                handleTeacherSelect(course.course_id, teacher)
-                              }
-                            >
-                              {teacher.fullName}
-                            </li>
-                          ))}
-                      </ul>
-                    </td>
-                    <td>
-                      <select
-                        className="select select-sm select-bordered"
-                        value={courseGrades[course.course_id] || ""}
-                        onChange={(e) =>
-                          handleGradeChange(course.course_id, e.target.value)
-                        }
-                      >
-                        <option disabled value="">
-                          เลือกเกรด
-                        </option>
-                        {grades.map((grade) => (
-                          <option key={grade} value={grade}>
-                            {gradeDisplayMap[grade] || grade}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td>
-                      <input
-                        className="input input-bordered input-sm"
-                        type="text"
-                        placeholder="หมายเหตุ"
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+        <td className="py-2">
+  <select
+    value={selectedTeachers[course.listcourseregister_id] || course.teacher_id || ""}
+    onChange={(e) =>
+      handleTeacherChange(course.listcourseregister_id, e.target.value)
+    }
+  >
+    <option value="">เลือกผู้สอน</option>
+    {teachers.map((teacher) => (
+      <option key={teacher.teacher_id} value={teacher.teacher_id}>
+        {teacher.firstname} {teacher.lastname}
+      </option>
+    ))}
+  </select>
+</td>
+
+        <td className="py-2">
+          <select
+            value={grades[course.listcourseregister_id] || ""}
+            onChange={(e) =>
+              handleGradeChange(course.listcourseregister_id, e.target.value)
+            }
+          >
+            <option value="">เลือกผลการเรียน</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
+
+
             </table>
           </div>
+          <br />
 
           <div className="mt-6 flex justify-between">
             <button
@@ -442,7 +320,7 @@ const Fillgrade = () => {
               <button
                 type="button"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
-                onClick={handleSave}
+                onClick={handleSubmit} // Call the submit function here
               >
                 บันทึก
               </button>
