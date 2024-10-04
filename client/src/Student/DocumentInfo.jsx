@@ -504,7 +504,7 @@ const DocumentInfo = () => {
             type="text"
             name="firstname"
             disabled
-            value={`${advisor.firstname} ${advisor.lastname}`}
+            value={`${advisor.titlename}${advisor.firstname} ${advisor.lastname}`}
             onChange={handleChange}
             className="w-full mt-1 border border-gray-300 rounded p-2"
             placeholder="รหัสไปรษณีย์"

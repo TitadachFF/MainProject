@@ -12,7 +12,7 @@ const GraduateCheck = () => {
   const [groupData, setGroupData] = useState([]);
   const [courseData, setCourseData] = useState([]);
   const [courseGroupedData, setCourseGroupedData] = useState({});
-  const [isLoading, setIsLoading] = useState(true); // เช็คสถานะการโหลด
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const fetchStudentData = async () => {
