@@ -7,7 +7,7 @@ const Fillgrade = () => {
   const [academicName, setAcademicName] = useState("");
   const [selectedTeachers, setSelectedTeachers] = useState({}); // State to hold selected teachers for each course
   const [grades, setGrades] = useState({}); // State to hold grades for each course
-
+  const [freeSubject, setFreeSubject] = useState({});
   const [studentData, setStudentData] = useState({
     student_id: "",
     titlenameTh: "",
@@ -99,16 +99,19 @@ const Fillgrade = () => {
           console.log(registerResponse.data);
           const teachersMap = {};
           const gradesMap = {};
-
+          const freeSubjectMap = {};
           registerResponse.data.forEach((register) => {
             register.listcourseregister.forEach((course) => {
-              teachersMap[course.listcourseregister_id] = course.teacher_id || ""; // ตรวจสอบการตั้งค่า teacher_id
+              teachersMap[course.listcourseregister_id] =
+                course.teacher_id || ""; // ตรวจสอบการตั้งค่า teacher_id
               gradesMap[course.listcourseregister_id] = course.grade || ""; // ตรวจสอบการตั้งค่า grade
+              freeSubjectMap[course.freesubject] = course.freesubject || "";
             });
           });
-  
+
           setSelectedTeachers(teachersMap);
           setGrades(gradesMap);
+          setFreeSubject(freeSubjectMap);
           const teacherResponse = await axios.get(
             `http://localhost:3000/api/getTeachers`,
             {
@@ -138,6 +141,10 @@ const Fillgrade = () => {
     setGrades({ ...grades, [listcourseregister_id]: grade });
   };
 
+  const handleFreeSubjectChange = (listcourseregister_id, freesubject) => {
+    setFreeSubject({ ...freeSubject, [listcourseregister_id]: freesubject });
+  };
+
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -146,6 +153,7 @@ const Fillgrade = () => {
         Object.keys(selectedTeachers).map(async (listcourseregister_id) => {
           const teacher_id = selectedTeachers[listcourseregister_id];
           const grade = grades[listcourseregister_id];
+          const freesubject = !!freeSubject[listcourseregister_id]; // ใช้ !! เพื่อบังคับเป็น boolean
 
           if (!teacher_id) {
             console.error(
@@ -155,7 +163,7 @@ const Fillgrade = () => {
           }
 
           const body = {
-            freesubject: "false",
+            freesubject: freesubject,
             teacher_id: teacher_id,
             grade: grade || null, // ถ้าไม่มี grade จะส่ง null
           };
@@ -240,62 +248,105 @@ const Fillgrade = () => {
           {/* Create table here */}
 
           <div className="mt-6">
-            <table className="min-w-full bg-white">
+            <table className="min-w-full bg-white border">
               <thead>
-                <tr>
+                <tr className="border bg-red text-white">
                   <th className="py-2">รหัสวิชา</th>
                   <th className="py-2">ชื่อวิชา</th>
                   <th className="py-2">นก/ชม.</th>
                   <th className="py-2">ภาคเรียน</th>
                   <th className="py-2">ชื่อผู้สอน</th>
                   <th className="py-2">ผลการเรียน</th>
+                  <th className="py-2">วิชาเลือกเสรี</th>
                 </tr>
               </thead>
               <tbody>
-  {registers.map((register) =>
-    register.listcourseregister.map((course) => (
-      <tr key={course.listcourseregister_id}>
-        <td className="py-2">{course.course.course_id}</td>
-        <td className="py-2">{course.course.courseNameTH}</td>
-        <td className="py-2">{course.course.courseUnit}</td>
-        <td className="py-2">{register.semester}</td>
+                {registers.map((register) =>
+                  register.listcourseregister.map((course) => (
+                    <tr key={course.listcourseregister_id}>
+                      <td className="py-2 border text-center">
+                        {course.course.course_id}
+                      </td>
+                      <td className="py-2 border text-center">
+                        {course.course.courseNameTH}
+                      </td>
+                      <td className="py-2 border text-center">
+                        {course.course.courseUnit}
+                      </td>
+                      <td className="py-2 border text-center">
+                        {register.semester}
+                      </td>
 
-        <td className="py-2">
-  <select
-    value={selectedTeachers[course.listcourseregister_id] || course.teacher_id || ""}
-    onChange={(e) =>
-      handleTeacherChange(course.listcourseregister_id, e.target.value)
-    }
-  >
-    <option value="">เลือกผู้สอน</option>
-    {teachers.map((teacher) => (
-      <option key={teacher.teacher_id} value={teacher.teacher_id}>
-        {teacher.firstname} {teacher.lastname}
-      </option>
-    ))}
-  </select>
-</td>
+                      <td className="py-2 border text-center">
+                        <select
+                          className="border rounded-md p-1 text-center"
+                          value={
+                            selectedTeachers[course.listcourseregister_id] ||
+                            course.teacher_id ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            handleTeacherChange(
+                              course.listcourseregister_id,
+                              e.target.value
+                            )
+                          }
+                        >
+                          <option value="">เลือกผู้สอน</option>
+                          {teachers.map((teacher) => (
+                            <option
+                              key={teacher.teacher_id}
+                              value={teacher.teacher_id}
+                            >
+                              {teacher.firstname} {teacher.lastname}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
 
-        <td className="py-2">
-          <select
-            value={grades[course.listcourseregister_id] || ""}
-            onChange={(e) =>
-              handleGradeChange(course.listcourseregister_id, e.target.value)
-            }
-          >
-            <option value="">เลือกผลการเรียน</option>
-            <option value="A">A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-            <option value="D">D</option>
-          </select>
-        </td>
-      </tr>
-    ))
-  )}
-</tbody>
-
-
+                      <td className="py-2 border text-center">
+                        <select
+                          className="border rounded-md p-1 text-center"
+                          value={grades[course.listcourseregister_id] || ""}
+                          onChange={(e) =>
+                            handleGradeChange(
+                              course.listcourseregister_id,
+                              e.target.value
+                            )
+                          }
+                        >
+                          <option value="">เลือกผลการเรียน</option>
+                          <option value="A">A</option>
+                          <option value="B_plus">B+</option>
+                          <option value="B">B</option>
+                          <option value="C_plus">C+</option>
+                          <option value="C">C</option>
+                          <option value="D_plus">D</option>
+                          <option value="D">D</option>
+                        </select>
+                      </td>
+                      {/* ช่องเลือกวิชาเลือกเสรี */}
+                      <td className="py-2 border text-center">
+                        <select
+                          className="border rounded-md p-1 text-center"
+                          value={
+                            freeSubject[course.listcourseregister_id] || "false"
+                          } // แสดงค่าที่เคยกรอกไว้หรือ "false" ถ้าไม่มีค่า
+                          onChange={(e) =>
+                            handleFreeSubjectChange(
+                              course.listcourseregister_id,
+                              e.target.value === "false" // แปลงค่าจาก string เป็น boolean
+                            )
+                          }
+                        >
+                          <option value="true">ใช่</option>
+                          <option value="false">ไม่ใช่</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
             </table>
           </div>
           <br />
