@@ -132,7 +132,7 @@ const CourseMenu = () => {
         {/* Card4 */}
         <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
-          onClick={() => navigate("/course")}
+          onClick={() => navigate("/allteacher")}
         >
           <figure>
             <svg

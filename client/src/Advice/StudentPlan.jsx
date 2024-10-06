@@ -146,7 +146,7 @@ const StudentPlan = () => {
           {Object.keys(groupedPlans).length > 0 ? (
             <div>
               {Object.entries(groupedPlans).map(([key, plans]) => {
-                const [year, semester] = key.split(" - "); // แยกปีและเทอม
+                const [year, semester] = key.split(" - ");
                 return (
                   <div key={key} className="mb-4 relative">
                     <div className="flex items-center">
@@ -178,7 +178,7 @@ const StudentPlan = () => {
                         </svg>
                       </button>
                       {dropdownOpen === key && (
-                        <div className="absolute right-6 mt-2 bg-white text-black border rounded shadow-lg w-48 z-50">
+                        <div className="absolute right-6 mt-24 bg-white text-black border rounded shadow-lg w-48 z-50">
                           <button
                             onClick={() => handleEdit(key, plans)}
                             className="block px-4 py-2 hover:bg-gray-200 w-full text-left"

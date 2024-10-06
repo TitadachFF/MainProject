@@ -152,6 +152,7 @@ const AdviceInfo = () => {
                   type="text"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
                   value={phone}
+                  placeholder="เบอร์โทรศัพท์"
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
@@ -161,6 +162,7 @@ const AdviceInfo = () => {
                   type="email"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
                   value={email}
+                  placeholder="อีเมล"
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>

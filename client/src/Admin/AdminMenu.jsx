@@ -43,9 +43,9 @@ const AdminMenu = () => {
             </svg>
           </figure>
           <div className="card-body text-center">
-            <h2 className="font-semibold">เพิ่มผู้ใช้</h2>
+            <h2 className="font-semibold">เพิ่มตัวแทนหลักสูตร</h2>
             <p className="border-t py-2">
-              เพิ่มผู้ใช้ เช่น อาจารย์ นักศึกษา ตัวแทนหลักสูตร เข้ามาในระบบ
+              เพิ่มตัวแทนหลักสูตร เข้ามาในระบบ
             </p>
             <div className="card-actions justify-end"></div>
           </div>
