@@ -22,8 +22,6 @@ const DocumentInfo = () => {
     phone: "",
     sector_status: "",
     corps: "",
-    sec_id: "",
-    academic_id: "",
     pre_educational: "",
     graduated_from: "",
     pregraduatedyear: "",
@@ -34,9 +32,9 @@ const DocumentInfo = () => {
     subdistrict: "",
     district: "",
     province: "",
-    advisor_id: "",
     wanttoend: "",
     yeartoend: "",
+    zipcode: "",
   });
   const [sections, setSections] = useState({
     sec_name: "",
@@ -98,38 +96,70 @@ const DocumentInfo = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setStudentData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    if (name === "phone") {
+      const phoneValue = value.replace(/[^0-9]/g, "");
+      if (phoneValue.length <= 10) {
+        setStudentData((prevData) => ({
+          ...prevData,
+          [name]: phoneValue,
+        }));
+      }
+    } else {
+      setStudentData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleUpdate = async (e) => {
-    e.preventDefault(); // ป้องกันการ submit ฟอร์มแบบปกติ
+    e.preventDefault();
     try {
       const token = localStorage.getItem("token");
 
-      // เช็คว่ามี studentId หรือไม่
-      if (studentData.student_id) {
-        console.log("Student data to update:", studentData); // ตรวจสอบค่าที่จะถูกส่งไปยัง API
-
-        const response = await axios.put(
-          `http://localhost:3000/api/updateStudent/${studentData.student_id}`,
-          studentData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        console.log("Update response:", response.data);
-
-        if (response.status === 200) {
-          document.getElementById("my_modal_1").showModal();
-          setMessage("อัพเดตข้อมูลสำเร็จ!");
-          setIsSuccess(true);
+      const response = await axios.put(
+        `http://localhost:3000/api/updateStudent/${studentData.student_id}`,
+        {
+          titlenameTh: studentData.titlenameTh,
+          firstname: studentData.firstname,
+          lastname: studentData.lastname,
+          titlenameEng: studentData.titlenameEng,
+          firstnameEng: studentData.firstnameEng,
+          lastnameEng: studentData.lastnameEng,
+          birthdate: studentData.birthdate,
+          monthdate: studentData.monthdate,
+          yeardate: studentData.yeardate,
+          phone: studentData.phone,
+          sector_status: studentData.sector_status,
+          corps: studentData.corps,
+          pre_educational: studentData.pre_educational,
+          graduated_from: studentData.graduated_from,
+          pregraduatedyear: studentData.pregraduatedyear,
+          afterendcontact: studentData.afterendcontact,
+          homenumber: studentData.homenumber,
+          road: studentData.road,
+          alley: studentData.alley,
+          subdistrict: studentData.subdistrict,
+          district: studentData.district,
+          province: studentData.province,
+          wanttoend: studentData.wanttoend,
+          yeartoend: studentData.yeartoend,
+          zipcode: studentData.zipcode, 
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
+
+      console.log("Update response:", response.data);
+
+      if (response.status === 200) {
+        document.getElementById("my_modal_1").showModal();
+        setMessage("อัพเดตข้อมูลสำเร็จ!");
+        setIsSuccess(true);
       }
     } catch (error) {
       console.error("Error updating student data:", error.message);
@@ -138,6 +168,9 @@ const DocumentInfo = () => {
       setIsSuccess(false);
     }
   };
+  function refreshPage() {
+    window.location.reload();
+  }
 
   return (
     <form onSubmit={handleUpdate}>
@@ -150,8 +183,8 @@ const DocumentInfo = () => {
           <input
             type="text"
             name="student_id"
+            disabled
             value={studentData.student_id}
-            onChange={handleChange}
             className="w-full mt-1 border border-gray-300 rounded p-2"
             placeholder="รหัสประจำตัว"
           />
@@ -334,7 +367,6 @@ const DocumentInfo = () => {
               name="sec_name"
               disabled
               value={sections.sec_name}
-              onChange={handleChange}
               className="w-24 mt-1 border border-gray-300 rounded p-2 hover:cursor-text"
               placeholder="หลักสูตร"
             />
@@ -505,9 +537,8 @@ const DocumentInfo = () => {
             name="firstname"
             disabled
             value={`${advisor.titlename}${advisor.firstname} ${advisor.lastname}`}
-            onChange={handleChange}
             className="w-full mt-1 border border-gray-300 rounded p-2"
-            placeholder="รหัสไปรษณีย์"
+            placeholder="อาจารย์ที่ปรึกษา"
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -564,6 +595,7 @@ const DocumentInfo = () => {
             <form method="dialog" className="w-full flex justify-between">
               <button
                 id="close-alertmodal"
+                onClick={refreshPage}
                 className="px-10 py-2 bg-white text-red border font-semibold border-red rounded"
               >
                 ปิด

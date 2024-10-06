@@ -10,14 +10,14 @@ const StudentInfo = () => {
   const [sections, setSections] = useState([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState("");
-
   const location = useLocation();
+
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [studentData, setStudentData] = useState({
     username: "",
     password: "",
   });
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,22 +27,18 @@ const StudentInfo = () => {
 
         if (token && storedUserData) {
           const parsedUserData = JSON.parse(storedUserData);
-          setStudentId(parsedUserData.decoded.id);
+          const studentId = parsedUserData.decoded.id;
           const academicNameFromToken =
             parsedUserData.decoded.academic.academic_name || "";
-          const [studentResponse] = await Promise.all([
-            axios.get(
-              `http://localhost:3000/api/getStudentById/${parsedUserData.decoded.id}`,
-              {
-                headers: { Authorization: `Bearer ${token}` },
-              }
-            ),
-            axios.get("http://localhost:3000/api/getSections"), // ดึงข้อมูลหมู่เรียน
-            axios.get("http://localhost:3000/api/getTeachers"), // ดึงข้อมูลอาจารย์
-          ]);
           setAcademicName(academicNameFromToken);
-          setStudentData(studentResponse.data); // อัปเดตข้อมูลนักศึกษา
-          setSections(sectionResponse.data); // อัปเดตข้อมูลหมู่เรียน
+          setStudentId(studentId); // เพิ่มการตั้งค่า studentId
+          const studentResponse = await axios.get(
+            `http://localhost:3000/api/getStudentById/${studentId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setStudentData(studentResponse.data);
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -54,37 +50,40 @@ const StudentInfo = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-  
+
+    // Log ข้อมูลที่ผู้ใช้กรอก
+    console.log("Updated student data:", studentData);
+    console.log("Confirm password:", confirmPassword);
+
     // ตรวจสอบว่ามีการกรอกยืนยันรหัสผ่านหรือไม่
     if (!confirmPassword) {
       setPasswordError("โปรดยืนยันรหัสผ่าน");
       return;
     }
-  
+
     // ตรวจสอบว่ารหัสผ่านและยืนยันรหัสผ่านตรงกันหรือไม่
     if (studentData.password !== confirmPassword) {
       setPasswordError("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน");
       return;
     }
-  
+
     try {
       const token = localStorage.getItem("token");
-  
+
       if (studentId) {
-        console.log("Student data to update:", studentData);
-  
         const response = await axios.put(
           `http://localhost:3000/api/updateStudent/${studentId}`,
-          studentData,
+          {
+            username: studentData.username,
+            password: studentData.password,
+          },
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-  
-        console.log("Update response:", response.data);
-  
+
         if (response.status === 200) {
           document.getElementById("my_modal_1").showModal();
           setMessage("อัพเดตข้อมูลสำเร็จ!");
@@ -101,6 +100,9 @@ const StudentInfo = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Log การเปลี่ยนแปลงข้อมูลในฟอร์ม
+    console.log(`Field changed: ${name}, Value: ${value}`);
 
     setStudentData((prevData) => ({
       ...prevData,
@@ -180,7 +182,6 @@ const StudentInfo = () => {
                       type="text"
                       name="student_id"
                       value={studentData.student_id}
-                      onChange={handleChange}
                       disabled
                       className="w-28 mt-1 border border-gray-300 rounded p-2"
                       placeholder="ชื่อ-นามสกุล"
@@ -192,7 +193,6 @@ const StudentInfo = () => {
                       type="text"
                       name="firstname"
                       value={studentData.firstname}
-                      onChange={handleChange}
                       disabled
                       className="w-full mt-1 border border-gray-300 rounded p-2"
                       placeholder="ชื่อ"
@@ -204,7 +204,6 @@ const StudentInfo = () => {
                       type="text"
                       name="lastname"
                       value={studentData.lastname}
-                      onChange={handleChange}
                       disabled
                       className="w-full mt-1 border border-gray-300 rounded p-2"
                       placeholder="นามสกุล"

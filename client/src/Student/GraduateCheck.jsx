@@ -12,7 +12,8 @@ const GraduateCheck = () => {
   const [groupData, setGroupData] = useState([]);
   const [courseData, setCourseData] = useState([]);
   const [courseGroupedData, setCourseGroupedData] = useState({});
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
+  const [registerData, setRegisterData] = useState([]); // ประกาศ state สำหรับ registerData
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -42,8 +43,8 @@ const GraduateCheck = () => {
           const registerResponse = await axios.get(
             `http://localhost:3000/api/getRegisters/${studentId}`
           );
-
           const registerData = registerResponse.data;
+          setRegisterData(registerData); // ตั้งค่า registerData ใน state
           console.log(registerData);
 
           const gradeToValue = (grade) => {
@@ -255,53 +256,74 @@ const GraduateCheck = () => {
 
           <br />
           {/* Table */}
+          {/* Table */}
           <div className="p-4">
-            {/* First Category */}
-
-            {Object.keys(courseGroupedData).length > 0 ? (
-              Object.entries(courseGroupedData).map(
-                ([categoryId, { categoryName, groups }]) => (
-                  <div key={categoryId} className="mb-6">
-                    <div className="font-semibold text-lg">{categoryName}</div>
-                    {Object.entries(groups).map(
-                      ([groupId, { groupName, courses, group_unit }]) => (
-                        <div key={groupId} className="mt-4">
-                          <div className="font-semibold">
-                            {groupName}
-                            {group_unit}
-                          </div>
-                          {courses.map((course, index) => (
-                            <div
-                              key={index}
-                              className="grid grid-cols-7 text-center border border-black p-2"
-                            >
-                              <div className="border border-r-0 border-black p-2">
-                                {course.course_id}
-                              </div>
-                              <div className="border border-r-0 border-black p-2 col-span-2">
-                                {course.courseNameTH}
-                              </div>
-                              <div className="border border-r-0 border-black p-2">
-                                {course.courseUnit}({course.courseTheory}-
-                                {course.coursePractice}-
-                                {course.categoryResearch})
-                              </div>
-                              <div className="border border-r-0 border-black p-2">
-                                {course.semester}
-                              </div>
-                              <div className="border  border-black  p-2">
-                                {course.grade}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )
-                    )}
+            {/* ตรวจสอบว่ามีข้อมูลการลงทะเบียนหรือไม่ */}
+            {registerData && registerData.length > 0 ? (
+              registerData.map((register) => (
+                <div key={register.register_id} className="mb-6">
+                  {/* แสดงปีและภาคการศึกษาของ register นั้นๆ */}
+                  <div className="font-semibold text-lg mb-4">
+                    ปีการศึกษา {register.year}, ภาคการศึกษา {register.semester}
                   </div>
-                )
-              )
+
+                  {/* ตรวจสอบว่ามีข้อมูลคอร์สที่ลงทะเบียนใน register นี้หรือไม่ */}
+                  {register.listcourseregister.length > 0 ? (
+                    <div className="grid grid-cols-7 text-center border border-black p-2">
+                      <div className="border border-black p-2">รหัสคอร์ส</div>
+                      <div className="border border-black p-2 col-span-2">
+                        ชื่อคอร์ส
+                      </div>
+                      <div className="border border-black p-2">
+                        หน่วยกิต (ท-ป-ศ)
+                      </div>
+                      <div className="border border-black p-2">ภาคการศึกษา</div>
+                      <div className="border border-black p-2">เกรด</div>
+                      <div className="border border-black p-2">
+                        อาจารย์ผู้สอน
+                      </div>
+                    </div>
+                  ) : (
+                    <p>ไม่มีข้อมูลการลงทะเบียน</p>
+                  )}
+
+                  {/* วนลูปแสดงข้อมูล listcourseregister ของแต่ละ register */}
+                  {register.listcourseregister.map((courseRegister, index) => (
+                    <div
+                      key={index}
+                      className="grid grid-cols-7 text-center border border-black p-2"
+                    >
+                      {/* เข้าถึง course_id ผ่าน course */}
+                      <div className="border border-black p-2">
+                        {courseRegister.course.course_id}
+                      </div>
+                      <div className="border border-black p-2 col-span-2">
+                        {courseRegister.course.courseNameTH}
+                      </div>
+                      <div className="border border-black p-2">
+                        {courseRegister.course.courseUnit} (
+                        {courseRegister.course.courseTheory}-
+                        {courseRegister.course.coursePractice}-
+                        {courseRegister.course.categoryResearch})
+                      </div>
+                      <div className="border border-black p-2">
+                        {register.semester}
+                      </div>
+                      <div className="border border-black p-2">
+                        {courseRegister.grade}
+                      </div>
+                      <div className="border border-black p-2">
+                        {/* อาจารย์ผู้สอน */}
+                        {courseRegister.teacher.titlename}{" "}
+                        {courseRegister.teacher.firstname}{" "}
+                        {courseRegister.teacher.lastname}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))
             ) : (
-              <p className="text-gray-300 font-bold">กำลังโหลด...</p>
+              <p className="text-gray-300 font-bold">ไม่มีข้อมูลการลงทะเบียน</p>
             )}
           </div>
 
