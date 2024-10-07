@@ -19,7 +19,14 @@ const Fillgrade = () => {
   const [selectedYear, setSelectedYear] = useState(""); // เพิ่ม state สำหรับเก็บปีการศึกษาที่เลือก
   const [availableYears, setAvailableYears] = useState([]); // เก็บปีการศึกษาที่มีใน register
   const [semester, setSemester] = useState(null);
-
+  
+  const handleGradeChange = (listcourseregister_id, value) => {
+    setGrades({
+      ...grades,
+      [listcourseregister_id]: value,
+    });
+  };
+  
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
@@ -83,7 +90,7 @@ const Fillgrade = () => {
                 course.teacher_id || "";
               gradesMap[course.listcourseregister_id] = course.grade || "";
               inputTeachersMap[course.listcourseregister_id] =
-                `${course.teacher.firstname} ${course.teacher.lastname}` || "";
+  course.teacher ? `${course.teacher.firstname} ${course.teacher.lastname}` : "";
               freeSubjectMap[course.listcourseregister_id] =
                 course.freesubject || false; // เก็บค่า freeSubject
             });
@@ -102,6 +109,8 @@ const Fillgrade = () => {
             }
           );
           setTeachers(teacherResponse.data);
+          console.log("Teacher data:",teacherResponse.data);
+          
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);

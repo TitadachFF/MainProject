@@ -13,7 +13,7 @@ const GraduateCheck = () => {
   const [courseData, setCourseData] = useState([]);
   const [courseGroupedData, setCourseGroupedData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const [registerData, setRegisterData] = useState([]); // ประกาศ state สำหรับ registerData
+  const [registerData, setRegisterData] = useState([]);
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -312,13 +312,15 @@ const GraduateCheck = () => {
                         {register.semester}
                       </div>
                       <div className="border border-black p-2">
-                        {courseRegister.grade.replace("_plus", "+")}
+                        {courseRegister.grade
+                          ? `${courseRegister.grade.replace("_plus", "+")}`
+                          : ""}
                       </div>
+
                       <div className="border border-black p-2">
-                        {/* อาจารย์ผู้สอน */}
-                        {courseRegister.teacher.titlename}{" "}
-                        {courseRegister.teacher.firstname}{" "}
-                        {courseRegister.teacher.lastname}
+                        {courseRegister.teacher
+                          ? `${courseRegister.teacher.titlename} ${courseRegister.teacher.firstname} ${courseRegister.teacher.lastname}`
+                          : ""}
                       </div>
                     </div>
                   ))}
