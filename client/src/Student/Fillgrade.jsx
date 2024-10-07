@@ -196,6 +196,12 @@ const Fillgrade = () => {
     const value = e.target.value;
     setSemester(value ? parseInt(value, 10) : null); // แปลงค่าเป็น integer
   };
+  const handleFreeSubjectChange = (listcourseregister_id, isFreeSubject) => {
+    setFreeSubject({
+      ...freeSubject,
+      [listcourseregister_id]: isFreeSubject,
+    });
+  };
 
 
   return (
@@ -390,22 +396,21 @@ const Fillgrade = () => {
                       </td>
 
                       <td className="py-2 border text-center">
-                        <select
-                          className="border rounded-md p-1 text-center"
-                          value={
-                            freeSubject[course.listcourseregister_id] || "false"
-                          }
-                          onChange={(e) =>
-                            handleFreeSubjectChange(
-                              course.listcourseregister_id,
-                              e.target.value === "false"
-                            )
-                          }
-                        >
-                          <option value="true">ใช่</option>
-                          <option value="false">ไม่ใช่</option>
-                        </select>
-                      </td>
+  <select
+    className="border rounded-md p-1 text-center"
+    value={freeSubject[course.listcourseregister_id] ? "true" : "false"}
+    onChange={(e) =>
+      handleFreeSubjectChange(
+        course.listcourseregister_id,
+        e.target.value === "true"
+      )
+    }
+  >
+    <option value="true">ใช่</option>
+    <option value="false">ไม่ใช่</option>
+  </select>
+</td>
+
                     </tr>
                   ))
                 )}
