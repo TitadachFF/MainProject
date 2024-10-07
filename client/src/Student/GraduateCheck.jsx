@@ -270,12 +270,12 @@ const GraduateCheck = () => {
                   {/* ตรวจสอบว่ามีข้อมูลคอร์สที่ลงทะเบียนใน register นี้หรือไม่ */}
                   {register.listcourseregister.length > 0 ? (
                     <div className="grid grid-cols-7 text-center border border-black p-2">
-                      <div className="border border-black p-2">รหัสคอร์ส</div>
+                      <div className="border border-black p-2">รหัสวิชา</div>
                       <div className="border border-black p-2 col-span-2">
-                        ชื่อคอร์ส
+                        รายวิชา
                       </div>
                       <div className="border border-black p-2">
-                        หน่วยกิต (ท-ป-ศ)
+                        หน่วยกิต น (ท-ป-ค)
                       </div>
                       <div className="border border-black p-2">ภาคการศึกษา</div>
                       <div className="border border-black p-2">เกรด</div>
@@ -299,6 +299,8 @@ const GraduateCheck = () => {
                       </div>
                       <div className="border border-black p-2 col-span-2">
                         {courseRegister.course.courseNameTH}
+                        <br />
+                        {courseRegister.course.courseNameENG}
                       </div>
                       <div className="border border-black p-2">
                         {courseRegister.course.courseUnit} (
@@ -310,7 +312,7 @@ const GraduateCheck = () => {
                         {register.semester}
                       </div>
                       <div className="border border-black p-2">
-                        {courseRegister.grade}
+                        {courseRegister.grade.replace("_plus", "+")}
                       </div>
                       <div className="border border-black p-2">
                         {/* อาจารย์ผู้สอน */}

@@ -82,11 +82,13 @@ const Fillgrade = () => {
               teachersMap[course.listcourseregister_id] =
                 course.teacher_id || "";
               gradesMap[course.listcourseregister_id] = course.grade || "";
-              freeSubjectMap[course.freesubject] = course.freesubject || "";
               inputTeachersMap[course.listcourseregister_id] =
                 `${course.teacher.firstname} ${course.teacher.lastname}` || "";
+              freeSubjectMap[course.listcourseregister_id] =
+                course.freesubject || false; // เก็บค่า freeSubject
             });
           });
+
 
           setSelectedTeachers(teachersMap);
           setGrades(gradesMap);
@@ -140,7 +142,7 @@ const Fillgrade = () => {
         Object.keys(selectedTeachers).map(async (listcourseregister_id) => {
           const teacher_id = selectedTeachers[listcourseregister_id];
           const grade = grades[listcourseregister_id];
-          const freesubject = !!freeSubject[listcourseregister_id];
+          const freesubject = freeSubject[listcourseregister_id] || false;
 
           if (!teacher_id) {
             console.error(
@@ -196,12 +198,15 @@ const Fillgrade = () => {
     const value = e.target.value;
     setSemester(value ? parseInt(value, 10) : null); // แปลงค่าเป็น integer
   };
-  const handleFreeSubjectChange = (listcourseregister_id, isFreeSubject) => {
+
+  const handleFreeSubjectChange = (listcourseregister_id, value) => {
     setFreeSubject({
       ...freeSubject,
-      [listcourseregister_id]: isFreeSubject,
+      [listcourseregister_id]: value === "true", // แปลงสตริงเป็นบูลีน
     });
   };
+
+
 
 
   return (
@@ -384,7 +389,7 @@ const Fillgrade = () => {
                             )
                           }
                         >
-                          <option value="">เลือกผลการเรียน</option>
+                          <option disabled value="">เลือกผลการเรียน</option>
                           <option value="A">A</option>
                           <option value="B_plus">B+</option>
                           <option value="B">B</option>
@@ -396,21 +401,28 @@ const Fillgrade = () => {
                       </td>
 
                       <td className="py-2 border text-center">
-  <select
-    className="border rounded-md p-1 text-center"
-    value={freeSubject[course.listcourseregister_id] ? "true" : "false"}
-    onChange={(e) =>
-      handleFreeSubjectChange(
-        course.listcourseregister_id,
-        e.target.value === "true"
-      )
-    }
-  >
-    <option value="true">ใช่</option>
-    <option value="false">ไม่ใช่</option>
-  </select>
-</td>
-
+                        <select
+                          className="border rounded-md p-1 text-center"
+                          value={
+                            freeSubject[course.listcourseregister_id] !==
+                            undefined
+                              ? String(
+                                  freeSubject[course.listcourseregister_id]
+                                )
+                              : ""
+                          }
+                          onChange={(e) =>
+                            handleFreeSubjectChange(
+                              course.listcourseregister_id,
+                              e.target.value
+                            )
+                          }
+                        >
+                          <option disabled value="">เลือก</option>
+                          <option value="true">ใช่</option>
+                          <option value="false">ไม่ใช่</option>
+                        </select>
+                      </td>
                     </tr>
                   ))
                 )}
