@@ -9,6 +9,7 @@ const EditCourse = () => {
   const [courses, setCourses] = useState([]);
   const [groups, setGroups] = useState([]); // เพิ่ม state สำหรับ groups
   const [editingCourse, setEditingCourse] = useState(null);
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   const navigate = useNavigate();
 
@@ -19,7 +20,7 @@ const EditCourse = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/deleteCourse/${course_id}`,
+        `${apiUrl}api/deleteCourse/${course_id}`,
         {
           method: "DELETE",
           headers: {
@@ -45,7 +46,7 @@ const EditCourse = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/api/getCoursesByCategoryId/${category_id}`,
+          `${apiUrl}api/getCoursesByCategoryId/${category_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -67,7 +68,7 @@ const EditCourse = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/api/getGroupsByCategoryId/${category_id}`,
+          `${apiUrl}api/getGroupsByCategoryId/${category_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -89,7 +90,7 @@ const EditCourse = () => {
       try {
         const token = localStorage.getItem("token");
         const majorResponse = await fetch(
-          `http://localhost:3000/api/getMajorByCode/${major_code}`,
+          `${apiUrl}api/getMajorByCode/${major_code}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -103,7 +104,7 @@ const EditCourse = () => {
         setMajor(majorData);
 
         const categoriesResponse = await fetch(
-          `http://localhost:3000/api/getCategoriesByMajorCode/${major_code}`,
+          `${apiUrl}api/getCategoriesByMajorCode/${major_code}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -148,7 +149,7 @@ const EditCourse = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/updateCourse/${editingCourse.course_id}`,
+        `${apiUrl}api/updateCourse/${editingCourse.course_id}`,
         {
           method: "PUT",
           headers: {

@@ -7,12 +7,13 @@ const AllCourse = () => {
   const [error, setError] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     const fetchMajors = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:3000/api/getAllMajors", {
+        const response = await fetch(`${apiUrl}api/getAllMajors`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -43,7 +44,7 @@ const AllCourse = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/deleteMajor/${majorId}`,
+        `${apiUrl}api/deleteMajor/${majorId}`,
         {
           method: "DELETE",
           headers: {

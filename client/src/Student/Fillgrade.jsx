@@ -19,7 +19,8 @@ const [selectedTeachers, setSelectedTeachers] = useState({});
   const [selectedYear, setSelectedYear] = useState(""); // เพิ่ม state สำหรับเก็บปีการศึกษาที่เลือก
   const [availableYears, setAvailableYears] = useState([]); // เก็บปีการศึกษาที่มีใน register
   const [semester, setSemester] = useState(null);
-  
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [message, setMessage] = useState("");
   const handleGradeChange = (listcourseregister_id, value) => {
     setGrades({
       ...grades,
@@ -28,7 +29,6 @@ const [selectedTeachers, setSelectedTeachers] = useState({});
   };
   
 const apiUrl = import.meta.env.VITE_BASE_URL;
-console.log(apiUrl);
 
   useEffect(() => {
     
@@ -54,7 +54,7 @@ console.log(apiUrl);
 
 
           const sectionResponse = await axios.get(
-            `http://localhost:3000/api/getSectionById/${studentResponse.data.sec_id}`,
+            `${apiUrl}api/getSectionById/${studentResponse.data.sec_id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -63,7 +63,7 @@ console.log(apiUrl);
           setSections(sectionResponse.data);
 
           const advisorResponse = await axios.get(
-            `http://localhost:3000/api/getAdvisorById/${studentResponse.data.advisor_id}`,
+            `${apiUrl}api/getAdvisorById/${studentResponse.data.advisor_id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -71,7 +71,7 @@ console.log(apiUrl);
           setAdvisor(advisorResponse.data);
 
           const registerResponse = await axios.get(
-            `http://localhost:3000/api/getRegisters/${studentResponse.data.student_id}`,
+            `${apiUrl}api/getRegisters/${studentResponse.data.student_id}`,
 
             {
               headers: { Authorization: `Bearer ${token}` },
@@ -112,7 +112,7 @@ console.log(apiUrl);
 
           const teacherResponse = await axios.get(
 
-            `http://localhost:3000/api/getTeachers`,
+            `${apiUrl}api/getTeachers`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -178,7 +178,7 @@ console.log(apiUrl);
           };
 
           const response = await axios.put(
-            `http://localhost:3000/api/updateRegister/${listcourseregister_id}`,
+            `${apiUrl}api/updateRegister/${listcourseregister_id}`,
             body,
             {
               headers: { Authorization: `Bearer ${token}` },
@@ -189,12 +189,13 @@ console.log(apiUrl);
       );
 
 
-      alert("บันทึกผลการเรียนเรียบร้อยแล้ว");
-      window.location.reload();
+      document.getElementById("my_modal_1").showModal();
+      setMessage("บันทึกสำเร็จ !");
+      setIsSuccess(true);
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล:", error.message);
-      alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + error.message);
-    }
+      setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
+      setIsSuccess(false);    }
 
   };
 
@@ -229,7 +230,9 @@ console.log(apiUrl);
       [listcourseregister_id]: value === "true", // แปลงสตริงเป็นบูลีน
     });
   };
-
+  function refreshPage() {
+    window.location.reload();
+  }
 
 
   return (
@@ -466,13 +469,13 @@ console.log(apiUrl);
             </button>
 
             <div className="flex space-x-4">
-              <button
+              {/* <button
                 type="button"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
                 onClick={() => navigate("/documents?form=documentinfo")}
               >
                 ดูตัวอย่างเอกสาร
-              </button>
+              </button> */}
               <button
                 type="button"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
@@ -485,6 +488,36 @@ console.log(apiUrl);
           </div>
         </div>
       </div>
+      <dialog id="my_modal_1" className="modal">
+        <div className="modal-box">
+          <h3 id="alertmodal" className="font-bold text-lg">
+            {message}
+          </h3>
+          <p className="py-4 text-gray-500">
+            กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
+          </p>
+          <div className="modal-action flex justify-between">
+            <form method="dialog" className="w-full flex justify-between">
+              <button
+                id="close-alertmodal"
+                onClick={refreshPage}
+
+                className="px-10 py-2 bg-white text-red border font-semibold border-red rounded"
+              >
+                ปิด
+              </button>
+              {isSuccess && (
+                <button
+                  className="px-8 py-2 bg-red border border-red text-white rounded"
+                  onClick={() => navigate("/student")}
+                >
+                  หน้าแรก
+                </button>
+              )}
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };

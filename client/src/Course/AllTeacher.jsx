@@ -14,13 +14,14 @@ const AllTeacher = () => {
   const [editingAdvisor, setEditingAdvisor] = useState(null);
   const [updatedAdvisor, setUpdatedAdvisor] = useState({});
   const [sections, setSections] = useState([]);
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
 
   useEffect(() => {
     const fetchSections = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:3000/api/getSections", {
+        const response = await fetch(`${apiUrl}api/getSections`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -44,7 +45,7 @@ const AllTeacher = () => {
     const fetchAdvisors = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/getAdvisors"
+          `${apiUrl}api/getAdvisors`
         );
         setAdvisors(response.data);
         setFilteredAdvisors(response.data);
@@ -92,7 +93,7 @@ const AllTeacher = () => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `http://localhost:3000/api/updateAdvisor/${updatedAdvisor.advisor_id}`, // ใช้ advisor_id แทน id
+        `${apiUrl}api/updateAdvisor/${updatedAdvisor.advisor_id}`, // ใช้ advisor_id แทน id
         updatedAdvisor,
         {
           headers: {
@@ -105,7 +106,7 @@ const AllTeacher = () => {
       setEditingAdvisor(null);
 
       // อัปเดตรายการอาจารย์หลังจากบันทึกสำเร็จ
-      const response = await axios.get("http://localhost:3000/api/getAdvisors");
+      const response = await axios.get(`${apiUrl}api/getAdvisors`);
       setAdvisors(response.data);
       setFilteredAdvisors(response.data);
     } catch (error) {
@@ -126,7 +127,7 @@ const AllTeacher = () => {
       const token = localStorage.getItem("token");
 
       await axios.delete(
-        `http://localhost:3000/api/deleteAdvisor/${advisorToDelete.advisor_id}`,
+        `${apiUrl}api/deleteAdvisor/${advisorToDelete.advisor_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -136,7 +137,7 @@ const AllTeacher = () => {
       setShowDeleteModal(false);
       setAdvisorToDelete(null);
       // Refresh list after successful delete
-      const response = await axios.get("http://localhost:3000/api/getAdvisors");
+      const response = await axios.get(`${apiUrl}api/getAdvisors`);
       setAdvisors(response.data);
       setFilteredAdvisors(response.data);
     } catch (error) {

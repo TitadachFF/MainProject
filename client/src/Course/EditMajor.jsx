@@ -6,6 +6,7 @@ const EditMajor = () => {
   const major_code = searchParams.get("editMajor");
   const [major, setMajor] = useState(null);
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,7 +25,7 @@ const EditMajor = () => {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://localhost:3000/api/updateMajor/${major.major_id}`,
+        `${apiUrl}api/updateMajor/${major.major_id}`,
         {
           method: "PUT",
           headers: {
@@ -69,7 +70,7 @@ const EditMajor = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/api/getMajorByCode/${major_code}`,
+          `${apiUrl}api/getMajorByCode/${major_code}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

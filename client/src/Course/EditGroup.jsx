@@ -8,6 +8,7 @@ const EditGroup = () => {
   const [categories, setCategories] = useState([]);
   const [groups, setGroups] = useState([]);
   const [editingGroup, setEditingGroup] = useState(null);
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   const [newGroup, setNewGroup] = useState({
     group_name: "",
@@ -36,7 +37,7 @@ const EditGroup = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/createGroupMajor`,
+        `${apiUrl}api/createGroupMajor`,
         {
           method: "POST",
           headers: {
@@ -70,7 +71,7 @@ const EditGroup = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/api/deleteGroupMajor/${groupId}`,
+          `${apiUrl}api/deleteGroupMajor/${groupId}`,
           {
             method: "DELETE",
             headers: {
@@ -101,7 +102,7 @@ const EditGroup = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/updateGroupMajor/${editingGroup.group_id}`,
+        `${apiUrl}api/updateGroupMajor/${editingGroup.group_id}`,
         {
           method: "PUT",
           headers: {
@@ -145,7 +146,7 @@ const EditGroup = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/api/getGroupsByCategoryId/${category_id}`,
+          `${apiUrl}api/getGroupsByCategoryId/${category_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -166,7 +167,7 @@ const EditGroup = () => {
       try {
         const token = localStorage.getItem("token");
         const majorResponse = await fetch(
-          `http://localhost:3000/api/getMajorByCode/${major_code}`,
+          `${apiUrl}api/getMajorByCode/${major_code}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -180,7 +181,7 @@ const EditGroup = () => {
         setMajor(majorData);
 
         const categoriesResponse = await fetch(
-          `http://localhost:3000/api/getCategoriesByMajorCode/${major_code}`,
+          `${apiUrl}api/getCategoriesByMajorCode/${major_code}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

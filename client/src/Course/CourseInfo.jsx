@@ -16,6 +16,7 @@ const CourseInfo = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +32,7 @@ const CourseInfo = () => {
 
           if (courseinstructorId) {
             const response = await axios.get(
-              `http://localhost:3000/api/getCourseInById/${courseinstructorId}`,
+              `${apiUrl}api/getCourseInById/${courseinstructorId}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -70,7 +71,7 @@ const CourseInfo = () => {
       const courseinstructor_id = userData?.decoded?.id; // Extracting the ID
 
       const response = await axios.put(
-        `http://localhost:3000/api/updateCourseIn/${courseinstructor_id}`,
+        `${apiUrl}api/updateCourseIn/${courseinstructor_id}`,
         updatedCourseData,
         {
           headers: {

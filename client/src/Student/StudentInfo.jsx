@@ -11,13 +11,13 @@ const StudentInfo = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState("");
   const location = useLocation();
-
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [studentData, setStudentData] = useState({
     username: "",
     password: "",
   });
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +33,7 @@ const StudentInfo = () => {
           setAcademicName(academicNameFromToken);
           setStudentId(studentId); // เพิ่มการตั้งค่า studentId
           const studentResponse = await axios.get(
-            `http://localhost:3000/api/getStudentById/${studentId}`,
+            `${apiUrl}api/getStudentById/${studentId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -72,7 +72,7 @@ const StudentInfo = () => {
 
       if (studentId) {
         const response = await axios.put(
-          `http://localhost:3000/api/updateStudent/${studentId}`,
+          `${apiUrl}api/updateStudent/${studentId}`,
           {
             username: studentData.username,
             password: studentData.password,
