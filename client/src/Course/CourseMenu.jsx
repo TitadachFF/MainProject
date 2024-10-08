@@ -13,8 +13,10 @@ const CourseMenu = () => {
         <span className="mx-1">&gt;</span>
         <p>เมนูตัวแทนหลักสูตร</p>
       </div>
-      <div className=" py-20 flex flex-wrap justify-center gap-4 p-4 ">
-        {/* Card 1 */}
+      <div className="py-6 flex justify-center">
+      <div className="flex flex-wrap justify-start gap-6 max-w-screen-xl">
+
+      {/* Card 1 */}
         <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
           onClick={() => navigate("/addcourse")}
@@ -189,7 +191,7 @@ const CourseMenu = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div>    </div>
   );
 };
 

@@ -230,7 +230,7 @@ const EditGroup = () => {
         <p>แก้ไขหมวดวิชา</p>
       </div>
       <div className="flex justify-center p-6 bg-gray-100">
-        <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
+        <div className="w-full max-w-5xl bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-2xl text-red font-bold">แก้ไขกลุ่มวิชา</h2>
           <form>
             <p className="text-red px-2 font-semibold py-2">
@@ -244,39 +244,50 @@ const EditGroup = () => {
               เพิ่มกลุ่มวิชา
             </button>
             <div className="grid grid-cols-1 py-2 gap-2">
-              {groups.map((group) => (
-                <div
-                  key={group.group_id}
-                  className="border border-gray-300 rounded-md p-1"
-                >
-                  <div className="flex justify-between items-center">
-                    <div className="flex space-x-3">
-                      <span className="text-gray-700 font-semibold">
-                        {group.group_name}
-                      </span>
-                      <span className="text-gray-500">
-                        จำนวนไม่น้อยกว่า: {group.group_unit}หน่วยกิต
-                      </span>
-                    </div>
-                    <div className="flex space-x-2">
-                      <button
-                        type="button"
-                        className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-600"
-                        onClick={() => handleEditGroupClick(group)}
-                      >
-                        แก้ไข
-                      </button>
-                      <button
-                        type="button"
-                        className="bg-red text-white px-4 py-2 rounded hover:bg-gray-400 ml-2"
-                        onClick={() => handleDeleteGroup(group.group_id)}
-                      >
-                        ลบ
-                      </button>{" "}
+              {groups.map((group) => {
+                const groupCategory = categories.find(
+                  (category) => category.category_id === group.category_id
+                );
+
+                return (
+                  <div
+                    key={group.group_id}
+                    className="border border-gray-300 rounded-md p-1"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex space-x-3">
+                        <span className="text-gray-700 font-semibold">
+                          {group.group_name}
+                        </span>
+                        <span className="text-gray-500">
+                          จำนวนไม่น้อยกว่า: {group.group_unit}หน่วยกิต
+                        </span>
+                        {groupCategory && (
+              <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">
+                            หมวดวิชา: {groupCategory.category_name}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          type="button"
+                          className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-600"
+                          onClick={() => handleEditGroupClick(group)}
+                        >
+                          แก้ไข
+                        </button>
+                        <button
+                          type="button"
+                          className="bg-red text-white px-4 py-2 rounded hover:bg-gray-400 ml-2"
+                          onClick={() => handleDeleteGroup(group.group_id)}
+                        >
+                          ลบ
+                        </button>{" "}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </form>
           <div className="flex justify-between py-2">

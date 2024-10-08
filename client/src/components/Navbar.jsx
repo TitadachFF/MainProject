@@ -98,7 +98,10 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <a href="/" className="pl-4 text-5xl text-red pr-2 font-serif">
+        <a
+          href="/"
+          className="pl-4 text-5xl text-red pr-2 font-serif hover:drop-shadow-md"
+        >
           SE
         </a>
         <div className="border-l-4">
@@ -113,59 +116,59 @@ const Navbar = () => {
           {userData?.decoded.role === "student" && (
             <li className="flex-row">
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/student")}
               >
                 เมนูนักศึกษา
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/fillgrade")}
               >
                 กรอกแบบบันทึกผลการเรียน
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/documents")}
               >
                 เอกสาร
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
+                onClick={() => navigate("/graduate_check")}
+              >
+                ตรวจสอบจบ
+              </a>
+              <a
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/studentinfo")}
               >
                 ข้อมูลส่วนตัว
-              </a>
-              <a
-                className="font-semibold hover:underline"
-                onClick={() => navigate("/documentresponse")}
-              >
-                คำตอบกลับเอกสาร
               </a>
             </li>
           )}
           {userData?.decoded.role === "course_in" && (
             <li className="flex-row">
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/course")}
               >
                 เมนูตัวแทนหลักสูตร
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/addcourse")}
               >
                 เพิ่มหลักสูตร
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/allcourse")}
               >
                 ดูหลักสูตร
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/courseinfo")}
               >
                 ข้อมูลส่วนตัว
@@ -175,31 +178,31 @@ const Navbar = () => {
           {userData?.decoded.role === "advisor" && (
             <li className="flex-row">
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/addstudent")}
               >
                 เพิ่มนักศึกษา
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/allstudent")}
               >
                 ดูรายชื่อนักศึกษา
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/studentplan")}
               >
                 แผนการเรียน
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/adviceinfo")}
               >
                 ข้อมูลส่วนตัว
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/documentstudent")}
               >
                 เอกสารคำร้องขอ
@@ -229,7 +232,9 @@ const Navbar = () => {
           <div className="dropdown dropdown-end flex">
             <div className="pt-3 flex">
               <p className="font-bold pr-2">ยินดีต้อนรับ !</p>
-              <span className="pr-2">{userData?.decoded.name}</span>
+              <span className="pr-2">
+                {userData?.decoded.firstname} {userData?.decoded.lastname}
+              </span>
               <span className={`h-6 badge ${roleColor}`}>{displayRole}</span>
             </div>
             <div
@@ -256,18 +261,17 @@ const Navbar = () => {
             >
               <li>
                 <div className="justify-between">
-                  <span>{userData?.decoded.name}</span>
+                  <span>
+                    {userData?.decoded.firstname} {userData?.decoded.lastname}
+                  </span>
                   <span className={`badge ${roleColor}`}>{displayRole}</span>
                 </div>
               </li>
+
               <li>
-                <a>Profile</a>
-              </li>
-              <li>
-                <a>Settings</a>
-              </li>
-              <li>
-                <a onClick={handleLogout}>Logout</a>
+                <a className="font-bold" onClick={handleLogout}>
+                  Logout
+                </a>
               </li>
             </ul>
           </div>

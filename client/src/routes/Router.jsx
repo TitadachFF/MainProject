@@ -10,8 +10,7 @@ import CourseMenu from "../Course/CourseMenu";
 import AddStudent from "../Advice/AddStudent";
 import AdviceInfo from "../Advice/AdviceInfo";
 import AllStudent from "../Advice/AllStudent";
-
-import AddTeacherName from "../Admin/AddTeacherName";
+import RegistePlan from "../Student/RegistePlan";
 
 import AddCourse from "../Course/AddCourse";
 import AddCourseCategory from "../Course/AddCourseCategory";
@@ -47,6 +46,7 @@ import AddListplan from "../Advice/AddListplan";
 import EditGroup from "../Course/EditGroup";
 import EditCourse from "../Course/EditCourse";
 import RegistePlan from "../Student/RegistePlan";
+import GraduateCheck from "../Student/GraduateCheck";
 
 const Router = createBrowserRouter([
   {
@@ -78,6 +78,15 @@ const Router = createBrowserRouter([
         element: <Fillgrade />,
       },
       { path: "/editcourse", element: <EditCourse /> },
+
+      {
+        path: "/registerplan",
+        element: <RegistePlan />,
+      },
+      {
+        path: "/viewmajor",
+        element: <ViewMajor />,
+      },
       {
         path: "/studentinfo",
         element: <StudentInfo />,
@@ -185,6 +194,9 @@ const Router = createBrowserRouter([
       {
         path: "/registerplan",
         element: <RegistePlan />
+
+        path: "/graduate_check",
+        element: <GraduateCheck/>,
       },
     ],
   },
