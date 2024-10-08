@@ -44,6 +44,8 @@ const DocumentInfo = () => {
     firstname: "",
     lastname: "",
   });
+  const apiUrl = import.meta.env.VITE_BASE_URL;
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,7 +60,7 @@ const DocumentInfo = () => {
             parsedUserData.decoded.academic.academic_name || "";
           setAcademicName(academicNameFromToken);
           const studentResponse = await axios.get(
-            `http://localhost:3000/api/getStudentById/${studentId}`,
+            `${apiUrl}api/getStudentById/${studentId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -67,7 +69,7 @@ const DocumentInfo = () => {
           setStudentData(studentResponse.data);
 
           const sectionResponse = await axios.get(
-            `http://localhost:3000/api/getSectionById/${studentResponse.data.sec_id}`,
+            `${apiUrl}api/getSectionById/${studentResponse.data.sec_id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -75,7 +77,7 @@ const DocumentInfo = () => {
           setSections(sectionResponse.data);
 
           const advisorResponse = await axios.get(
-            `http://localhost:3000/api/getAdvisorById/${studentResponse.data.advisor_id}`,
+            `${apiUrl}api/getAdvisorById/${studentResponse.data.advisor_id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -119,7 +121,7 @@ const DocumentInfo = () => {
       const token = localStorage.getItem("token");
 
       const response = await axios.put(
-        `http://localhost:3000/api/updateStudent/${studentData.student_id}`,
+        `${apiUrl}api/updateStudent/${studentData.student_id}`,
         {
           titlenameTh: studentData.titlenameTh,
           firstname: studentData.firstname,

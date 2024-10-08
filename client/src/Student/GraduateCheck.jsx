@@ -12,6 +12,8 @@ const GraduateCheck = () => {
   const [courseGroupedData, setCourseGroupedData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [freeSubjectData, setFreeSubjectData] = useState([]); // สร้าง state สำหรับวิชาเสรี
+  const apiUrl = import.meta.env.VITE_BASE_URL;
+
   const gradeToValue = (grade) => {
     switch (grade) {
       case "A":
@@ -44,7 +46,7 @@ const GraduateCheck = () => {
             parsedUserData.decoded.academic.academic_name || "";
 
           const studentResponse = await axios.get(
-            `http://localhost:3000/api/getStudentById/${studentId}`,
+            `${apiUrl}api/getStudentById/${studentId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -55,7 +57,7 @@ const GraduateCheck = () => {
           const majorId = studentData.major_id;
 
           const majorResponse = await axios.get(
-            `http://localhost:3000/api/getMajorById/${majorId}`
+            `${apiUrl}api/getMajorById/${majorId}`
           );
           setMajorUnit(majorResponse.data.majorUnit);
 
@@ -65,10 +67,10 @@ const GraduateCheck = () => {
             groupsResponse,
             coursesResponse,
           ] = await Promise.all([
-            axios.get(`http://localhost:3000/api/getRegisters/${studentId}`),
-            axios.get(`http://localhost:3000/api/getAllCategories`),
-            axios.get(`http://localhost:3000/api/getAllGroupMajors`),
-            axios.get(`http://localhost:3000/api/getAllCourses`),
+            axios.get(`${apiUrl}api/getRegisters/${studentId}`),
+            axios.get(`${apiUrl}api/getAllCategories`),
+            axios.get(`${apiUrl}api/getAllGroupMajors`),
+            axios.get(`${apiUrl}api/getAllCourses`),
           ]);
 
           const registerData = registerResponse.data;

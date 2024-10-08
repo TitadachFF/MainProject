@@ -12,6 +12,7 @@ const EditCategory = () => {
     category_unit: "",
   });
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   const navigate = useNavigate();
 
@@ -34,7 +35,7 @@ const EditCategory = () => {
   const handleAddCategory = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:3000/api/createCategory`, {
+      const response = await fetch(`${apiUrl}api/createCategory`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +67,7 @@ const EditCategory = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/api/deleteCategory/${categoryId}`,
+          `${apiUrl}api/deleteCategory/${categoryId}`,
           {
             method: "DELETE",
             headers: {
@@ -99,7 +100,7 @@ const EditCategory = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/updateCategory/${editingCategory.category_id}`,
+        `${apiUrl}api/updateCategory/${editingCategory.category_id}`,
         {
           method: "PUT",
           headers: {
@@ -142,7 +143,7 @@ const EditCategory = () => {
       try {
         const token = localStorage.getItem("token");
         const majorResponse = await fetch(
-          `http://localhost:3000/api/getMajorByCode/${major_code}`,
+          `${apiUrl}api/getMajorByCode/${major_code}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -156,7 +157,7 @@ const EditCategory = () => {
         setMajor(majorData);
 
         const categoriesResponse = await fetch(
-          `http://localhost:3000/api/getCategoriesByMajorCode/${major_code}`,
+          `${apiUrl}api/getCategoriesByMajorCode/${major_code}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

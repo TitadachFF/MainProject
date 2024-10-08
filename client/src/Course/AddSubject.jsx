@@ -19,6 +19,7 @@ const AddSubject = () => {
   const [courses, setCourses] = useState([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState("");
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   const navigate = useNavigate();
 
@@ -26,7 +27,7 @@ const AddSubject = () => {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:3000/api/getAllMajors", {
+        const response = await fetch(`${apiUrl}api/getAllMajors`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -47,7 +48,7 @@ const AddSubject = () => {
         try {
           const token = localStorage.getItem("token");
           const response = await fetch(
-            `http://localhost:3000/api/getCategoriesByMajorCode/${major_code}`,
+            `${apiUrl}api/getCategoriesByMajorCode/${major_code}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -78,7 +79,7 @@ const AddSubject = () => {
         try {
           const token = localStorage.getItem("token");
           const response = await fetch(
-            `http://localhost:3000/api/getGroupsByCategoryId/${category_id}`,
+            `${apiUrl}api/getGroupsByCategoryId/${category_id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -137,7 +138,7 @@ const AddSubject = () => {
     }
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:3000/api/createCourse", {
+      const response = await fetch(`${apiUrl}api/createCourse`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

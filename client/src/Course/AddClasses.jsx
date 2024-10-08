@@ -10,12 +10,13 @@ const AddClasses = () => {
 
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     const fetchMajors = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/getAllMajors/",
+          `${apiUrl}api/getAllMajors/`,
           {
             method: "GET",
           }
@@ -54,7 +55,7 @@ const AddClasses = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/createSection", {
+      const response = await fetch(`${apiUrl}api/createSection`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

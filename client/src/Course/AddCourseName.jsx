@@ -6,6 +6,8 @@ const AddCourseName = () => {
   const location = useLocation();
   const [isSuccess, setIsSuccess] = useState(false); 
   const [message, setMessage] = useState("");
+  const apiUrl = import.meta.env.VITE_BASE_URL;
+
   const [formData, setFormData] = useState({
     major_code: "",
     majorNameTH: "",
@@ -59,7 +61,7 @@ const AddCourseName = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/createMajor", {
+      const response = await fetch(`${apiUrl}api/createMajor`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

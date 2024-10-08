@@ -12,6 +12,7 @@ const AddCourseCategory = () => {
     category_unit: "",
     major_id: "",
   });
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,7 +51,7 @@ const AddCourseCategory = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:3000/api/createCategory", {
+      const response = await fetch(`${apiUrl}api/createCategory`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -85,7 +86,7 @@ const AddCourseCategory = () => {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:3000/api/getAllMajors", {
+        const response = await fetch(`${apiUrl}api/getAllMajors`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

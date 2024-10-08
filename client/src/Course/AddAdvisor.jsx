@@ -6,6 +6,7 @@ const AddAdvisor = () => {
   const [sections, setSections] = useState([]);
   const [message, setMessage] = useState("");
   const [message2, setMessage2] = useState("");
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   const [formData, setFormData] = useState({
     username: "",
@@ -15,6 +16,7 @@ const AddAdvisor = () => {
     lastname: "",
     phone: "",
     email: "",
+    titlename:"",
     sec_id: "",
   });
 
@@ -24,7 +26,7 @@ const AddAdvisor = () => {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/getSections", {
+        const response = await fetch(`${apiUrl}api/getSections`, {
           method: "GET",
         });
 
@@ -67,6 +69,7 @@ const AddAdvisor = () => {
       password: formData.password,
       firstname: formData.firstname,
       lastname: formData.lastname,
+      titlename: formData.titlename,
       sec_id: parseInt(formData.sec_id, 10),
     };
 
@@ -79,7 +82,7 @@ const AddAdvisor = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/createAdvisor", {
+      const response = await fetch(`${apiUrl}api/createAdvisor`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -136,6 +139,17 @@ const AddAdvisor = () => {
           <form>
             <div className="grid grid-cols-1 gap-6">
               <div className="flex gap-6">
+              <div className="w-1/2">
+                  <label className="block text-gray-700">คำนำหน้า</label>
+                  <input
+                    type="text"
+                    name="titlename"
+                    className="w-full mt-1 border border-gray-300 rounded p-2"
+                    placeholder="คำนำหน้าขื่อ"
+                    value={formData.titlename}
+                    onChange={handleChange}
+                  />
+                </div>
                 <div className="w-1/2">
                   <label className="block text-gray-700">ชื่อ</label>
                   <input
@@ -238,7 +252,7 @@ const AddAdvisor = () => {
               <button
                 type="button"
                 className="px-6 py-2 bg-gray-100 border border-red text-red rounded"
-                onClick={() => navigate("/advice")}
+                onClick={() => navigate("/course")}
               >
                 ย้อนกลับ
               </button>

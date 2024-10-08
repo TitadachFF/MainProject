@@ -8,6 +8,7 @@ const RegistePlan = () => {
   const [academicName, setAcademicName] = useState("");
   const [studentplanId, setStudentplanId] = useState(""); // State for selected student plan ID
   const [year, setYear] = useState(""); // State for year
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState("");
@@ -30,7 +31,7 @@ const RegistePlan = () => {
           console.log("Academic Name from Token:", academicNameFromToken);
 
           const response = await axios.get(
-            `http://localhost:3000/api/getStudentById/${studentId}`,
+            `${apiUrl}api/getStudentById/${studentId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -41,7 +42,7 @@ const RegistePlan = () => {
 
           // Fetch student plans based on academic name
           const studentPlansResponse = await axios.get(
-            `http://localhost:3000/api/getStudentplanByAcademic?academicName=${academicNameFromToken}`,
+            `${apiUrl}api/getStudentplanByAcademic?academicName=${academicNameFromToken}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -61,7 +62,7 @@ const RegistePlan = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:3000/api/createRegister",
+        `${apiUrl}api/createRegister`,
 
         {},
 

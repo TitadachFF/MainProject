@@ -13,12 +13,13 @@ const AddCourseGroup = () => {
     group_name: "",
     group_unit: "",
   });
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:3000/api/getAllMajors", {
+        const response = await fetch(`${apiUrl}api/getAllMajors`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -40,7 +41,7 @@ const AddCourseGroup = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/getCategoriesByMajorCode/${major_code}`,
+        `${apiUrl}api/getCategoriesByMajorCode/${major_code}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -105,6 +106,8 @@ const AddCourseGroup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("dara",formData);
+    
     if (
       !formData.selectedCategory ||
       !formData.group_name ||
@@ -119,7 +122,7 @@ const AddCourseGroup = () => {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        "http://localhost:3000/api/createGroupMajor",
+        `${apiUrl}api/createGroupMajor`,
         {
           method: "POST",
           headers: {
