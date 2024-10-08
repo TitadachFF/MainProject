@@ -27,8 +27,11 @@ const [selectedTeachers, setSelectedTeachers] = useState({});
     });
   };
   
+const apiUrl = import.meta.env.VITE_BASE_URL;
+console.log(apiUrl);
 
   useEffect(() => {
+    
     const fetchStudentData = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -41,7 +44,7 @@ const [selectedTeachers, setSelectedTeachers] = useState({});
             parsedUserData.decoded.academic.academic_name || "";
 
           const studentResponse = await axios.get(
-            `http://localhost:3000/api/getStudentById/${studentId}`,
+            `${apiUrl}api/getStudentById/${studentId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
