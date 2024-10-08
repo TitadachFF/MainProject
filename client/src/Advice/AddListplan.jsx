@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 const AddListplan = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [categories, setCategories] = useState([]);
   const [groups, setGroups] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -11,8 +13,8 @@ const AddListplan = () => {
   const [selectedGroup, setSelectedGroup] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [studentplanId, setStudentplanId] = useState(""); // State for selected student plan
-  const [studentPlans, setStudentPlans] = useState([]); // State for student plans
+  const [studentplanId, setStudentplanId] = useState("");
+  const [studentPlans, setStudentPlans] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -26,16 +28,8 @@ const AddListplan = () => {
             },
           }
         );
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
         const data = await response.json();
-        console.log("Fetched categories data:", data);
-        if (Array.isArray(data)) {
-          setCategories(data);
-        } else {
-          console.error("Unexpected API response:", data);
-        }
+        setCategories(data);
       } catch (error) {
         console.error("Error fetching categories:", error.message);
       }
@@ -56,16 +50,8 @@ const AddListplan = () => {
             },
           }
         );
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
         const data = await response.json();
-        console.log("Fetched student plans data:", data);
-        if (Array.isArray(data)) {
-          setStudentPlans(data);
-        } else {
-          console.error("Unexpected API response:", data);
-        }
+        setStudentPlans(data);
       } catch (error) {
         console.error("Error fetching student plans:", error.message);
       }
@@ -88,12 +74,7 @@ const AddListplan = () => {
             }
           );
           const data = await response.json();
-          console.log("Fetched groups data:", data);
-          if (Array.isArray(data)) {
-            setGroups(data);
-          } else {
-            console.error("Unexpected API response:", data);
-          }
+          setGroups(data);
         } catch (error) {
           console.error("Error fetching groups:", error);
         }
@@ -119,12 +100,7 @@ const AddListplan = () => {
             }
           );
           const data = await response.json();
-          console.log("Fetched courses data:", data);
-          if (Array.isArray(data)) {
-            setCourses(data);
-          } else {
-            console.error("Unexpected API response:", data);
-          }
+          setCourses(data);
         } catch (error) {
           console.error("Error fetching courses:", error);
         }
@@ -137,24 +113,18 @@ const AddListplan = () => {
   }, [selectedGroup]);
 
   const handleCategoryChange = (e) => {
-    const category = e.target.value;
-    setSelectedCategory(category);
-    setSelectedGroup(""); // Clear selected group when category changes
-    setSelectedCourse(""); // Clear selected course when category changes
-    console.log("Selected category:", category);
+    setSelectedCategory(e.target.value);
+    setSelectedGroup("");
+    setSelectedCourse("");
   };
 
   const handleGroupChange = (e) => {
-    const group = e.target.value;
-    setSelectedGroup(group);
-    setSelectedCourse(""); // Clear selected course when group changes
-    console.log("Selected group:", group);
+    setSelectedGroup(e.target.value);
+    setSelectedCourse("");
   };
 
   const handleCourseChange = (e) => {
-    const course = e.target.value;
-    setSelectedCourse(course);
-    console.log("Selected course:", course);
+    setSelectedCourse(e.target.value);
   };
 
   const handleAddCourseClick = () => {
@@ -166,19 +136,35 @@ const AddListplan = () => {
       const selectedCourseData = courses.find(
         (course) => course.course_id === selectedCourse
       );
+
       if (selectedCourseData) {
-        setSelectedCourses((prevCourses) => [
-          ...prevCourses,
-          {
-            courseId: selectedCourseData.course_id,
-            courseName: selectedCourseData.courseNameTH,
-            courseUnit: selectedCourseData.courseUnit,
-            courseTheory: selectedCourseData.courseTheory || "0",
-            coursePractice: selectedCourseData.coursePractice || "0",
-            categoryResearch: selectedCourseData.categoryResearch || "0",
-          },
-        ]);
-        console.log("Added course:", selectedCourseData);
+        // Check if the course is already selected
+        const isCourseAlreadySelected = selectedCourses.some(
+          (course) => course.courseId === selectedCourseData.course_id
+        );
+
+        if (isCourseAlreadySelected) {
+          setErrorMessage(
+            `คุณเลือกรายวิชานี้แล้ว: ${selectedCourseData.courseNameTH}`
+          );
+          setShowErrorModal(true);
+          setTimeout(() => {
+            setShowErrorModal(false);
+            setErrorMessage("");
+          }, 1000);
+        } else {
+          setSelectedCourses((prevCourses) => [
+            ...prevCourses,
+            {
+              courseId: selectedCourseData.course_id,
+              courseName: selectedCourseData.courseNameTH,
+              courseUnit: selectedCourseData.courseUnit,
+              courseTheory: selectedCourseData.courseTheory || "0",
+              coursePractice: selectedCourseData.coursePractice || "0",
+              categoryResearch: selectedCourseData.categoryResearch || "0",
+            },
+          ]);
+        }
       }
     }
     setShowModal(false);
@@ -192,16 +178,18 @@ const AddListplan = () => {
       const token = localStorage.getItem("token");
       const courses = selectedCourses.map((course) => course.courseId);
 
-      console.log("กำลังส่งแผนการเรียนพร้อมข้อมูล:", {
-        studentplan_id: studentplanId, 
-        course_id: courses,
-      });
+      if (!studentplanId || courses.length === 0) {
+        setErrorMessage("กรุณากรอกข้อมูลให้ครบถ้วน");
+        setShowErrorModal(true);
 
-      if (!studentplanId || !courses) {
-        throw new Error("กรุณากรอกข้อมูลให้ครบถ้วน");
+        setTimeout(() => {
+          setShowErrorModal(false);
+          setErrorMessage("");
+        }, 2000);
+
+        return;
       }
 
-      // Send each course separately
       for (const courseId of courses) {
         const response = await fetch(
           `http://localhost:3000/api/createListStudentplan/${studentplanId}`,
@@ -219,22 +207,42 @@ const AddListplan = () => {
 
         if (!response.ok) {
           const errorData = await response.json();
-          console.error("การตอบสนองของเซิร์ฟเวอร์:", errorData);
-          throw new Error("ไม่สามารถสร้างแผนการเรียนได้");
-        }
+          const duplicateCourse = selectedCourses.find(
+            (course) => course.courseId === courseId
+          );
 
-        const data = await response.json();
-        console.log("สร้างแผนการเรียนสำเร็จ:", data);
+          setErrorMessage(
+            `ไม่สามารถเพิ่มวิชา ${duplicateCourse.courseName} เนื่องจากมีในแผนการเรียนแล้ว`
+          );
+          setShowErrorModal(true);
+
+          setTimeout(() => {
+            setShowErrorModal(false);
+            setErrorMessage("");
+          }, 2000);
+
+          return;
+        }
       }
 
       navigate("/studentplan");
     } catch (error) {
-      console.error("เกิดข้อผิดพลาดในการสร้างแผนการเรียน:", error);
+      console.error("Error creating student plan:", error);
     }
   };
 
+  const handleCloseErrorModal = () => {
+    setShowErrorModal(false);
+    setErrorMessage("");
+  };
+
+  // คำนวณหน่วยกิตรวม
+  const totalUnits = selectedCourses.reduce((total, course) => {
+    return total + parseInt(course.courseUnit, 10);
+  }, 0);
+
   return (
-    <div className="w-full max-w-3xl bg-white rounded-lg">
+    <div className="w-full max-w-3xl bg-white rounded-lg p-6">
       <h1 className="mb-6 text-black">เพิ่มรายวิชาในแผน</h1>
       <div className="mb-4">
         <label className="block text-gray-700">Student Plan</label>
@@ -246,15 +254,13 @@ const AddListplan = () => {
           <option value="">เลือกแผนการเรียน</option>
           {studentPlans.map((plan) => (
             <option key={plan.studentplan_id} value={plan.studentplan_id}>
-              แผนการเรียนปีการศึกษา {plan.year}{" "}
-              {/* Display academic year or other relevant info */}
+              แผนการเรียนปีการศึกษา {plan.year} เทอม {plan.semester}
             </option>
           ))}
         </select>
       </div>
 
       <div className="border border-gray-300 p-4 rounded-lg">
-        {/* Display Selected Courses */}
         {selectedCourses.length > 0 && (
           <div className="mt-6">
             <div className="bg-white p-4 rounded-lg">
@@ -290,8 +296,14 @@ const AddListplan = () => {
             เพิ่มรายวิชา
           </button>
         </div>
-        {/* ปุ่มส่งข้อมูล */}
+
+        {selectedCourses.length > 0 && (
+          <div className="mt-4 text-lg font-semibold">
+            จำนวนหน่วยกิตรวม: {totalUnits} หน่วยกิต
+          </div>
+        )}
       </div>
+
       <div className="col-span-3 mt-6 flex justify-between">
         <button
           type="button"
@@ -308,6 +320,7 @@ const AddListplan = () => {
         </button>
       </div>
 
+      {/* Modal สำหรับเลือกวิชา */}
       {showModal && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -362,14 +375,31 @@ const AddListplan = () => {
             </div>
             <div className="flex justify-end">
               <button
-                className="px-4 py-2 bg-red text-white rounded-full mr-2"
+                className="px-4 py-2 bg-red text-white rounded mr-2"
                 onClick={handleCloseModal}
               >
-                บันทึก
+                เพิ่ม
               </button>
               <button
-                className="px-4 py-2 border border-gray-300 rounded-full"
-                onClick={handleCloseModal}
+                className="px-4 py-2 bg-gray-300 rounded"
+                onClick={() => setShowModal(false)}
+              >
+                ปิด
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal สำหรับข้อผิดพลาด */}
+      {showErrorModal && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-lg font-bold">{errorMessage}</h2>
+            <div className="flex justify-end mt-4">
+              <button
+                className="px-4 py-2 bg-red text-white rounded-full"
+                onClick={handleCloseErrorModal}
               >
                 ปิด
               </button>

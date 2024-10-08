@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Fillgrade = () => {
   const navigate = useNavigate();
   const [academicName, setAcademicName] = useState("");
-  const [selectedTeachers, setSelectedTeachers] = useState({});
+const [selectedTeachers, setSelectedTeachers] = useState({});
   const [grades, setGrades] = useState({});
   const [freeSubject, setFreeSubject] = useState({});
   const [studentData, setStudentData] = useState({});
@@ -27,6 +27,7 @@ const Fillgrade = () => {
     });
   };
   
+
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
@@ -48,11 +49,13 @@ const Fillgrade = () => {
           setStudentData(studentResponse.data);
           setAcademicName(academicNameFromToken);
 
+
           const sectionResponse = await axios.get(
             `http://localhost:3000/api/getSectionById/${studentResponse.data.sec_id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
+
           );
           setSections(sectionResponse.data);
 
@@ -66,6 +69,7 @@ const Fillgrade = () => {
 
           const registerResponse = await axios.get(
             `http://localhost:3000/api/getRegisters/${studentResponse.data.student_id}`,
+
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -97,20 +101,24 @@ const Fillgrade = () => {
           });
 
 
+
           setSelectedTeachers(teachersMap);
           setGrades(gradesMap);
           setFreeSubject(freeSubjectMap);
           setInputTeachers(inputTeachersMap);
 
           const teacherResponse = await axios.get(
+
             `http://localhost:3000/api/getTeachers`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
+
           setTeachers(teacherResponse.data);
           console.log("Teacher data:",teacherResponse.data);
           
+
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -177,12 +185,14 @@ const Fillgrade = () => {
         })
       );
 
+
       alert("บันทึกผลการเรียนเรียบร้อยแล้ว");
       window.location.reload();
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล:", error.message);
       alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + error.message);
     }
+
   };
 
   // ฟังก์ชันกรองรายวิชาตามปีการศึกษาที่เลือก
@@ -204,8 +214,10 @@ const Fillgrade = () => {
       : filteredRegisters;
 
   const handleSemesterChange = (e) => {
+
     const value = e.target.value;
     setSemester(value ? parseInt(value, 10) : null); // แปลงค่าเป็น integer
+
   };
 
   const handleFreeSubjectChange = (listcourseregister_id, value) => {
@@ -214,7 +226,6 @@ const Fillgrade = () => {
       [listcourseregister_id]: value === "true", // แปลงสตริงเป็นบูลีน
     });
   };
-
 
 
 
@@ -288,6 +299,7 @@ const Fillgrade = () => {
                   ))}
                 </select>
               </label>
+
             </div>
           </div>
           <div className="flex mt-5">
@@ -332,6 +344,7 @@ const Fillgrade = () => {
                 </tr>
               </thead>
               <tbody>
+
                 {filteredCourses.map((register) =>
                   register.listcourseregister.map((course) => (
                     <tr key={course.listcourseregister_id}>
@@ -380,6 +393,7 @@ const Fillgrade = () => {
                                     )
                                   }
                                 >
+
                                   {`${teacher.firstname} ${teacher.lastname}`}
                                 </li>
                               ))}
@@ -459,6 +473,7 @@ const Fillgrade = () => {
               <button
                 type="button"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
+
                 onClick={handleSubmit}
               >
                 บันทึก

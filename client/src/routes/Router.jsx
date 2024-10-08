@@ -40,12 +40,12 @@ import EditStudentPlan from "../Advice/EditStudentPlan";
 
 import AddAdvisor from "../Course/AddAdvisor";
 import AddClasses from "../Course/AddClasses";
-import AddTeacherName from "../Admin/AddTeacherName";
 import AllTeacher from "../Course/AllTeacher";
 import AddListplan from "../Advice/AddListplan";
 
 import EditGroup from "../Course/EditGroup";
 import EditCourse from "../Course/EditCourse";
+import RegistePlan from "../Student/RegistePlan";
 import GraduateCheck from "../Student/GraduateCheck";
 
 const Router = createBrowserRouter([
@@ -78,6 +78,7 @@ const Router = createBrowserRouter([
         element: <Fillgrade />,
       },
       { path: "/editcourse", element: <EditCourse /> },
+
       {
         path: "/registerplan",
         element: <RegistePlan />,
@@ -191,6 +192,9 @@ const Router = createBrowserRouter([
         element: <AddListplan />,
       },
       {
+        path: "/registerplan",
+        element: <RegistePlan />
+
         path: "/graduate_check",
         element: <GraduateCheck/>,
       },

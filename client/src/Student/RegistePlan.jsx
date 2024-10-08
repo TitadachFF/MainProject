@@ -8,6 +8,7 @@ const RegistePlan = () => {
   const [academicName, setAcademicName] = useState("");
   const [studentplanId, setStudentplanId] = useState(""); // State for selected student plan ID
   const [year, setYear] = useState(""); // State for year
+
   const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState("");
   const [semester, setSemester] = useState(""); // State for semester
@@ -61,11 +62,14 @@ const RegistePlan = () => {
       const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://localhost:3000/api/createRegister",
+
         {},
+
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       console.log("Update response:", response.data);
 
       document.getElementById("my_modal_1").showModal();
@@ -101,12 +105,16 @@ const RegistePlan = () => {
           {studentData && (
             <div className="grid grid-cols-1 gap-6">
               <div className="flex space-x-4">
+
+
                 <label className="flex text-gray-700 font-">
                   <p className="font-bold"> ชื่อ: </p>
                   <p className=" ml-2">
                     {studentData.firstname} {studentData.lastname}
                   </p>
                 </label>
+
+
                 <label className="flex text-gray-700">
                   <p className="font-bold mr-2">รหัสนักศึกษา:</p>{" "}
                   {studentData.student_id}
@@ -119,6 +127,7 @@ const RegistePlan = () => {
               </div>
             </div>
           )}
+
 
           <button
             type="button"
@@ -164,6 +173,7 @@ const RegistePlan = () => {
                 onChange={(e) => setSemester(e.target.value)}
               />
             </div>
+
           </div> */}
 
           <div className="mt-6 flex justify-between">
@@ -176,17 +186,20 @@ const RegistePlan = () => {
             </button>
 
             <div className="flex space-x-4">
+
               {/* <button
                 type="button"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
                 onClick={handleSubmit}
               >
                 บันทึก
+
               </button> */}
             </div>
           </div>
         </div>
       </div>
+
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box">
           <h3 id="alertmodal" className="font-bold text-lg">

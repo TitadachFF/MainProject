@@ -59,16 +59,18 @@ const CourseInfo = () => {
     try {
       const token = localStorage.getItem("token");
       const updatedCourseData = {
-        name: coursename,
-        phone,
-        email,
+        username,
+        password,
         firstname,
         lastname,
-        password,
+        phone,
+        email,
       };
 
+      const courseinstructor_id = userData?.decoded?.id; // Extracting the ID
+
       const response = await axios.put(
-        `http://localhost:3000/api/updateUser/${userData.decoded.id}`,
+        `http://localhost:3000/api/updateCourseIn/${courseinstructor_id}`,
         updatedCourseData,
         {
           headers: {
@@ -80,11 +82,15 @@ const CourseInfo = () => {
       setMessage(response.data.message);
       setShowModal(true);
 
+      // Update the userData in local state if needed
       setUserData({
         ...userData,
         decoded: {
           ...userData.decoded,
-          name: coursename,
+          firstname,
+          lastname,
+          phone,
+          email,
         },
       });
 
@@ -94,7 +100,7 @@ const CourseInfo = () => {
       }, 1000);
     } catch (error) {
       console.error("Error updating user:", error.message);
-      setMessage("Error updating user");
+      setMessage(error.response?.data?.message || "Error updating user");
     }
   };
 

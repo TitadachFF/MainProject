@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { UserIcon } from "@heroicons/react/16/solid";
 
 const AllTeacher = () => {
   const navigate = useNavigate();
@@ -66,9 +67,12 @@ const AllTeacher = () => {
   };
 
   const startEditing = (advisor) => {
+    console.log("Editing advisor:", advisor); // เพิ่ม log เพื่อดูข้อมูลที่ได้รับ
     setEditingAdvisor(advisor);
-    setUpdatedAdvisor(advisor);
+    setUpdatedAdvisor({ ...advisor }); // กระจายข้อมูลอาจารย์ทั้งหมด รวมถึง id ด้วย
   };
+
+
 
   const handleUpdateChange = (e) => {
     const { name, value } = e.target;
@@ -76,14 +80,31 @@ const AllTeacher = () => {
   };
 
   const saveChanges = async () => {
+    console.log("Updated Advisor Data:", updatedAdvisor); // ตรวจสอบข้อมูล
+
+    // ตรวจสอบว่า advisor_id มีค่า
+    if (!updatedAdvisor.advisor_id) {
+      console.error("ไม่มี ID ของอาจารย์");
+      return;
+    }
+
     try {
+      const token = localStorage.getItem("token");
+
       await axios.put(
-        `http://localhost:3000/api/updateAdvisor/${updatedAdvisor.id}`,
-        updatedAdvisor
+        `http://localhost:3000/api/updateAdvisor/${updatedAdvisor.advisor_id}`, // ใช้ advisor_id แทน id
+        updatedAdvisor,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       setShowSuccessModal(true);
       setEditingAdvisor(null);
-      // Refresh list after successful update
+
+      // อัปเดตรายการอาจารย์หลังจากบันทึกสำเร็จ
       const response = await axios.get("http://localhost:3000/api/getAdvisors");
       setAdvisors(response.data);
       setFilteredAdvisors(response.data);
@@ -92,6 +113,8 @@ const AllTeacher = () => {
     }
   };
 
+
+
   const confirmDeleteAdvisor = (advisor) => {
     setAdvisorToDelete(advisor);
     setShowDeleteModal(true);
@@ -99,8 +122,16 @@ const AllTeacher = () => {
 
   const deleteAdvisor = async () => {
     try {
+
+      const token = localStorage.getItem("token");
+
       await axios.delete(
-        `http://localhost:3000/api/deleteAdvisor/${advisorToDelete.id}`
+        `http://localhost:3000/api/deleteAdvisor/${advisorToDelete.advisor_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setShowDeleteModal(false);
       setAdvisorToDelete(null);
@@ -112,6 +143,16 @@ const AllTeacher = () => {
       console.error("Error deleting advisor:", error.message);
     }
   };
+
+  useEffect(() => {
+    if (showSuccessModal) {
+      const timer = setTimeout(() => {
+        setShowSuccessModal(false);
+      }, 1000); // หายไปหลังจาก 1 วินาที
+
+      return () => clearTimeout(timer); // ล้าง timeout เมื่อ component ถูก unmount หรือเมื่อ modal ถูกซ่อน
+    }
+  }, [showSuccessModal]);
 
   return (
     <div className="bg-gray-100">
@@ -144,21 +185,25 @@ const AllTeacher = () => {
           <div className="overflow-y-auto max-h-96">
             <ul className="divide-y divide-gray-200">
               {filteredAdvisors.map((advisor) => {
+                const section = sections.find(
+                  (sec) => sec.sec_id === advisor.sec_id
+                );
+                const secName = section ? section.sec_name : "หมู่เรียนไม่ระบุ";
+
                 return (
                   <li
                     key={advisor.id}
                     className="py-2 flex items-center justify-between"
                   >
                     <div className="flex items-center">
+                      <UserIcon className="h-9 w-9 mr-5 text-gray-500" />
                       <div>
                         <p className="text-lg">
-                          {advisor.firstname} {advisor.lastname}
+                          {advisor.titlename} {""} {advisor.firstname} {advisor.lastname}
                         </p>
-                        {advisor && (
-                          <p className="text-sm text-gray-500">
-                            หมู่เรียน {advisor.sec_name || "หมู่เรียนไม่ระบุ"}
-                          </p>
-                        )}
+                        <p className="text-sm text-gray-500">
+                          หมู่เรียน {secName}
+                        </p>
                         <p className="text-sm text-gray-500">
                           เบอร์โทร: {advisor.phone || "ไม่ระบุ"}
                         </p>
@@ -191,7 +236,7 @@ const AllTeacher = () => {
             <button
               type="button"
               className="px-6 py-2 bg-gray-100 border rounded"
-              onClick={() => navigate("/advice")}
+              onClick={() => navigate("/course")}
             >
               ย้อนกลับ
             </button>
@@ -237,6 +282,7 @@ const AllTeacher = () => {
                 <input
                   type="text"
                   name="phone"
+                  placeholder="เบอร์โทรศัพท์"
                   className="mt-1 w-full h-9 rounded border-gray-300 p-2 border text-gray-500"
                   value={updatedAdvisor.phone || ""}
                   onChange={handleUpdateChange}
@@ -248,6 +294,7 @@ const AllTeacher = () => {
                 </label>
                 <input
                   type="email"
+                  placeholder="อีเมล"
                   name="email"
                   className="mt-1 w-full h-9 rounded border-gray-300 p-2 border text-gray-500"
                   value={updatedAdvisor.email || ""}
@@ -255,17 +302,17 @@ const AllTeacher = () => {
                 />
               </div>
             </div>
-            <div className="flex justify-end p-4 border-t border-gray-200">
+            <div className="bg-gray-100 rounded-b-lg p-4 flex-shrink-0 flex justify-end space-x-2">
               <button
                 type="button"
-                className="px-4 py-2 bg-gray-300 text-white rounded mr-2"
+                className="px-4 py-1 bg-gray-100 border rounded"
                 onClick={() => setEditingAdvisor(null)}
               >
                 ยกเลิก
               </button>
               <button
                 type="button"
-                className="px-4 py-2 bg-green-500 text-white rounded"
+                className="px-4 py-2 bg-red text-white rounded"
                 onClick={saveChanges}
               >
                 บันทึก
@@ -278,7 +325,7 @@ const AllTeacher = () => {
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <p className="text-green-500">อัปเดตสำเร็จ!</p>
+            <p className="text-red">อัปเดตสำเร็จ!</p>
           </div>
         </div>
       )}
@@ -299,7 +346,7 @@ const AllTeacher = () => {
               </button>
               <button
                 type="button"
-                className="px-4 py-2 bg-red-500 text-white rounded"
+                className="px-4 py-2 bg-red text-white rounded"
                 onClick={deleteAdvisor}
               >
                 ลบ

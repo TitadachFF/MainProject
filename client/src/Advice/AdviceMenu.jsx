@@ -5,7 +5,7 @@ const AdviceMenu = () => {
   const navigate = useNavigate();
   return (
     <div className="pb-36">
-      <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28">
+      <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-32">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
         </p>

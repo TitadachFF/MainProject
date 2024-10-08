@@ -113,12 +113,12 @@ const AddTeacherName = () => {
                 onChange={handleChange}
               >
                 <option value="">คำนำหน้า</option>
-                <option value="Mr.">Mr.</option>
-                <option value="Mrs.">Mrs.</option>
-                <option value="Ms.">Ms.</option>
-                <option value="Miss.">Miss.</option>
-                <option value="Dr.">Dr.</option>
-                <option value="Asst. Prof.">Asst. Prof.</option>
+                <option value="Mr.">นาย</option>
+                <option value="Mrs.">นาง</option>
+                <option value="Ms.">นางสาว</option>
+                <option value="Miss.">อาจารย์</option>
+                <option value="Dr.">ดร</option>
+                <option value="Asst. Prof.">ผศ</option>
               </select>
             </div>
             <div>

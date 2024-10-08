@@ -32,7 +32,6 @@ const AllUser = () => {
   const [searchUser, setSearchUser] = useState("");
   const [updatedName, setUpdatedName] = useState("");
   const [updatedUserName, setUpdatedUserName] = useState("");
-  const [updatedUserPassword, setUpdatedUserPassword] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showUnSuccessModal, setShowUnSuccessModal] = useState(false);
 
@@ -120,125 +119,6 @@ const AllUser = () => {
     setUpdatedRole(user.role);
     setUpdatedUserName(user.username);
   };
-
-  // const startEditingPassword = (user) => {
-  //   setEditingUserPassword(user);
-  //   setUpdatedUserPassword("");
-  // };
-
-  // const saveChanges = async () => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const [firstname, lastname] = updatedName.split(" ");
-
-  //     const requestBody = {
-  //       firstname: firstname || "",
-  //       lastname: lastname || "",
-  //       username: updatedUserName,
-  //       password: updatedUserPassword,
-  //     };
-
-  //     console.log("Request Body:", requestBody);
-
-  //     let response;
-  //     let url;
-
-  //     // ตรวจสอบว่า editingUser มีข้อมูลอะไรบ้าง
-  //     if (editingUser) {
-  //       if (editingUser.userType === "student") {
-  //         url = `http://localhost:3000/api/updateStudent/${editingUser.id}`;
-  //       } else if (editingUser.userType === "teacher") {
-  //         url = `http://localhost:3000/api/updateTeacher/${editingUser.id}`;
-  //       } else if (editingUser.userType === "course_instructor") {
-  //         url = `http://localhost:3000/api/updateCourseIn/${editingUser.id}`;
-  //       } else {
-  //         throw new Error("Unknown user type");
-  //       }
-
-  //       response = await fetch(url, {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         body: JSON.stringify(requestBody),
-  //       });
-
-  //       if (!response.ok) {
-  //         throw new Error("Failed to update user");
-  //       }
-
-  //       const updatedUser = await response.json();
-  //       setUsers((prevUsers) =>
-  //         prevUsers.map((user) =>
-  //           user.id === updatedUser.id ? updatedUser : user
-  //         )
-  //       );
-
-  //       setEditingUser(null);
-  //       setEditingUserPassword(null);
-  //       setShowSuccessModal(true);
-
-  //       setTimeout(() => {
-  //         setShowSuccessModal(false);
-  //         window.location.reload();
-  //       }, 1000);
-  //     } else if (editingUserPassword) {
-  //       url = `http://localhost:3000/api/updatePassword/${editingUserPassword.id}`;
-
-  //       response = await fetch(url, {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         body: JSON.stringify({ password: updatedUserPassword }),
-  //       });
-
-  //       if (!response.ok) {
-  //         throw new Error("Failed to update password");
-  //       }
-
-  //       setEditingUserPassword(null);
-  //       setShowSuccessModal(true);
-
-  //       setTimeout(() => {
-  //         setShowSuccessModal(false);
-  //         window.location.reload();
-  //       }, 1000);
-  //     }
-  //   } catch (error) {
-  //     setError(error.message);
-  //     setShowUnSuccessModal(true);
-  //     setTimeout(() => {
-  //       setShowUnSuccessModal(false);
-  //       window.location.reload();
-  //     }, 1000);
-  //   }
-  // };
-
-  // const deleteUser = async (userId) => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const response = await fetch(
-  //       `http://localhost:3000/api/deleteUser/${userId}`,
-  //       {
-  //         method: "DELETE",
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to delete user");
-  //     }
-
-  //     setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
-  //   } catch (error) {
-  //     setError(error.message);
-  //   }
-  // };
 
   if (loading) {
     return (
@@ -392,9 +272,6 @@ const AllUser = () => {
                       >
                         ลบ
                       </button>
-                      {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-</svg> */}
                     </div>
                   </li>
                 ))}
@@ -418,22 +295,6 @@ const AllUser = () => {
                       onChange={(e) => setUpdatedName(e.target.value)}
                     />
                   </div>
-                  {/* <div className="mb-2">
-                    <label className="block text-md font-medium text-black">
-                      ตำแหน่ง
-                    </label>
-                    <select
-                      className="mt-1 w-full rounded border-gray-300 p-2 border text-gray-500"
-                      value={updatedRole}
-                      onChange={(e) => setUpdatedRole(e.target.value)}
-                    >
-                      {roleOptions.map((option, index) => (
-                        <option key={index} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div> */}
                   <div className="mb-2">
                     <label className="block text-md font-medium text-black">
                       ชื่อผู้ใช้
@@ -458,7 +319,6 @@ const AllUser = () => {
                     <button
                       type="button"
                       className="px-4 py-2 bg-red text-white text-sm rounded"
-                      // onClick={saveChanges}
                     >
                       บันทึก
                     </button>
@@ -466,42 +326,6 @@ const AllUser = () => {
                 </div>
               </div>
             )}
-            {/* {editingUserPassword && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white rounded-lg p-6 w-1/3">
-                  <h3 className="text-2xl mb-4 font-bold text-red">
-                    ลืมรหัสผ่าน
-                  </h3>
-                  <div className="mb-2">
-                    <label className="block text-md font-medium text-black">
-                      กรอกรหัสผ่านใหม่
-                    </label>
-                    <input
-                      type="text"
-                      className="mt-1 w-full  rounded border-gray-300 p-2  border text-gray-500 "
-                      placeholder="New Password"
-                      onChange={(e) => setUpdatedUserPassword(e.target.value)}
-                    />
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <button
-                      type="button"
-                      className="px-4 py-2 bg-gray-100 text-black text-sm rounded border"
-                      onClick={() => setEditingUserPassword(null)}
-                    >
-                      ยกเลิก
-                    </button>
-                    <button
-                      type="button"
-                      className="px-4 py-2 bg-red text-white text-sm rounded"
-                      onClick={saveChanges}
-                    >
-                      บันทึก
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )} */}
             {showSuccessModal && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50  ">
                 <div className="bg-white rounded-lg  modal-box">

@@ -13,6 +13,8 @@ const StudentMenu = () => {
         <span className="mx-1">&gt;</span>
         <p>เมนูนักศึกษา</p>
       </div>
+
+
       <div className="py-6 flex justify-center">
         <div className="flex flex-wrap justify-start gap-6 max-w-screen-xl">
           <div
