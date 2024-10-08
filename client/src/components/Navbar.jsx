@@ -13,19 +13,19 @@ const Navbar = () => {
   let roleColor = "";
   let svgRoleColor = "";
 
-  if (displayRole === "ADMIN") {
+  if (displayRole === "admin") {
     displayRole = "แอดมิน";
     svgRoleColor = "text-orange-300";
     roleColor = "bg-orange-300 text-white";
-  } else if (displayRole === "STUDENT") {
+  } else if (displayRole === "student") {
     displayRole = "นักศึกษา";
     svgRoleColor = "text-red";
     roleColor = "bg-red text-white";
-  } else if (displayRole === "ADVISOR") {
+  } else if (displayRole === "advisor") {
     displayRole = "อาจารย์";
     svgRoleColor = "text-blue-500";
     roleColor = "bg-blue-500 text-white";
-  } else if (displayRole === "COURSE_INSTRUCTOR") {
+  } else if (displayRole === "course_in") {
     displayRole = "ตัวแทนหลักสูตร";
     svgRoleColor = "text-green-700";
     roleColor = "bg-green-700 text-white";
@@ -98,113 +98,124 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <a href="/" className="pl-4 text-5xl text-red pr-2 font-serif">
+        <a
+          href="/"
+          className="pl-4 text-5xl text-red pr-2 font-serif hover:drop-shadow-md"
+        >
           SE
         </a>
         <div className="border-l-4">
-  <p className="pl-2 text-sm pt-1 hidden sm:block">
-    Graduated System <br />
-    ระบบกรอกแบบฟอร์มคำร้องขอสำเร็จการศึกษา
-  </p>
-</div>
-
+          <p className="pl-2 text-sm pt-1 hidden sm:block">
+            Graduated System <br />
+            ระบบกรอกแบบฟอร์มคำร้องขอสำเร็จการศึกษา
+          </p>
+        </div>
       </div>
       <div className="navbar-center hidden lg:flex ">
         <ul className="menu menu-horizontal px-1  ">
-          {userData?.decoded.role === "STUDENT" && (
+          {userData?.decoded.role === "student" && (
             <li className="flex-row">
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/student")}
               >
                 เมนูนักศึกษา
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/fillgrade")}
               >
                 กรอกแบบบันทึกผลการเรียน
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/documents")}
               >
                 เอกสาร
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
+                onClick={() => navigate("/graduate_check")}
+              >
+                ตรวจสอบจบ
+              </a>
+              <a
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/studentinfo")}
               >
                 ข้อมูลส่วนตัว
               </a>
-              <a
-                className="font-semibold hover:underline"
-                onClick={() => navigate("/documentresponse")}
-              >
-                คำตอบกลับเอกสาร
-              </a>
             </li>
           )}
-          {userData?.decoded.role === "COURSE_INSTRUCTOR" && (
+          {userData?.decoded.role === "course_in" && (
             <li className="flex-row">
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
+                onClick={() => navigate("/course")}
+              >
+                เมนูตัวแทนหลักสูตร
+              </a>
+              <a
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/addcourse")}
               >
                 เพิ่มหลักสูตร
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/allcourse")}
               >
                 ดูหลักสูตร
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/courseinfo")}
               >
                 ข้อมูลส่วนตัว
               </a>
             </li>
           )}
-          {userData?.decoded.role === "ADVISOR" && (
+          {userData?.decoded.role === "advisor" && (
             <li className="flex-row">
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/addstudent")}
               >
                 เพิ่มนักศึกษา
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/allstudent")}
               >
                 ดูรายชื่อนักศึกษา
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/studentplan")}
               >
                 แผนการเรียน
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/adviceinfo")}
               >
                 ข้อมูลส่วนตัว
               </a>
               <a
-                className="font-semibold hover:underline"
+                className="font-semibold hover:underline hover:bg-white"
                 onClick={() => navigate("/documentstudent")}
               >
                 เอกสารคำร้องขอ
               </a>
             </li>
           )}
-          {userData?.decoded.role === "ADMIN" && (
+          {userData?.decoded.role === "admin" && (
             <li className="flex-row ">
               <a className="font-semibold hover:underline" href="/admin">
                 เมนูแอดมิน
+              </a>
+              <a className="font-semibold hover:underline" href="/admin">
+                เพิ่มรายชื่อผู้ใช้
               </a>
               <a className="font-semibold hover:underline" href="/alluser">
                 ดูรายชื่อผู้ใช้
@@ -221,7 +232,9 @@ const Navbar = () => {
           <div className="dropdown dropdown-end flex">
             <div className="pt-3 flex">
               <p className="font-bold pr-2">ยินดีต้อนรับ !</p>
-              <span className="pr-2">{userData?.decoded.name}</span>
+              <span className="pr-2">
+                {userData?.decoded.firstname} {userData?.decoded.lastname}
+              </span>
               <span className={`h-6 badge ${roleColor}`}>{displayRole}</span>
             </div>
             <div
@@ -248,23 +261,23 @@ const Navbar = () => {
             >
               <li>
                 <div className="justify-between">
-                  <span>{userData?.decoded.name}</span>
+                  <span>
+                    {userData?.decoded.firstname} {userData?.decoded.lastname}
+                  </span>
                   <span className={`badge ${roleColor}`}>{displayRole}</span>
                 </div>
               </li>
+
               <li>
-                <a>Profile</a>
-              </li>
-              <li>
-                <a>Settings</a>
-              </li>
-              <li>
-                <a onClick={handleLogout}>Logout</a>
+                <a className="font-bold" onClick={handleLogout}>
+                  Logout
+                </a>
               </li>
             </ul>
           </div>
         ) : (
           <a
+            id="signin-button"
             className="btn rounded-full p-2 pr-5 pl-5 bg-red text-white cursor-pointer"
             onClick={() => document.getElementById("login").showModal()}
           >

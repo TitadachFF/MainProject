@@ -25,13 +25,13 @@ const Modal = ({ name, onLogin }) => {
       setShowModal(true);
       setTimeout(() => {
         setShowModal(false);
-        if (userData?.decoded.role === "ADMIN") {
+        if (userData?.decoded.role === "admin") {
           navigate("/admin", { replace: true });
-        } else if (userData?.decoded.role === "STUDENT") {
+        } else if (userData?.decoded.role === "student") {
           navigate("/student", { replace: true });
-        } else if (userData?.decoded.role === "COURSE_INSTRUCTOR") {
+        } else if (userData?.decoded.role === "course_in") {
           navigate("/course", { replace: true });
-        } else if (userData?.decoded.role === "ADVISOR") {
+        } else if (userData?.decoded.role === "advisor") {
           navigate("/advice", { replace: true });
         } else {
           navigate(from, { replace: true });
@@ -61,11 +61,12 @@ const Modal = ({ name, onLogin }) => {
             <div className="modal-action mt-0 flex flex-col justify-center">
               <h3 className="font-bold text-lg text-center">โปรดเข้าสู่ระบบ</h3>
               <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
-                <div className="form-control">
+                <div  className="form-control">
                   <label className="label">
                     <span className="label-text">Username</span>
                   </label>
                   <input
+                    id="input-username"
                     type="text"
                     placeholder="Username"
                     className="input input-bordered"
@@ -73,11 +74,12 @@ const Modal = ({ name, onLogin }) => {
                     {...register("username")}
                   />
                 </div>
-                <div className="form-control">
+                <div   className="form-control">
                   <label className="label">
                     <span className="label-text">Password</span>
                   </label>
                   <input
+                    id="input-password"
                     type="password"
                     placeholder="Password"
                     className="input input-bordered"
@@ -92,6 +94,7 @@ const Modal = ({ name, onLogin }) => {
                 </div>
                 <div className="form-control mt-6">
                   <input
+                    id="submit-login"
                     type="submit"
                     value="เข้าสู่ระบบ"
                     className="btn bg-red text-white"

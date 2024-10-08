@@ -10,8 +10,8 @@ import CourseMenu from "../Course/CourseMenu";
 import AddStudent from "../Advice/AddStudent";
 import AdviceInfo from "../Advice/AdviceInfo";
 import AllStudent from "../Advice/AllStudent";
+import RegistePlan from "../Student/RegistePlan";
 
-// Course Import
 import AddCourse from "../Course/AddCourse";
 import AddCourseCategory from "../Course/AddCourseCategory";
 import AddCourseGroup from "../Course/AddCourseGroup";
@@ -25,9 +25,10 @@ import Adduser from "../Admin/Adduser";
 import Alluser from "../Admin/Alluser";
 import AllCourse from "../Course/AllCourse";
 
-
 import CourseCategory from "../Course/CourseCategory";
 
+import ViewMajor from "../Course/ViewMajor";
+import EditCategory from "../Course/EditCategory";
 
 import DocumentStudent from "../Advice/DocumentStudent";
 import StudentPlan from "../Advice/StudentPlan";
@@ -36,6 +37,16 @@ import AdminInfo from "../Admin/AdminInfo";
 import EditMajor from "../Course/EditMajor";
 import NavigateMenu from "../components/NavigateMenu";
 import EditStudentPlan from "../Advice/EditStudentPlan";
+
+import AddAdvisor from "../Course/AddAdvisor";
+import AddClasses from "../Course/AddClasses";
+import AddTeacherName from "../Admin/AddTeacherName";
+import AllTeacher from "../Course/AllTeacher";
+import AddListplan from "../Advice/AddListplan";
+
+import EditGroup from "../Course/EditGroup";
+import EditCourse from "../Course/EditCourse";
+import GraduateCheck from "../Student/GraduateCheck";
 
 const Router = createBrowserRouter([
   {
@@ -58,10 +69,22 @@ const Router = createBrowserRouter([
         path: "/documentresponse",
         element: <Documentres />,
       },
-
+      {
+        path: "/editgroup",
+        element: <EditGroup />,
+      },
       {
         path: "/fillgrade",
         element: <Fillgrade />,
+      },
+      { path: "/editcourse", element: <EditCourse /> },
+      {
+        path: "/registerplan",
+        element: <RegistePlan />,
+      },
+      {
+        path: "/viewmajor",
+        element: <ViewMajor />,
       },
       {
         path: "/studentinfo",
@@ -78,6 +101,10 @@ const Router = createBrowserRouter([
       {
         path: "/alluser",
         element: <Alluser />,
+      },
+      {
+        path: "/editcategory",
+        element: <EditCategory />,
       },
       {
         path: "/adduser",
@@ -139,8 +166,33 @@ const Router = createBrowserRouter([
         path: "/navigate",
         element: <NavigateMenu />,
       },
-      { 
-        path:"/editstudentplan", element: <EditStudentPlan />
+      {
+        path: "/editstudentplan",
+        element: <EditStudentPlan />,
+      },
+      {
+        path: "/addadvisor",
+        element: <AddAdvisor />,
+      },
+      {
+        path: "/addclass",
+        element: <AddClasses />,
+      },
+      {
+        path: "/addteachername",
+        element: <AddTeacherName />,
+      },
+      {
+        path: "/allteacher",
+        element: <AllTeacher />,
+      },
+      {
+        path: "/addlistplan",
+        element: <AddListplan />,
+      },
+      {
+        path: "/graduate_check",
+        element: <GraduateCheck/>,
       },
     ],
   },

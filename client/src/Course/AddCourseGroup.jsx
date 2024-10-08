@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 const AddCourseGroup = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
+  const [message, setMessage] = useState("");
   const [filteredCategories, setFilteredCategories] = useState([]);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({
     selectedCourse: "",
     selectedCategory: "",
@@ -103,6 +105,16 @@ const AddCourseGroup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (
+      !formData.selectedCategory ||
+      !formData.group_name ||
+      !formData.group_unit
+    ) {
+      document.getElementById("my_modal_1").showModal();
+      setMessage("* กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน");
+      setIsSuccess(false);
+      return;
+    }
     try {
       const token = localStorage.getItem("token");
 
@@ -116,20 +128,28 @@ const AddCourseGroup = () => {
           },
           body: JSON.stringify({
             group_name: formData.group_name,
-            group_unit: parseInt(formData.group_unit, 10),
-            category_id: parseInt(formData.selectedCategory, 10),
+            group_unit: parseInt(formData.group_unit),
+            category_id: parseInt(formData.selectedCategory),
           }),
         }
       );
 
       if (response.ok) {
         document.getElementById("my_modal_1").showModal();
+        setMessage("เพิ่มกลุ่มวิชาสำเร็จ !");
+        setIsSuccess(true);
       } else {
         const errorData = await response.json();
         console.error("Error response:", errorData);
+        document.getElementById("my_modal_1").showModal();
+        setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
+        setIsSuccess(false);
       }
     } catch (error) {
       console.error("Error:", error);
+      document.getElementById("my_modal_1").showModal();
+      setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
+      setIsSuccess(false);
     }
   };
 
@@ -223,7 +243,7 @@ const AddCourseGroup = () => {
 
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">บันทึกข้อมูลสำเร็จ!</h3>
+          <h3 className="font-bold text-lg">{message}</h3>
           <p className="py-4 text-gray-500">
             กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
           </p>
@@ -232,12 +252,14 @@ const AddCourseGroup = () => {
               <button className="px-10 py-2 bg-white text-red border font-semibold border-red rounded">
                 ปิด
               </button>
-              <button
-                className="px-8 py-2 bg-red border border-red text-white rounded"
-                onClick={() => updateQueryString("addSubject")}
-              >
-                ถัดไป
-              </button>
+              {isSuccess && ( // แสดงปุ่ม "ถัดไป" เฉพาะเมื่อข้อมูลครบถ้วน
+                <button
+                  className="px-8 py-2 bg-red border border-red text-white rounded"
+                  onClick={() => updateQueryString("addSubject")}
+                >
+                  ถัดไป
+                </button>
+              )}
             </form>
           </div>
         </div>

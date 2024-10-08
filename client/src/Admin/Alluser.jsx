@@ -86,26 +86,25 @@ const AllUser = () => {
     fetchUsers();
   }, []);
 
-  // const roleOptions = [
-  //   { value: "ทั้งหมด", label: "ทั้งหมด" },
-  //   { value: "STUDENT", label: "นักศึกษา" },
-  //   { value: "ADVISOR", label: "ที่ปรึกษา" },
-  //   { value: "COURSE_INSTRUCTOR", label: "ตัวแทนหลักสูตร" },
-  //   { value: "ADMIN", label: "แอดมิน" },
-  // ];
+  const roleOptions = [
+    { value: "ทั้งหมด", label: "ทั้งหมด" },
+    { value: "STUDENT", label: "นักศึกษา" },
+    { value: "ADVISOR", label: "ที่ปรึกษา" },
+    { value: "COURSE_INSTRUCTOR", label: "ตัวแทนหลักสูตร" },
+    { value: "ADMIN", label: "แอดมิน" },
+  ];
 
-  const filteredUsers = users;
 
-  // const filteredUsers = users.filter((user) => {
-  //   return (
-  //     (selectedRole === "ทั้งหมด" ||
-  //       selectedRole === "" ||
-  //       user.role === selectedRole) &&
-  //     `${user.firstname} ${user.lastname}`
-  //       .toLowerCase()
-  //       .includes(searchUser.toLowerCase())
-  //   );
-  // });
+  const filteredUsers = users.filter((user) => {
+    return (
+      (selectedRole === "ทั้งหมด" ||
+        selectedRole === "" ||
+        user.role === selectedRole) &&
+      `${user.firstname} ${user.lastname}`
+        .toLowerCase()
+        .includes(searchUser.toLowerCase())
+    );
+  });
 
   const handleRoleChange = (e) => {
     setSelectedRole(e.target.value);
@@ -322,11 +321,11 @@ const AllUser = () => {
                     value={selectedRole}
                     onChange={handleRoleChange}
                   >
-                    {/* {roleOptions.map((option, index) => (
+                    {roleOptions.map((option, index) => (
                       <option key={index} value={option.value}>
                         {option.label}
                       </option>
-                    ))} */}
+                    ))}
                   </select>
 
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-700">
@@ -369,13 +368,11 @@ const AllUser = () => {
                         <div className="flex">
                           <p className="pr-2">
                             {user.firstname} {user.lastname}
-                          </p>{" "}
+                          </p>
                           <p className="text-xs badge">
-                            {/* {
-                              roleOptions.find(
-                                (option) => option.value === user.role
-                              )?.label
-                            } */}
+                            {roleOptions.find(
+                              (option) => option.value === user.role
+                            )?.label || ""}
                           </p>
                         </div>
                       </div>
@@ -387,13 +384,6 @@ const AllUser = () => {
                         onClick={() => startEditing(user)}
                       >
                         แก้ไข
-                      </button>
-                      <button
-                        type="button"
-                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded"
-                        onClick={() => startEditingPassword(user)}
-                      >
-                        ลืมรหัสผ่าน
                       </button>
                       <button
                         type="button"

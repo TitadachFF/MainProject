@@ -13,95 +13,150 @@ const StudentMenu = () => {
         <span className="mx-1">&gt;</span>
         <p>เมนูนักศึกษา</p>
       </div>
-
-      <div className="py-20 flex flex-wrap justify-center gap-4 p-4">
-        <div  
-          className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
-          onClick={() => navigate("/fillgrade")}
-        >
-          <figure>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-40 my-10"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-              />
-            </svg>
-          </figure>
-          <div className="card-body text-center">
-            <h2 className="font-semibold">กรอกแบบบันทึกผลการเรียน</h2>
-            <p className="border-t py-2">เพิ่มและแก้ไขผลการเรียน</p>
-            <div className="card-actions justify-end"></div>
+      <div className="py-6 flex justify-center">
+        <div className="flex flex-wrap justify-start gap-6 max-w-screen-xl">
+          <div
+            className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
+            onClick={() => navigate("/registerplan")}
+          >
+            <figure>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className=" my-10 size-40"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0-3-3m3 3 3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"
+                />
+              </svg>
+            </figure>
+            <div className="card-body text-center">
+              <h2 className="font-semibold">ลงทะเบียนเรียนแผนการเรียน</h2>
+              <p className="border-t py-2">ลงทะเบียนดึงแผนการเรียน</p>
+              <div className="card-actions justify-end"></div>
+            </div>
           </div>
-        </div>
 
-        {/* Card 2 */}
-        <div
-          className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
-          onClick={() => navigate("/documents")}
-        >
-          <figure>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className=" my-10 size-40"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-              />
-            </svg>
-          </figure>
-          <div className="card-body text-center">
-            <h2 className="font-semibold">เอกสาร</h2>
-            <p className="border-t py-2">แก้ไข หรือ ตรวจสอบเอกสาร</p>
-            <div className="card-actions justify-end"></div>
+          <div
+            className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
+            onClick={() => navigate("/fillgrade")}
+          >
+            <figure>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-40 my-10"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                />
+              </svg>
+            </figure>
+            <div className="card-body text-center">
+              <h2 className="font-semibold">กรอกแบบบันทึกผลการเรียน</h2>
+              <p className="border-t py-2">เพิ่มและแก้ไขผลการเรียน</p>
+              <div className="card-actions justify-end"></div>
+            </div>
           </div>
-        </div>
-
-        {/* Card 3 */}
-        <div
-          className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
-          onClick={() => navigate("/studentinfo")}
-        >
-          <figure>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-40 my-10"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-              />
-            </svg>
-          </figure>
-          <div className="card-body text-center">
-            <h2 className="font-semibold">ข้อมูลส่วนตัว</h2>
-            <p className="border-t py-2">
-              ดูข้อมูลส่วนตัว และ แก้ไขข้อมูลส่วนตัว
-            </p>
-            <div className="card-actions justify-end"></div>
+          {/* ตรวจสอบจบCard */}
+          <div
+            className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
+            onClick={() => navigate("/graduate_check")}
+          >
+            <figure>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-40 my-10"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 0 1 9 9v.375M10.125 2.25A3.375 3.375 0 0 1 13.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 0 1 3.375 3.375M9 15l2.25 2.25L15 12"
+                />
+              </svg>
+            </figure>
+            <div className="card-body text-center">
+              <h2 className="font-semibold">ตรวจสอบจบ</h2>
+              <p className="border-t py-2 text-center">
+                ตรวจสอบจำนวนหน่วยกิตว่าตรงกับเงื่อนไขที่จะสำเร็จการศึกษาได้หรือไม่
+              </p>
+              <div className="card-actions justify-end"></div>
+            </div>
           </div>
-        </div>
+          {/* Card 2 */}
+          <div
+            className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
+            onClick={() => navigate("/documents")}
+          >
+            <figure>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className=" my-10 size-40"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                />
+              </svg>
+            </figure>
+            <div className="card-body text-center">
+              <h2 className="font-semibold">เอกสาร</h2>
+              <p className="border-t py-2">แก้ไข หรือ ตรวจสอบเอกสาร</p>
+              <div className="card-actions justify-end"></div>
+            </div>
+          </div>
 
-        {/* Card 4 */}
-        <div
+          {/* Card 3 */}
+          <div
+            className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
+            onClick={() => navigate("/studentinfo")}
+          >
+            <figure>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-40 my-10"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                />
+              </svg>
+            </figure>
+            <div className="card-body text-center">
+              <h2 className="font-semibold">ข้อมูลส่วนตัว</h2>
+              <p className="border-t py-2">
+                ดูข้อมูลส่วนตัว และ แก้ไขข้อมูลส่วนตัว
+              </p>
+              <div className="card-actions justify-end"></div>
+            </div>
+          </div>
+
+          {/* Card 4 */}
+          {/* <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/documentresponse")}
         >
@@ -128,6 +183,7 @@ const StudentMenu = () => {
             </p>
             <div className="card-actions justify-end"></div>
           </div>
+        </div> */}
         </div>
       </div>
     </div>

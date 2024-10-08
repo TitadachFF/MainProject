@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const AdminMenu = () => {
   const navigate = useNavigate();
   return (
-    <div className="pb-[120px]">
+    <div className="pb-36">
       <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28 ">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
@@ -13,7 +13,7 @@ const AdminMenu = () => {
         <p>เมนูแอดมิน</p>
       </div>
 
-      <div className="py-20 flex flex-wrap justify-center gap-4 p-4 section-container">
+      <div className="py-20 flex flex-wrap justify-center gap-4 p-4">
         {/* Card 1 */}
         <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
@@ -33,7 +33,7 @@ const AdminMenu = () => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="size-40 my-10"
+              className="size-40 my-10 text-blue-500"
             >
               <path
                 strokeLinecap="round"
@@ -50,8 +50,45 @@ const AdminMenu = () => {
             <div className="card-actions justify-end"></div>
           </div>
         </div>
-
         {/* Card 2 */}
+        <div
+          className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
+          onClick={() => navigate("/addteachername")}
+          onAuxClick={(e) => {
+            if (e.button === 1) {
+              // ตรวจสอบว่าคลิกเมาส์กลาง
+              e.preventDefault(); // ป้องกันการกระทำเริ่มต้น
+              window.open("/addteachername", "_blank");
+            }
+          }}
+        >
+          <figure>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-40 my-10 text-red"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+              />
+            </svg>
+          </figure>
+          <div className="card-body text-center">
+            <h2 className="font-semibold">เพิ่มเพิ่มรายชื่ออาจารย์</h2>
+            <p className="border-t py-2">
+              เพิ่มรายชื่ออาจารย์เข้ามาในระบบ <br /> เพื่อใช้ในการ
+              กรอกเกรดของนักศึกษา
+            </p>
+            <div className="card-actions justify-end"></div>
+          </div>
+        </div>
+
+        {/* Card 3 */}
         <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/alluser")}
@@ -88,7 +125,7 @@ const AdminMenu = () => {
           </div>
         </div>
 
-        {/* Card 3 */}
+        {/* Card 4 */}
         <div
           className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/admininfo")}

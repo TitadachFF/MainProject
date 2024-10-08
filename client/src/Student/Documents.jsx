@@ -53,7 +53,7 @@ const Documents = () => {
                   คำร้องแจ้งความประสงค์
                 </a>
               </li>
-              <li
+              {/* <li
                 className="mr-4"
                 onClick={() => updateQueryString("documentinfo")}
               >
@@ -66,7 +66,7 @@ const Documents = () => {
                 >
                   แบบบันทึกผลการเรียน
                 </a>
-              </li>
+              </li> */}
             </ul>
           </div>
           {/* คำร้อง */}

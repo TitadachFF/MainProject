@@ -2,22 +2,26 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AddSubject = () => {
-  const [selectedCourse, setSelectedCourse] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedGroup, setSelectedGroup] = useState("");
-  const [courseCode, setCourseCode] = useState("");
-  const [courseNameTH, setCourseNameTH] = useState("");
-  const [courseNameENG, setCourseNameENG] = useState("");
-  const [courseUnit, setCourseUnit] = useState(0);
-  const [courseTheory, setCourseTheory] = useState(0);
-  const [coursePractice, setCoursePractice] = useState(0);
-  const [categoryResearch, setCategoryResearch] = useState(0);
+  const [formData, setFormData] = useState({
+    selectedCourse: "",
+    selectedCategory: "",
+    selectedGroup: "",
+    courseCode: "",
+    courseNameTH: "",
+    courseNameENG: "",
+    courseUnit: 0,
+    courseTheory: 0,
+    coursePractice: 0,
+    categoryResearch: 0,
+  });
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [groups, setGroups] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [message, setMessage] = useState("");
+
   const navigate = useNavigate();
 
-  // Fetch Majors
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -37,9 +41,8 @@ const AddSubject = () => {
     fetchCourses();
   }, []);
 
-  // Fetch Categories By MajorCode
   useEffect(() => {
-    if (selectedCourse) {
+    if (formData.selectedCourse) {
       const fetchCategoriesByMajorCode = async (major_code) => {
         try {
           const token = localStorage.getItem("token");
@@ -63,19 +66,17 @@ const AddSubject = () => {
         }
       };
 
-      fetchCategoriesByMajorCode(selectedCourse);
+      fetchCategoriesByMajorCode(formData.selectedCourse);
     } else {
       setFilteredCategories([]);
     }
-  }, [selectedCourse]);
+  }, [formData.selectedCourse]);
 
-  // Fetch Groups By CategoryId
   useEffect(() => {
-    if (selectedCategory) {
+    if (formData.selectedCategory) {
       const fetchGroupsByCategoryId = async (category_id) => {
         try {
           const token = localStorage.getItem("token");
-
           const response = await fetch(
             `http://localhost:3000/api/getGroupsByCategoryId/${category_id}`,
             {
@@ -91,61 +92,51 @@ const AddSubject = () => {
         }
       };
 
-      fetchGroupsByCategoryId(selectedCategory);
+      fetchGroupsByCategoryId(formData.selectedCategory);
     } else {
       setGroups([]);
     }
-  }, [selectedCategory]);
+  }, [formData.selectedCategory]);
 
-  const handleCourseChange = (e) => {
-    setSelectedCourse(e.target.value);
-    setSelectedCategory("");
-    setSelectedGroup("");
-  };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-    setSelectedGroup("");
-  };
-
-  const handleGroupChange = (e) => {
-    setSelectedGroup(e.target.value);
-  };
-
-  const handleCourseCodeChange = (e) => {
-    setCourseCode(e.target.value);
-  };
-
-  const handleCourseNameTHChange = (e) => {
-    setCourseNameTH(e.target.value);
-  };
-
-  const handleCourseNameENGChange = (e) => {
-    setCourseNameENG(e.target.value);
-  };
-
-  const handleCourseUnitChange = (e) => {
-    setCourseUnit(e.target.value);
-  };
-
-  const handleCourseTheoryChange = (e) => {
-    setCourseTheory(e.target.value);
-  };
-
-  const handleCoursePracticeChange = (e) => {
-    setCoursePractice(e.target.value);
-  };
-
-  const handleCategoryResearchChange = (e) => {
-    setCategoryResearch(e.target.value);
+    if (
+      name === "courseUnit" ||
+      name === "courseTheory" ||
+      name === "coursePractice" ||
+      name === "categoryResearch"
+    ) {
+      if (value >= 0) {
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const token = localStorage.getItem("token");
-
+    if (
+      !formData.selectedCategory ||
+      !formData.selectedGroup ||
+      !formData.courseCode ||
+      !formData.courseNameTH ||
+      !formData.courseNameENG
+    ) {
+      document.getElementById("my_modal_1").showModal();
+      setMessage("* กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน");
+      setIsSuccess(false);
+      return;
+    }
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:3000/api/createCourse", {
         method: "POST",
         headers: {
@@ -153,26 +144,34 @@ const AddSubject = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          course_id: courseCode,
-          courseNameTH: courseNameTH,
-          courseNameENG: courseNameENG,
-          courseTheory: parseInt(courseTheory),
-          coursePractice: parseInt(coursePractice),
-          categoryResearch: parseInt(categoryResearch),
-          courseUnit: parseInt(courseUnit),
-          major_id: parseInt(selectedCourse),
-          category_id: parseInt(selectedCategory),
-          group_id: parseInt(selectedGroup),
+          course_id: formData.courseCode,
+          courseNameTH: formData.courseNameTH,
+          courseNameENG: formData.courseNameENG,
+          courseTheory: parseInt(formData.courseTheory),
+          coursePractice: parseInt(formData.coursePractice),
+          categoryResearch: parseInt(formData.categoryResearch),
+          courseUnit: parseInt(formData.courseUnit),
+          major_id: parseInt(formData.selectedCourse),
+          category_id: parseInt(formData.selectedCategory),
+          group_id: parseInt(formData.selectedGroup),
         }),
       });
 
       if (response.ok) {
         document.getElementById("my_modal_1").showModal();
+        setIsSuccess(true);
+        setMessage("เพิ่มวิชาสำเร็จ!");
       } else {
         console.error("Failed to submit course data");
+        setIsSuccess(false);
+        setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
+        document.getElementById("my_modal_1").showModal();
       }
     } catch (error) {
       console.error("Error submitting course data:", error);
+      setIsSuccess(false);
+      setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
+      document.getElementById("my_modal_1").showModal();
     }
   };
 
@@ -187,10 +186,11 @@ const AddSubject = () => {
           <div className="flex flex-col">
             <label className="mb-2">เลือกหลักสูตร</label>
             <select
+              name="selectedCourse"
               id="course"
               className="dropdown appearance-none w-full text-gray-500 bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
-              value={selectedCourse}
-              onChange={handleCourseChange}
+              value={formData.selectedCourse}
+              onChange={handleChange}
             >
               <option value="">เลือกหลักสูตร</option>
               {courses.map((course) => (
@@ -203,11 +203,12 @@ const AddSubject = () => {
           <div className="flex flex-col">
             <label className="mb-2">เลือกหมวดวิชา</label>
             <select
+              name="selectedCategory"
               id="category"
               className="dropdown appearance-none w-full text-gray-500 bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-              disabled={!selectedCourse}
+              value={formData.selectedCategory}
+              onChange={handleChange}
+              disabled={!formData.selectedCourse}
             >
               <option value="">เลือกหมวดวิชา</option>
               {filteredCategories.map((category) => (
@@ -220,11 +221,12 @@ const AddSubject = () => {
           <div className="flex flex-col mb-2">
             <label className="mb-2">เลือกกลุ่มวิชา</label>
             <select
+              name="selectedGroup"
               id="group"
               className="dropdown appearance-none w-full text-gray-500 bg-white border border-gray-300 rounded-lg py-2 pl-4 pr-8 leading-tight focus:outline-none focus:border-gray-500"
-              value={selectedGroup}
-              onChange={handleGroupChange}
-              disabled={!selectedCategory}
+              value={formData.selectedGroup}
+              onChange={handleChange}
+              disabled={!formData.selectedCategory}
             >
               <option value="">เลือกกลุ่มวิชา</option>
               {groups.map((group) => (
@@ -239,65 +241,72 @@ const AddSubject = () => {
           <div className="flex flex-col">
             <label className="mb-2">รหัสวิชา</label>
             <input
+              name="courseCode"
               type="text"
               className="border rounded-lg px-2 py-2"
-              value={courseCode}
-              onChange={handleCourseCodeChange}
+              value={formData.courseCode}
+              onChange={handleChange}
             />
           </div>
           <div className="flex flex-col col-span-2">
             <label className="mb-2">ชื่อรายวิชา(ภาษาไทย)</label>
             <input
+              name="courseNameTH"
               type="text"
               className="border rounded-lg px-2 py-2 w-full"
-              value={courseNameTH}
-              onChange={handleCourseNameTHChange}
+              value={formData.courseNameTH}
+              onChange={handleChange}
             />
           </div>
           <div className="flex flex-col col-span-2">
             <label className="mb-2">ชื่อรายวิชา(English)</label>
             <input
+              name="courseNameENG"
               type="text"
               className="border rounded-lg px-2 py-2 w-full"
-              value={courseNameENG}
-              onChange={handleCourseNameENGChange}
+              value={formData.courseNameENG}
+              onChange={handleChange}
             />
           </div>
           <div className="flex flex-col">
             <label className="mb-2">น (หน่วยกิต)</label>
             <input
+              name="courseUnit"
               type="number"
               className="border rounded-lg px-2 py-2"
-              value={courseUnit}
-              onChange={handleCourseUnitChange}
+              value={formData.courseUnit}
+              onChange={handleChange}
             />
           </div>
-          
+
           <div className="flex flex-col">
             <label className="mb-2">ท (ทฤษฎี)</label>
             <input
+              name="courseTheory"
               type="number"
               className="border rounded-lg px-2 py-2"
-              value={courseTheory}
-              onChange={handleCourseTheoryChange}
+              value={formData.courseTheory}
+              onChange={handleChange}
             />
           </div>
           <div className="flex flex-col">
             <label className="mb-2">ป (ปฏิบัติ)</label>
             <input
+              name="coursePractice"
               type="number"
               className="border rounded-lg px-2 py-2"
-              value={coursePractice}
-              onChange={handleCoursePracticeChange}
+              value={formData.coursePractice}
+              onChange={handleChange}
             />
           </div>
           <div className="flex flex-col">
             <label className="mb-2">ค (ค้นคว้าอิสระ)</label>
             <input
+              name="categoryResearch"
               type="number"
               className="border rounded-lg px-2 py-2"
-              value={categoryResearch}
-              onChange={handleCategoryResearchChange}
+              value={formData.categoryResearch}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -318,7 +327,7 @@ const AddSubject = () => {
         </div>
         <dialog id="my_modal_1" className="modal">
           <div className="modal-box">
-            <h3 className="font-bold text-lg">บันทึกข้อมูลสำเร็จ!</h3>
+            <h3 className="font-bold text-lg">{message}</h3>
             <p className="py-4 text-gray-500">
               กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
             </p>
@@ -327,12 +336,14 @@ const AddSubject = () => {
                 <button className="px-10 py-2 bg-white text-red border font-semibold border-red rounded">
                   ปิด
                 </button>
-                <button
-                  className="px-8 py-2 bg-red border border-red text-white rounded"
-                  onClick={() => navigate("/course")}
-                >
-                  หน้าแรก
-                </button>
+                {isSuccess && ( // แสดงปุ่ม "ถัดไป" เฉพาะเมื่อข้อมูลครบถ้วน
+                  <button
+                    className="px-8 py-2 bg-red border border-red text-white rounded"
+                    onClick={() => navigate("/course")}
+                  >
+                    หน้าแรก
+                  </button>
+                )}
               </form>
             </div>
           </div>
