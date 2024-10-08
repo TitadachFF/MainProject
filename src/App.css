@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap');
+body{
+  font-family: "Noto Sans Thai", sans-serif;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+}
+
+footer {
+  background-color: #f8f9fa;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+
+.background-container {
+  background-image: url('/images/background.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3; /* ความโปร่งแสงของพื้นหลัง */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background-repeat: no-repeat;
+}
