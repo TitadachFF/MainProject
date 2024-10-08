@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AdminInfo = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const [adminName, setAdminName] = useState("");
   const [username, setUsername] = useState("");
@@ -54,7 +55,7 @@ const AdminInfo = () => {
       const updatedUserData = { name: adminName, username, password };
 
       const response = await axios.put(
-        `http://localhost:3000/api/updateUser/${userData.decoded.id}`,
+        `${apiUrl}api/updateUser/${userData.decoded.id}`,
         updatedUserData,
         {
           headers: {

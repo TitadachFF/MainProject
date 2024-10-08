@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Adduser = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [message2, setMessage2] = useState("");
@@ -69,7 +70,7 @@ const Adduser = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:3000/api/createCourseIn", {
+      const response = await fetch(`${apiUrl}api/createCourseIn`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

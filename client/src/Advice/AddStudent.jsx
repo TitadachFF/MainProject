@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AddStudent = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const [sections, setSections] = useState([]);
   const [majors, setMajors] = useState([]);
@@ -29,7 +30,7 @@ const AddStudent = () => {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/getSections");
+        const response = await fetch(`${apiUrl}api/getSections`);
         if (response.ok) {
           const data = await response.json();
           setSections(data);
@@ -43,7 +44,7 @@ const AddStudent = () => {
 
     const fetchMajors = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/getAllMajors");
+        const response = await fetch(`${apiUrl}api/getAllMajors`);
         if (response.ok) {
           const data = await response.json();
           setMajors(data);
@@ -110,7 +111,7 @@ const AddStudent = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/createStudent", {
+      const response = await fetch(`${apiUrl}api/createStudent`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

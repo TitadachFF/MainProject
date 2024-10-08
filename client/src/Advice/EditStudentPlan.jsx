@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const EditStudentPlan = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL;
   const location = useLocation();
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
@@ -32,7 +33,7 @@ const EditStudentPlan = () => {
   const fetchStudentPlanById = async (studentPlanId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/getStudentplanById/${studentPlanId}`
+        `${apiUrl}api/getStudentplanById/${studentPlanId}`
       );
       setPlan(response.data);
       if (response.data.Listcoursestudentplan.length > 0) {
@@ -53,9 +54,7 @@ const EditStudentPlan = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/getAllCourses"
-      );
+      const response = await axios.get(`${apiUrl}api/getAllCourses`);
       setCourses(response.data);
     } catch (error) {
       console.error("Error fetching courses:", error);
@@ -65,14 +64,11 @@ const EditStudentPlan = () => {
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:3000/api/getAllCategories",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${apiUrl}api/getAllCategories`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data = await response.json();
       setCategories(data);
     } catch (error) {
@@ -83,7 +79,7 @@ const EditStudentPlan = () => {
   const fetchGroups = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/getAllGroupMajors"
+        `${apiUrl}api/getAllGroupMajors`
       );
       setGroups(response.data);
     } catch (error) {
@@ -104,9 +100,37 @@ const EditStudentPlan = () => {
     setConfirmDeleteModal(true);
   };
 
-  const handleConfirmDelete = () => {
-    // Add logic for deletion
-    setConfirmDeleteModal(false);
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await axios.delete(
+        `${apiUrl}api/deleteListStudentplan/${planToDelete.Listcoursestudentplan_id}`
+      );
+      if (response.status === 200) {
+        // Update the local state to remove the deleted course
+        setPlan((prevPlan) => ({
+          ...prevPlan,
+          Listcoursestudentplan: prevPlan.Listcoursestudentplan.filter(
+            (course) =>
+              course.Listcoursestudentplan_id !==
+              planToDelete.Listcoursestudentplan_id
+          ),
+        }));
+        setModalMessage("ลบสำเร็จ");
+        setModalDescription("รายวิชาถูกลบออกจากแผนการเรียนเรียบร้อยแล้ว");
+        setShowModal(true);
+      } else {
+        setModalMessage("เกิดข้อผิดพลาด");
+        setModalDescription("ไม่สามารถลบรายวิชาได้ กรุณาลองใหม่อีกครั้ง");
+        setShowModal(true);
+      }
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      setModalMessage("เกิดข้อผิดพลาด");
+      setModalDescription("ไม่สามารถลบรายวิชาได้ กรุณาลองใหม่อีกครั้ง");
+      setShowModal(true);
+    } finally {
+      setConfirmDeleteModal(false);
+    }
   };
 
   const handleCancelDelete = () => {
@@ -270,7 +294,7 @@ const EditStudentPlan = () => {
               <div className="mt-4">
                 <button
                   onClick={handleConfirmDelete}
-                  className="bg-red-500 text-white px-4 py-2 rounded"
+                  className="bg-red text-white px-4 py-2 rounded"
                 >
                   ยืนยัน
                 </button>

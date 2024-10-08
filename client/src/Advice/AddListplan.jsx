@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AddListplan = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -20,14 +21,11 @@ const AddListplan = () => {
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:3000/api/getAllCategories",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${apiUrl}api/getAllCategories`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const data = await response.json();
         setCategories(data);
       } catch (error) {
@@ -42,14 +40,11 @@ const AddListplan = () => {
     const fetchStudentPlans = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:3000/api/getStudentplanByAcademic",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${apiUrl}api/getStudentplanByAcademic`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const data = await response.json();
         setStudentPlans(data);
       } catch (error) {
@@ -66,7 +61,7 @@ const AddListplan = () => {
         try {
           const token = localStorage.getItem("token");
           const response = await fetch(
-            `http://localhost:3000/api/getGroupsByCategoryId/${selectedCategory}`,
+            `${apiUrl}api/getGroupsByCategoryId/${selectedCategory}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -92,7 +87,7 @@ const AddListplan = () => {
         try {
           const token = localStorage.getItem("token");
           const response = await fetch(
-            `http://localhost:3000/api/getCoursesByGroupId/${selectedGroup}`,
+            `${apiUrl}api/getCoursesByGroupId/${selectedGroup}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -192,7 +187,7 @@ const AddListplan = () => {
 
       for (const courseId of courses) {
         const response = await fetch(
-          `http://localhost:3000/api/createListStudentplan/${studentplanId}`,
+          `${apiUrl}api/createListStudentplan/${studentplanId}`,
           {
             method: "POST",
             headers: {

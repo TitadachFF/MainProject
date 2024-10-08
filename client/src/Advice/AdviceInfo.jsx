@@ -16,6 +16,7 @@ const AdviceInfo = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    const apiUrl = import.meta.env.VITE_BASE_URL;
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -26,7 +27,7 @@ const AdviceInfo = () => {
           setAdvisorId(parsedUserData.decoded.id);
 
           const response = await axios.get(
-            `http://localhost:3000/api/getAdvisorById/${parsedUserData.decoded.id}`,
+            `${apiUrl}api/getAdvisorById/${parsedUserData.decoded.id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -63,7 +64,7 @@ const AdviceInfo = () => {
       };
 
       const response = await axios.put(
-        `http://localhost:3000/api/updateAdvisor/${advisorId}`,
+        `${apiUrl}api/updateAdvisor/${advisorId}`,
         updatedAdvisorData,
         {
           headers: {

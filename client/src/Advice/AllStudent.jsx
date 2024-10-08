@@ -22,6 +22,8 @@ const SkeletonUser = () => (
 
 
 const AllStudent = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL;
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
@@ -49,7 +51,7 @@ const AllStudent = () => {
     const fetchStudents = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:3000/api/getStudents", {
+        const response = await fetch(`${apiUrl}api/getStudents`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -62,14 +64,11 @@ const AllStudent = () => {
         setStudents(data);
 
         // ดึงข้อมูล Section และอัปเดต roomOptions ด้วย section names
-        const sectionResponse = await fetch(
-          "http://localhost:3000/api/getSections",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const sectionResponse = await fetch(`${apiUrl}api/getSections`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!sectionResponse.ok) {
           throw new Error("Failed to fetch sections");
@@ -149,7 +148,7 @@ const AllStudent = () => {
       }
 
       const response = await fetch(
-        `http://localhost:3000/api/updateStudent/${editingStudent.student_id}`,
+        `${apiUrl}api/updateStudent/${editingStudent.student_id}`,
         {
           method: "PUT",
           headers: {
@@ -199,7 +198,7 @@ const AllStudent = () => {
         throw new Error("Student ID is undefined");
       }
       const response = await fetch(
-        `http://localhost:3000/api/deleteStudent/${studentToDelete.student_id}`,
+        `${apiUrl}api/deleteStudent/${studentToDelete.student_id}`,
         {
           method: "DELETE",
           headers: {

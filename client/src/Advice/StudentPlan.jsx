@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const StudentPlan = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL;
   const [studentPlans, setStudentPlans] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -15,7 +16,7 @@ const StudentPlan = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://localhost:3000/api/getStudentplanByAcademic",
+          `${apiUrl}api/getStudentplanByAcademic`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -93,14 +94,11 @@ const StudentPlan = () => {
         return;
       }
 
-      await axios.delete(
-        `http://localhost:3000/api/deleteStudentPlan/${planId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${apiUrl}api/deleteStudentPlan/${planId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setStudentPlans(
         studentPlans.filter(

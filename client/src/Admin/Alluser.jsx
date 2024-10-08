@@ -20,6 +20,7 @@ const SkeletonUser = () => (
 );
 
 const AllUser = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const location = useLocation();
   const [users, setUsers] = useState([]);
@@ -42,17 +43,17 @@ const AllUser = () => {
         // ใช้ Promise.all เพื่อทำการดึงข้อมูลจาก API ทั้งสามแบบพร้อมกัน
         const [studentsResponse, teachersResponse, instructorResponse] =
           await Promise.all([
-            fetch("http://localhost:3000/api/getStudents", {
+            fetch(`${apiUrl}api/getStudents`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }),
-            fetch("http://localhost:3000/api/getCourseIns", {
+            fetch(`${apiUrl}api/getCourseIns`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }),
-            fetch("http://localhost:3000/api/getTeachers", {
+            fetch(`${apiUrl}api/getTeachers`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },

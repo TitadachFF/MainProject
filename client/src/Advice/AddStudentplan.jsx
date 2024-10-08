@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AddListplan from "./AddListplan";
 
 const AddStudentplan = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const location = useLocation();
   const [currentForm, setCurrentForm] = useState("");
@@ -22,10 +23,12 @@ const AddStudentplan = () => {
 
   const fetchMajors = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/getAllMajors"); // Fetch majors from API
-      if (!response.ok) {
-        throw new Error("Failed to fetch majors");
-      }
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${apiUrl}api/getAllMajors`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data = await response.json();
       setMajors(data); 
     } catch (error) {
@@ -58,7 +61,7 @@ const AddStudentplan = () => {
       }
 
       const response = await fetch(
-        "http://localhost:3000/api/createStudentPlan",
+        `${apiUrl}api/createStudentPlan`,
         {
           method: "POST",
           headers: {
