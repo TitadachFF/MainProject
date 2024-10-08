@@ -104,10 +104,11 @@ const Navbar = () => {
         >
           SE
         </a>
-        <div className="border-l-4">
+        <div className="border-l-4 ">
           <p className="pl-2 text-sm pt-1 hidden sm:block">
-            Graduated System <br />
-            ระบบกรอกแบบฟอร์มคำร้องขอสำเร็จการศึกษา
+            Graduation Verification System
+            <br />
+            ระบบตรวจสอบการสำเร็จการศึกษา
           </p>
         </div>
       </div>
@@ -231,8 +232,8 @@ const Navbar = () => {
         {isLoggedIn ? (
           <div className="dropdown dropdown-end flex">
             <div className="pt-3 flex">
-              <p className="font-bold pr-2">ยินดีต้อนรับ !</p>
-              <span className="pr-2">
+              <p className="font-semibold text-gray-500 pr-2">ยินดีต้อนรับ!</p>
+              <span className="pr-2 text-gray-400">
                 {userData?.decoded.firstname} {userData?.decoded.lastname}
               </span>
               <span className={`h-6 badge ${roleColor}`}>{displayRole}</span>
