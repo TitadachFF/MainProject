@@ -293,19 +293,19 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
               <label className="flex">
                 ปีการศึกษา:
                 <select
+                  id="dropdown-year"
                   className="select select-bordered select-xs max-w-xs ml-2"
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
                 >
                   <option value="">เลือกปีการศึกษา</option>
                   {availableYears.map((year) => (
-                    <option key={year} value={year}>
+                    <option key={year} value={year} id="option-year">
                       ปีการศึกษา {year}
                     </option>
                   ))}
                 </select>
               </label>
-
             </div>
           </div>
           <div className="flex mt-5">
@@ -319,6 +319,7 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
             />
             <p className="mr-2">ทั้งหมด</p>
             <input
+              id="semester1"
               type="radio"
               name="radio-1"
               className="radio mr-2"
@@ -327,6 +328,7 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
             />
             <p className="mr-2">1</p>
             <input
+              id="semester2"
               type="radio"
               name="radio-1"
               className="radio mr-2"
@@ -350,7 +352,6 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
                 </tr>
               </thead>
               <tbody>
-
                 {filteredCourses.map((register) =>
                   register.listcourseregister.map((course) => (
                     <tr key={course.listcourseregister_id}>
@@ -369,6 +370,7 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
 
                       <td className="py-2 border text-center relative">
                         <input
+                          id="input-Teacher"
                           type="text"
                           className="border rounded-md p-1 text-center"
                           value={
@@ -390,6 +392,7 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
                             <ul className="absolute left-0 z-10 bg-white border border-gray-300 w-full max-h-40 overflow-y-auto">
                               {filteredTeachers.map((teacher) => (
                                 <li
+                                  id="Teacher-Name"
                                   key={teacher.teacher_id}
                                   className="cursor-pointer p-1 hover:bg-gray-200"
                                   onClick={() =>
@@ -399,7 +402,6 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
                                     )
                                   }
                                 >
-
                                   {`${teacher.firstname} ${teacher.lastname}`}
                                 </li>
                               ))}
@@ -409,6 +411,7 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
 
                       <td className="py-2 border text-center">
                         <select
+                          id="dropdown-grade"
                           className="border rounded-md p-1 text-center"
                           value={grades[course.listcourseregister_id] || ""}
                           onChange={(e) =>
@@ -418,19 +421,36 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
                             )
                           }
                         >
-                          <option disabled value="">เลือกผลการเรียน</option>
-                          <option value="A">A</option>
-                          <option value="B_plus">B+</option>
-                          <option value="B">B</option>
-                          <option value="C_plus">C+</option>
-                          <option value="C">C</option>
-                          <option value="D_plus">D+</option>
-                          <option value="D">D</option>
+                          <option disabled value="">
+                            เลือกผลการเรียน
+                          </option>
+                          <option value="A" id="option-A">
+                            A
+                          </option>
+                          <option value="B_plus" id="option-B+">
+                            B+
+                          </option>
+                          <option value="B" id="option-B">
+                            B
+                          </option>
+                          <option value="C_plus" id="option-C+">
+                            C+
+                          </option>
+                          <option value="C" id="option-C">
+                            C
+                          </option>
+                          <option value="D_plus" id="option-D+">
+                            D+
+                          </option>
+                          <option value="D" id="option-D">
+                            D
+                          </option>
                         </select>
                       </td>
 
                       <td className="py-2 border text-center">
                         <select
+                          id="dropdown-freesubject"
                           className="border rounded-md p-1 text-center"
                           value={
                             freeSubject[course.listcourseregister_id] !==
@@ -447,9 +467,15 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
                             )
                           }
                         >
-                          <option disabled value="">เลือก</option>
-                          <option value="true">ใช่</option>
-                          <option value="false">ไม่ใช่</option>
+                          <option disabled value="">
+                            เลือก
+                          </option>
+                          <option value="true" id="freesubject-true">
+                            ใช่
+                          </option>
+                          <option value="false" id="freesubject-true">
+                            ไม่ใช่
+                          </option>
                         </select>
                       </td>
                     </tr>
@@ -477,9 +503,9 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
                 ดูตัวอย่างเอกสาร
               </button> */}
               <button
+                id="submit-button"
                 type="button"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
-
                 onClick={handleSubmit}
               >
                 บันทึก
@@ -501,7 +527,6 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
               <button
                 id="close-alertmodal"
                 onClick={refreshPage}
-
                 className="px-10 py-2 bg-white text-red border font-semibold border-red rounded"
               >
                 ปิด

@@ -47,6 +47,7 @@ const StudentMenu = () => {
           <div
             className="card w-96 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
             onClick={() => navigate("/fillgrade")}
+            id="Menu-fillgrade-button"
           >
             <figure>
               <svg
@@ -65,7 +66,7 @@ const StudentMenu = () => {
               </svg>
             </figure>
             <div className="card-body text-center">
-              <h2 className="font-semibold">กรอกแบบบันทึกผลการเรียน</h2>
+              <h2 className="font-semibold" id="fillgrade-Text">กรอกแบบบันทึกผลการเรียน</h2>
               <p className="border-t py-2">เพิ่มและแก้ไขผลการเรียน</p>
               <div className="card-actions justify-end"></div>
             </div>
