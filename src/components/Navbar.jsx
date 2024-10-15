@@ -59,7 +59,7 @@ const Navbar = () => {
     <div className="navbar bg-base-100 py-5 shadow-md fixed top-0 left-0 w-full z-50">
       <div className="navbar-start">
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+          <div tabIndex={0} role="button" className="btn btn-ghost 2xl:hidden">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -77,34 +77,55 @@ const Navbar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-60"
           >
-            <li>
-              <a>Item 1</a>
-            </li>
-            <li>
-              <a>Parent</a>
-              <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a>Item 3</a>
-            </li>
+            {userData?.decoded.role === "student" && (
+              <li>
+                <a href="/student">เมนูนักศึกษา</a>
+                <ul className="p-2">
+                  <li>
+                    <a href="/fillgrade">กรอกแบบบันทึกผลการเรียน</a>
+                    <a href="/documents">เอกสาร</a>
+                    <a href="/graduate_check">ตรวจสอบจบ</a>
+                    <a href="/studentinfo">ข้อมูลส่วนตัว</a>
+                  </li>
+                </ul>
+              </li>
+            )}
+            {userData?.decoded.role === "course_in" && (
+              <li>
+                <a href="/course">เมนูตัวแทนหลักสูตร</a>
+                <ul className="p-2">
+                  <li>
+                    <a href="/addcourse">เพิ่มหลักสูตร</a>
+                    <a onClick={() => navigate("/allcourse")}>ดูหลักสูตร</a>
+                    <a onClick={() => navigate("/courseinfo")}>ข้อมูลส่วนตัว</a>
+                  </li>
+                </ul>
+              </li>
+            )}
+            {userData?.decoded.role === "advisor" && (
+              <li>
+                <a href="/course">เมนูตัวแทนหลักสูตร</a>
+                <ul className="p-2">
+                  <li>
+                    <a href="/addcourse">เพิ่มหลักสูตร</a>
+                    <a onClick={() => navigate("/allcourse")}>ดูหลักสูตร</a>
+                    <a onClick={() => navigate("/courseinfo")}>ข้อมูลส่วนตัว</a>
+                  </li>
+                </ul>
+              </li>
+            )}
           </ul>
         </div>
+
         <a
           href="/"
-          className="pl-4 text-5xl text-red pr-2 font-serif hover:drop-shadow-md"
+          className="pl-4 text-6xl text-red pr-2 font-serif hover:drop-shadow-md"
         >
           SE
         </a>
-        <div className="border-l-4 ">
+        <div className="border-l-4 py-2 ">
           <p className="pl-2 text-sm pt-1 hidden sm:block">
             Graduation Verification System
             <br />
@@ -115,95 +136,56 @@ const Navbar = () => {
       <div className="navbar-center hidden lg:flex ">
         <ul className="menu menu-horizontal px-1  ">
           {userData?.decoded.role === "student" && (
-            <li className="flex-row">
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/student")}
-              >
+            <div className="flex-row ">
+              <a className="nav-menu" href="/student">
                 เมนูนักศึกษา
               </a>
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/fillgrade")}
-              >
+              <a className="nav-menu" href="/fillgrade">
                 กรอกแบบบันทึกผลการเรียน
               </a>
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/documents")}
-              >
+              <a className="nav-menu" href="/documents">
                 เอกสาร
               </a>
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/graduate_check")}
-              >
+              <a className="nav-menu" href="/graduate_check">
                 ตรวจสอบจบ
               </a>
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/studentinfo")}
-              >
+              <a className="nav-menu" href="/studentinfo">
                 ข้อมูลส่วนตัว
               </a>
-            </li>
+            </div>
           )}
           {userData?.decoded.role === "course_in" && (
-            <li className="flex-row">
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/course")}
-              >
+            <div className="flex-row">
+              <a className="nav-menu" onClick={() => navigate("/course")}>
                 เมนูตัวแทนหลักสูตร
               </a>
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/addcourse")}
-              >
+              <a className="nav-menu" onClick={() => navigate("/addcourse")}>
                 เพิ่มหลักสูตร
               </a>
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/allcourse")}
-              >
+              <a className="nav-menu" onClick={() => navigate("/allcourse")}>
                 ดูหลักสูตร
               </a>
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/courseinfo")}
-              >
+              <a className="nav-menu" onClick={() => navigate("/courseinfo")}>
                 ข้อมูลส่วนตัว
               </a>
-            </li>
+            </div>
           )}
           {userData?.decoded.role === "advisor" && (
             <li className="flex-row">
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/addstudent")}
-              >
+              <a className="nav-menu" onClick={() => navigate("/addstudent")}>
                 เพิ่มนักศึกษา
               </a>
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/allstudent")}
-              >
+              <a className="nav-menu" onClick={() => navigate("/allstudent")}>
                 ดูรายชื่อนักศึกษา
               </a>
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/studentplan")}
-              >
+              <a className="nav-menu" onClick={() => navigate("/studentplan")}>
                 แผนการเรียน
               </a>
-              <a
-                className="font-semibold hover:underline hover:bg-white"
-                onClick={() => navigate("/adviceinfo")}
-              >
+              <a className="nav-menu" onClick={() => navigate("/adviceinfo")}>
                 ข้อมูลส่วนตัว
               </a>
               <a
-                className="font-semibold hover:underline hover:bg-white"
+                className="nav-menu"
                 onClick={() => navigate("/documentstudent")}
               >
                 เอกสารคำร้องขอ
@@ -231,12 +213,16 @@ const Navbar = () => {
       <div className="navbar-end pr-4">
         {isLoggedIn ? (
           <div className="dropdown dropdown-end flex">
-            <div className="pt-3 flex">
-              <p className="font-semibold text-gray-500 pr-2">ยินดีต้อนรับ!</p>
+            <div className="user-info pt-3 flex  ">
+              <p className="user-greet font-semibold text-base text-gray-500 pr-2">
+                ยินดีต้อนรับ!
+              </p>
               <span className="pr-2 text-gray-400">
                 {userData?.decoded.firstname} {userData?.decoded.lastname}
               </span>
-              <span className={`h-6 badge ${roleColor}`}>{displayRole}</span>
+              <span className={`h-6 px-2 rounded-full text-sm ${roleColor}`}>
+                <p>{displayRole}</p>
+              </span>
             </div>
             <div
               tabIndex={0}
@@ -262,10 +248,15 @@ const Navbar = () => {
             >
               <li>
                 <div className="justify-between">
-                  <span>
-                    {userData?.decoded.firstname} {userData?.decoded.lastname}
+                  <span className="w-full flex space-x-2">
+                    <p>{userData?.decoded.firstname} </p>
+                    <p>{userData?.decoded.lastname}</p>
                   </span>
-                  <span className={`badge ${roleColor}`}>{displayRole}</span>
+                  <span
+                    className={` text-white px-2 py-1 rounded-full text-xs ${roleColor}`}
+                  >
+                    {displayRole}
+                  </span>
                 </div>
               </li>
 

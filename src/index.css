@@ -5,3 +5,43 @@
 .section-container{
   @apply max-w-screen-2xl container mx-auto xl:px-24 px-4;
 }
+/* .nav-container {
+  display: flex;
+  gap: 16px; 
+} */
+
+.nav-menu {
+  font-weight: 600; /* font-semibold */
+  padding: 5px; /* p-1 */
+  border-radius: 9999px; /* rounded-full */
+  font-size: 1rem; /* text-base */
+  cursor: pointer;
+  margin-right: 16px; /* mr-4 */
+  transition: background-color 0.3s;
+  
+}
+
+.nav-menu:hover {
+  /* text-decoration: underline; */
+  color: rgb(122, 122, 122);
+  background-color: #e2e8f0; /* hover:bg-gray-300 */
+}
+
+@media (max-width: 1500px) {
+  .nav-menu {
+    display: none;
+  }
+}
+
+/* ซ่อน div เมื่อหน้าจอมีความกว้างน้อยกว่า 1360px */
+@media (max-width: 785px) {
+  .user-info {
+    display: none;
+  }
+}
+
+@media(max-width:980px){
+  .user-greet{
+    display:  none;
+  }
+}
