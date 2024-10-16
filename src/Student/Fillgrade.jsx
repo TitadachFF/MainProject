@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Fillgrade = () => {
   const navigate = useNavigate();
   const [academicName, setAcademicName] = useState("");
-const [selectedTeachers, setSelectedTeachers] = useState({});
+  const [selectedTeachers, setSelectedTeachers] = useState({});
   const [grades, setGrades] = useState({});
   const [freeSubject, setFreeSubject] = useState({});
   const [studentData, setStudentData] = useState({});
@@ -21,17 +21,17 @@ const [selectedTeachers, setSelectedTeachers] = useState({});
   const [semester, setSemester] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const handleGradeChange = (listcourseregister_id, value) => {
     setGrades({
       ...grades,
       [listcourseregister_id]: value,
     });
   };
-  
-const apiUrl = import.meta.env.VITE_BASE_URL;
+
+  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
-    
     const fetchStudentData = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -52,13 +52,11 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
           setStudentData(studentResponse.data);
           setAcademicName(academicNameFromToken);
 
-
           const sectionResponse = await axios.get(
             `${apiUrl}api/getSectionById/${studentResponse.data.sec_id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
-
           );
           setSections(sectionResponse.data);
 
@@ -96,32 +94,26 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
               teachersMap[course.listcourseregister_id] =
                 course.teacher_id || "";
               gradesMap[course.listcourseregister_id] = course.grade || "";
-              inputTeachersMap[course.listcourseregister_id] =
-  course.teacher ? `${course.teacher.firstname} ${course.teacher.lastname}` : "";
+              inputTeachersMap[course.listcourseregister_id] = course.teacher
+                ? `${course.teacher.firstname} ${course.teacher.lastname}`
+                : "";
               freeSubjectMap[course.listcourseregister_id] =
                 course.freesubject || false; // เก็บค่า freeSubject
             });
           });
-
-
 
           setSelectedTeachers(teachersMap);
           setGrades(gradesMap);
           setFreeSubject(freeSubjectMap);
           setInputTeachers(inputTeachersMap);
 
-          const teacherResponse = await axios.get(
-
-            `${apiUrl}api/getTeachers`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const teacherResponse = await axios.get(`${apiUrl}api/getTeachers`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
           setTeachers(teacherResponse.data);
-          console.log("Teacher data:",teacherResponse.data);
-          
-
+          console.log("Teacher data:", teacherResponse.data);
+          setIsLoading(false);
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -188,15 +180,14 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
         })
       );
 
-
       document.getElementById("my_modal_1").showModal();
       setMessage("บันทึกสำเร็จ !");
       setIsSuccess(true);
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล:", error.message);
       setMessage("* เกิดข้อผิดพลาดจากเซิฟเวอร์");
-      setIsSuccess(false);    }
-
+      setIsSuccess(false);
+    }
   };
 
   // ฟังก์ชันกรองรายวิชาตามปีการศึกษาที่เลือก
@@ -218,10 +209,8 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
       : filteredRegisters;
 
   const handleSemesterChange = (e) => {
-
     const value = e.target.value;
     setSemester(value ? parseInt(value, 10) : null); // แปลงค่าเป็น integer
-
   };
 
   const handleFreeSubjectChange = (listcourseregister_id, value) => {
@@ -233,7 +222,6 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
   function refreshPage() {
     window.location.reload();
   }
-
 
   return (
     <div className="bg-gray-100">
@@ -254,60 +242,76 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
             กรอกแบบบันทึกผลการเรียน
           </h2>
 
-          <div className="grid grid-cols-1 gap-6">
-            <div className="flex space-x-2">
-              <label className="flex text-gray-700">
-                <p className="font-bold">{studentData.student_id}</p>
-              </label>
-              <label className="flex text-gray-700">
-                <p className="ml-2 font-bold">
-                  {studentData.titlenameTh} {""}
-                  {studentData.firstname} {""} {studentData.lastname}
-                </p>
-              </label>
-              <label className="flex text-gray-700">
-                <p className="ml-2 font-bold">
-                  {studentData.titlenameEng} {""}
-                  {studentData.firstnameEng} {""} {studentData.lastnameEng}
-                </p>
-              </label>
+          {isLoading ? (
+            <div className="flex flex-col space-y-5">
+              <div className="flex space-x-6">
+                <div className="skeleton h-6 w-36"></div>
+                <div className="skeleton h-6 w-36"></div>
+                <div className="skeleton h-6 w-36"></div>
+              </div>
+              <div className="flex gap-4">
+                <div className="skeleton h-6 w-52"></div>
+                <div className="skeleton h-6 w-28"></div>
+                <div className="skeleton h-6 w-60"></div>
+              </div>
+              <div className="skeleton h-6 w-52"></div>
             </div>
-            <div className="flex space-x-4">
-              <label className="flex text-gray-700">
-                <p className="font-bold">สาขาวิชา:</p>
-                <p className="ml-2">{academicName}</p>
-              </label>
-              <label className="flex text-gray-700">
-                <p className="font-bold">ชั้น:</p>
-                <p className="ml-2">{sections.sec_name}</p>
-              </label>
-              <label className="flex text-gray-700">
-                <p className="font-bold">อาจารย์ที่ปรึกษา:</p>
-                <p className="ml-2">
-                  {advisor.titlename} {advisor.firstname} {advisor.lastname}
-                </p>
-              </label>
+          ) : (
+            <div className="grid grid-cols-1 gap-6">
+              <div className="flex space-x-2">
+                <label className="flex text-gray-700">
+                  <p className="font-bold">{studentData.student_id}</p>
+                </label>
+                <label className="flex text-gray-700">
+                  <p className="ml-2 font-bold">
+                    {studentData.titlenameTh} {""}
+                    {studentData.firstname} {""} {studentData.lastname}
+                  </p>
+                </label>
+                <label className="flex text-gray-700">
+                  <p className="ml-2 font-bold">
+                    {studentData.titlenameEng} {""}
+                    {studentData.firstnameEng} {""} {studentData.lastnameEng}
+                  </p>
+                </label>
+              </div>
+              <div className="flex space-x-4">
+                <label className="flex text-gray-700">
+                  <p className="font-bold">สาขาวิชา:</p>
+                  <p className="ml-2">{academicName}</p>
+                </label>
+                <label className="flex text-gray-700">
+                  <p className="font-bold">ชั้น:</p>
+                  <p className="ml-2">{sections.sec_name}</p>
+                </label>
+                <label className="flex text-gray-700">
+                  <p className="font-bold">อาจารย์ที่ปรึกษา:</p>
+                  <p className="ml-2">
+                    {advisor.titlename} {advisor.firstname} {advisor.lastname}
+                  </p>
+                </label>
+              </div>
+              {/* เพิ่ม div ใหม่สำหรับ dropdown ปีการศึกษา */}
+              <div className="flex text-gray-700">
+                <label className="flex">
+                  ปีการศึกษา:
+                  <select
+                    className="select select-bordered select-xs max-w-xs ml-2"
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                  >
+                    <option value="">เลือกปีการศึกษา</option>
+                    {availableYears.map((year) => (
+                      <option key={year} value={year}>
+                        ปีการศึกษา {year}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
             </div>
-            {/* เพิ่ม div ใหม่สำหรับ dropdown ปีการศึกษา */}
-            <div className="flex text-gray-700">
-              <label className="flex">
-                ปีการศึกษา:
-                <select
-                  className="select select-bordered select-xs max-w-xs ml-2"
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(e.target.value)}
-                >
-                  <option value="">เลือกปีการศึกษา</option>
-                  {availableYears.map((year) => (
-                    <option key={year} value={year}>
-                      ปีการศึกษา {year}
-                    </option>
-                  ))}
-                </select>
-              </label>
+          )}
 
-            </div>
-          </div>
           <div className="flex mt-5">
             <label className="block text-gray-700 mr-2">เทอม :</label>
             <input
@@ -349,113 +353,125 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
                   <th className="py-2 border">วิชาเลือกเสรี</th>
                 </tr>
               </thead>
-              <tbody>
+              {isLoading ? (
+             <tbody>
+             <tr>
+               <td colSpan="7" className="h-20 text-center align-middle">
+                 กำลังโหลดข้อมูล...
+               </td>
+             </tr>
+           </tbody>
+              ) : (
+                <tbody>
+                  {filteredCourses.map((register) =>
+                    register.listcourseregister.map((course) => (
+                      <tr key={course.listcourseregister_id}>
+                        <td className="py-2 border text-center">
+                          {course.course.course_id}
+                        </td>
+                        <td className="py-2 border text-center">
+                          {course.course.courseNameTH}
+                        </td>
+                        <td className="py-2 border text-center">
+                          {course.course.courseUnit}
+                        </td>
+                        <td className="py-2 border text-center">
+                          {register.semester}
+                        </td>
 
-                {filteredCourses.map((register) =>
-                  register.listcourseregister.map((course) => (
-                    <tr key={course.listcourseregister_id}>
-                      <td className="py-2 border text-center">
-                        {course.course.course_id}
-                      </td>
-                      <td className="py-2 border text-center">
-                        {course.course.courseNameTH}
-                      </td>
-                      <td className="py-2 border text-center">
-                        {course.course.courseUnit}
-                      </td>
-                      <td className="py-2 border text-center">
-                        {register.semester}
-                      </td>
+                        <td className="py-2 border text-center relative">
+                          <input
+                            type="text"
+                            className="border rounded-md p-1 text-center"
+                            value={
+                              inputTeachers[course.listcourseregister_id] || ""
+                            }
+                            onChange={(e) =>
+                              handleTeacherInputChange(
+                                course.listcourseregister_id,
+                                e.target.value
+                              )
+                            }
+                            placeholder="พิมพ์ชื่ออาจารย์"
+                            onFocus={() =>
+                              setActiveInputId(course.listcourseregister_id)
+                            }
+                          />
+                          {activeInputId === course.listcourseregister_id &&
+                            filteredTeachers.length > 0 && (
+                              <ul className="absolute left-0 z-10 bg-white border border-gray-300 w-full max-h-40 overflow-y-auto">
+                                {filteredTeachers.map((teacher) => (
+                                  <li
+                                    key={teacher.teacher_id}
+                                    className="cursor-pointer p-1 hover:bg-gray-200"
+                                    onClick={() =>
+                                      handleTeacherSelect(
+                                        course.listcourseregister_id,
+                                        teacher
+                                      )
+                                    }
+                                  >
+                                    {`${teacher.firstname} ${teacher.lastname}`}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                        </td>
 
-                      <td className="py-2 border text-center relative">
-                        <input
-                          type="text"
-                          className="border rounded-md p-1 text-center"
-                          value={
-                            inputTeachers[course.listcourseregister_id] || ""
-                          }
-                          onChange={(e) =>
-                            handleTeacherInputChange(
-                              course.listcourseregister_id,
-                              e.target.value
-                            )
-                          }
-                          placeholder="พิมพ์ชื่ออาจารย์"
-                          onFocus={() =>
-                            setActiveInputId(course.listcourseregister_id)
-                          }
-                        />
-                        {activeInputId === course.listcourseregister_id &&
-                          filteredTeachers.length > 0 && (
-                            <ul className="absolute left-0 z-10 bg-white border border-gray-300 w-full max-h-40 overflow-y-auto">
-                              {filteredTeachers.map((teacher) => (
-                                <li
-                                  key={teacher.teacher_id}
-                                  className="cursor-pointer p-1 hover:bg-gray-200"
-                                  onClick={() =>
-                                    handleTeacherSelect(
-                                      course.listcourseregister_id,
-                                      teacher
-                                    )
-                                  }
-                                >
+                        <td className="py-2 border text-center">
+                          <select
+                            className="border rounded-md p-1 text-center"
+                            value={grades[course.listcourseregister_id] || ""}
+                            onChange={(e) =>
+                              handleGradeChange(
+                                course.listcourseregister_id,
+                                e.target.value
+                              )
+                            }
+                          >
+                            <option disabled value="">
+                              เลือกผลการเรียน
+                            </option>
+                            <option value="A">A</option>
+                            <option value="B_plus">B+</option>
+                            <option value="B">B</option>
+                            <option value="C_plus">C+</option>
+                            <option value="C">C</option>
+                            <option value="D_plus">D+</option>
+                            <option value="D">D</option>
+                          </select>
+                        </td>
 
-                                  {`${teacher.firstname} ${teacher.lastname}`}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                      </td>
-
-                      <td className="py-2 border text-center">
-                        <select
-                          className="border rounded-md p-1 text-center"
-                          value={grades[course.listcourseregister_id] || ""}
-                          onChange={(e) =>
-                            handleGradeChange(
-                              course.listcourseregister_id,
-                              e.target.value
-                            )
-                          }
-                        >
-                          <option disabled value="">เลือกผลการเรียน</option>
-                          <option value="A">A</option>
-                          <option value="B_plus">B+</option>
-                          <option value="B">B</option>
-                          <option value="C_plus">C+</option>
-                          <option value="C">C</option>
-                          <option value="D_plus">D+</option>
-                          <option value="D">D</option>
-                        </select>
-                      </td>
-
-                      <td className="py-2 border text-center">
-                        <select
-                          className="border rounded-md p-1 text-center"
-                          value={
-                            freeSubject[course.listcourseregister_id] !==
-                            undefined
-                              ? String(
-                                  freeSubject[course.listcourseregister_id]
-                                )
-                              : ""
-                          }
-                          onChange={(e) =>
-                            handleFreeSubjectChange(
-                              course.listcourseregister_id,
-                              e.target.value
-                            )
-                          }
-                        >
-                          <option disabled value="">เลือก</option>
-                          <option value="true">ใช่</option>
-                          <option value="false">ไม่ใช่</option>
-                        </select>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
+                        <td className="py-2 border text-center">
+                          <select
+                            className="border rounded-md p-1 text-center"
+                            value={
+                              freeSubject[course.listcourseregister_id] !==
+                              undefined
+                                ? String(
+                                    freeSubject[course.listcourseregister_id]
+                                  )
+                                : ""
+                            }
+                            onChange={(e) =>
+                              handleFreeSubjectChange(
+                                course.listcourseregister_id,
+                                e.target.value
+                              )
+                            }
+                          >
+                            <option disabled value="">
+                              เลือก
+                            </option>
+                            <option value="true">ใช่</option>
+                            <option value="false">ไม่ใช่</option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              )}
             </table>
           </div>
 
@@ -479,7 +495,6 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
               <button
                 type="button"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
-
                 onClick={handleSubmit}
               >
                 บันทึก
@@ -501,7 +516,6 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
               <button
                 id="close-alertmodal"
                 onClick={refreshPage}
-
                 className="px-10 py-2 bg-white text-red border font-semibold border-red rounded"
               >
                 ปิด

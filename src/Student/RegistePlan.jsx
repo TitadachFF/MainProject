@@ -9,7 +9,7 @@ const RegistePlan = () => {
   const [studentplanId, setStudentplanId] = useState(""); // State for selected student plan ID
   const [year, setYear] = useState(""); // State for year
   const apiUrl = import.meta.env.VITE_BASE_URL;
-
+  const [isLoading, setIsLoading] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState("");
   const [semester, setSemester] = useState(""); // State for semester
@@ -103,18 +103,15 @@ const RegistePlan = () => {
             ลงทะเบียนแผนการเรียน
           </h2>
 
-          {studentData && (
+          {studentData ? (
             <div className="grid grid-cols-1 gap-6">
               <div className="flex space-x-4">
-
-
                 <label className="flex text-gray-700 font-">
                   <p className="font-bold"> ชื่อ: </p>
                   <p className=" ml-2">
                     {studentData.firstname} {studentData.lastname}
                   </p>
                 </label>
-
 
                 <label className="flex text-gray-700">
                   <p className="font-bold mr-2">รหัสนักศึกษา:</p>{" "}
@@ -127,8 +124,15 @@ const RegistePlan = () => {
                 </label>
               </div>
             </div>
+          ) : (
+            <div className="flex flex-col space-y-5">
+              <div className="flex space-x-6">
+                <div className="skeleton h-6 w-36"></div>
+                <div className="skeleton h-6 w-48"></div>
+              </div>
+              <div className="skeleton h-6 w-48"></div>
+            </div>
           )}
-
 
           <button
             type="button"
@@ -138,49 +142,11 @@ const RegistePlan = () => {
             ลงทะเบียนแผนการเรียน
           </button>
 
-          {/* Registration Form */}
-          {/* <div className="mt-6">
-            <div className="flex flex-col space-y-1">
-              <label className="text-gray-400 text-sm ">
-                *เลือกแผนการเรียน
-              </label>
-              <select
-                className="border p-2 rounded-md"
-                value={studentplanId}
-                onChange={(e) => setStudentplanId(e.target.value)}
-              >
-                <option value="">กรุณาเลือกแผนการเรียน</option>
-                {studentPlans.map((plan) => (
-                  <option key={plan.id} value={plan.id}>
-                    ปีการศึกษา {plan.year} เทอม {plan.semester}
-                  </option>
-                ))}
-              </select>
-
-              <label className="text-gray-400 text-sm ">*เลือกปีการศึกษา</label>
-              <input
-                type="text"
-                placeholder="ปีการศึกษา"
-                className="border p-2 rounded-md"
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-              />
-              <label className="text-gray-400 text-sm ">*เลือกปีภาคเรียน</label>
-              <input
-                type="text"
-                placeholder="ภาคการศึกษา"
-                className="border p-2 rounded-md"
-                value={semester}
-                onChange={(e) => setSemester(e.target.value)}
-              />
-            </div>
-
-          </div> */}
-
+       
           <div className="mt-6 flex justify-between">
             <button
               type="button"
-              className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+              className="p-4 py-2 bg-gray-100 border rounded hover:bg-gray-200 hover:shadow-md"
               onClick={() => navigate("/student")}
             >
               ย้อนกลับ
@@ -188,14 +154,6 @@ const RegistePlan = () => {
 
             <div className="flex space-x-4">
 
-              {/* <button
-                type="button"
-                className="px-8 py-2 bg-red border border-red-600 text-white rounded"
-                onClick={handleSubmit}
-              >
-                บันทึก
-
-              </button> */}
             </div>
           </div>
         </div>
