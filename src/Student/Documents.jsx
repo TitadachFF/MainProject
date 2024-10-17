@@ -74,7 +74,7 @@ const Documents = () => {
         </button>
         <div className="flex justify-center">
           <img
-            src="/public/PDF (1).jpg"
+            src="/PDF (1).jpg"
             alt="Description"
             className="max-w-3xl h-auto rounded-lg mb-6"
           />
