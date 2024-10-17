@@ -47,6 +47,7 @@ import AddListplan from "../Advice/AddListplan";
 import EditGroup from "../Course/EditGroup";
 import EditCourse from "../Course/EditCourse";
 import GraduateCheck from "../Student/GraduateCheck";
+import PDFview from "../Student/PDFview";
 
 const Router = createBrowserRouter([
   {
@@ -193,6 +194,10 @@ const Router = createBrowserRouter([
       {
         path: "/graduate_check",
         element: <GraduateCheck/>,
+      },
+      {
+        path: "/DocumentPDF",
+        element: <PDFview/>
       },
     ],
   },

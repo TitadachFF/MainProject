@@ -430,6 +430,13 @@ const GraduateCheck = () => {
               <p>กำลังโหลดข้อมูล...</p>
             )}
           </div>
+          <div className="mt-6 flex justify-between">
+            <button className="px-8 py-2 bg-red border border-red text-white rounded" 
+            onClick={() => navigate("/DocumentPDF")}
+            >
+              ดาวน์โหลด PDF
+            </button>
+          </div>
         </div>
       </div>
     </div>
