@@ -310,7 +310,10 @@ const Fillgrade = () => {
                 </label>
               </div>
             </div>
+
+
           )}
+
 
           <div className="flex mt-5">
             <label className="block text-gray-700 mr-2">เทอม :</label>
@@ -323,6 +326,7 @@ const Fillgrade = () => {
             />
             <p className="mr-2">ทั้งหมด</p>
             <input
+              id="semester1"
               type="radio"
               name="radio-1"
               className="radio mr-2"
@@ -331,6 +335,7 @@ const Fillgrade = () => {
             />
             <p className="mr-2">1</p>
             <input
+              id="semester2"
               type="radio"
               name="radio-1"
               className="radio mr-2"
@@ -353,6 +358,8 @@ const Fillgrade = () => {
                   <th className="py-2 border">วิชาเลือกเสรี</th>
                 </tr>
               </thead>
+
+
               {isLoading ? (
                 <tbody>
                   <tr>
@@ -472,6 +479,7 @@ const Fillgrade = () => {
                   )}
                 </tbody>
               )}
+
             </table>
           </div>
 
@@ -493,6 +501,7 @@ const Fillgrade = () => {
                 ดูตัวอย่างเอกสาร
               </button> */}
               <button
+                id="submit-button"
                 type="button"
                 className="px-8 py-2 bg-red border border-red-600 text-white rounded"
                 onClick={handleSubmit}
