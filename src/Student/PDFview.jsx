@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Documents.css";
+import { useNavigate } from "react-router-dom";
 
 const PDFview = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
   const [studentData, setStudentData] = useState(null);
   const [academicName, setAcademicName] = useState("");
   const [majorUnit, setMajorUnit] = useState(null);
@@ -182,15 +184,6 @@ const PDFview = () => {
 
   return (
     <div className="font-sarabun container mx-auto p-4 max-w-5xl text-sm py-40">
-<div className="flex justify-center mb-8">
-  <button
-    className="px-8 py-2 bg-red border border-red text-white rounded print:hidden"
-    onClick={handlePrint}
-  >
-    โหลด PDF
-  </button>
-</div>
-
       <div className="mb-4 text-center print:hidden">
         <div
           className={`max-w-sm mx-auto rounded-lg shadow-lg p-4 ${
@@ -204,7 +197,14 @@ const PDFview = () => {
           )}
         </div>
       </div>
-
+      <div className="flex justify-center mb-8">
+        <button
+          className="px-8 py-3 bg-red border border-red text-white rounded print:hidden"
+          onClick={handlePrint}
+        >
+          โหลด PDF
+        </button>
+      </div>
       {currentPage === 1 && (
         <div className="mb-8 border-black p-4 ">
           <div className="mb-8 border-black p-0 ">
@@ -457,7 +457,6 @@ const PDFview = () => {
           </div>
         </div>
       )}
-
       <style jsx global>{`
         @import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap");
 
@@ -541,6 +540,22 @@ const PDFview = () => {
           }
         }
       `}</style>
+      <div className=" flex justify-around print:hidden">
+        <button
+          type="button"
+          className="px-6 py-2 mb-6 bg-gray-200  border text-black rounded"
+          onClick={() => navigate("/document2")}
+        >
+          ย้อนกลับ
+        </button>
+        <button
+          type="button"
+          className="px-6 py-2 mb-6 text-white border bg-red  border-red text-red-600 rounded"
+          onClick={() => navigate("/student")}
+        >
+          หน้าแรก
+        </button>
+      </div>
     </div>
   );
 };
