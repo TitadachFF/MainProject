@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./Documents.css";
 
 
 const PDFview = () => {
@@ -214,8 +215,8 @@ const PDFview = () => {
                   <tr>
                     <td>
                       ชื่อ - นามสกุล :{" "}
-                      <span className="dotted-line relative">
-                        <span className="absolute bottom-0.5">
+                      <span className=" dotted-line relative">
+                        <span className="text absolute bottom-0.5">
                           {""}
                           {studentData?.firstname} {studentData?.lastname}
                         </span>
@@ -223,7 +224,7 @@ const PDFview = () => {
                       </span>
                       วัน/เดือน/ปีเกิด :{" "}
                       <span className="dotted-line relative">
-                        <span className="absolute bottom-0.5">
+                        <span className="text absolute bottom-0.5">
                           {studentData?.birthdate}
                           {""} {studentData?.monthdate} {studentData?.yeardate}
                         </span>
@@ -234,32 +235,32 @@ const PDFview = () => {
                   <tr>
                     <td>
                       รหัสประจำตัว :{" "}
-                      <span className="dotted-line relative">
-                        <span className="absolute bottom-0.5 color: #1f16a2;">
+                      <span className=" dotted-line relative">
+                        <span className="text absolute bottom-0.5 color: #1f16a2;">
                           {""}
                           {studentData?.student_id}
                         </span>
                         ..................................
                       </span>
                       หมู่เรียน :{" "}
-                      <span className="dotted-line relative">
-                        <span className="absolute bottom-0.5">
+                      <span className=" dotted-line relative">
+                        <span className="text absolute bottom-0.5">
                           {""}
                           {sections?.sec_name}
                         </span>
                         ..............................
                       </span>
                       สาขาวิชา :{" "}
-                      <span className="dotted-line relative">
-                        <span className="absolute bottom-0.5">
+                      <span className=" dotted-line relative">
+                        <span className="text absolute bottom-0.5">
                           {""}
                           {academicName}
                         </span>
                         ............................................
                       </span>
                       เบอร์โทร :{" "}
-                      <span className="dotted-line relative">
-                        <span className="absolute bottom-0.5">
+                      <span className=" dotted-line relative">
+                        <span className="text absolute bottom-0.5">
                           {""}
                           {studentData?.phone || ""}
                         </span>
@@ -271,7 +272,7 @@ const PDFview = () => {
                     <td>
                       ชื่ออาจารย์ที่ปรึกษา :{" "}
                       <span className="dotted-line relative">
-                        <span className="absolute bottom-0.5">
+                        <span className="text absolute bottom-0.5">
                           {""}
                           {advisor.titlename} {advisor.firstname}{" "}
                           {advisor.lastname}
