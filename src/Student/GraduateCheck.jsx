@@ -443,6 +443,7 @@ const GraduateCheck = () => {
               </div>
             )}
           </div>
+
           
           <button
               type="button"
@@ -451,6 +452,7 @@ const GraduateCheck = () => {
             >
               ย้อนกลับ
             </button>
+
 
         </div>
         

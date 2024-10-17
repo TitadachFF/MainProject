@@ -11,7 +11,7 @@ import AddStudent from "../Advice/AddStudent";
 import AdviceInfo from "../Advice/AdviceInfo";
 import AllStudent from "../Advice/AllStudent";
 import RegistePlan from "../Student/RegistePlan";
-
+import Documents2 from "../Student/Documents2";
 import AddCourse from "../Course/AddCourse";
 import AddCourseCategory from "../Course/AddCourseCategory";
 import AddCourseGroup from "../Course/AddCourseGroup";
@@ -47,6 +47,7 @@ import AddListplan from "../Advice/AddListplan";
 import EditGroup from "../Course/EditGroup";
 import EditCourse from "../Course/EditCourse";
 import GraduateCheck from "../Student/GraduateCheck";
+import PDFview from "../Student/PDFview";
 
 const Router = createBrowserRouter([
   {
@@ -194,6 +195,14 @@ const Router = createBrowserRouter([
         path: "/graduate_check",
         element: <GraduateCheck/>,
       },
+      {
+        path: "/DocumentPDF",
+        element: <PDFview/>
+      },
+      {
+        path: "/document2",
+        element: <Documents2/>
+      }
     ],
   },
 ]);
