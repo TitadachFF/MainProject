@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./Documents.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Documents = () => {
+  const navigate = useNavigate();
   const [studentData, setStudentData] = useState({});
   const [sections, setSections] = useState({});
   const [academicName, setAcademicName] = useState("");
@@ -74,12 +76,12 @@ const Documents = () => {
           <img
             src="/public/PDF (1).jpg"
             alt="Description"
-            className="max-w-3xl h-auto rounded-lg mb-20"
+            className="max-w-3xl h-auto rounded-lg mb-6"
           />
           {/* Student Info */}
           {studentData && (
             <>
-              <div className=" name text absolute z-0">
+              <div className="name text absolute z-0">
                 <p className="nameTh">
                   {studentData.firstname} {studentData.lastname}
                 </p>
@@ -130,7 +132,15 @@ const Documents = () => {
             </>
           )}
         </div>
+        <button
+          type="button"
+          className="hidden-on-print px-6 py-2 mb-6 text-white border bg-red  border-red text-red-600 rounded"
+          onClick={() => navigate("/student")}
+        >
+          หน้าถัดไป
+        </button>
       </div>
+
       {/* PDF Style */}
       <style jsx global>{`
         @media print {
