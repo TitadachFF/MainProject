@@ -6,14 +6,16 @@ const Index = () => {
       {/* Title */}
       <p className="font-normal text-5xl text-start py-10 text-gray-600 leading-tight">
         ยินดีต้อนรับ{" "}
-        <span className="block text-3xl">
-          ระบบกรอกเเบบฟอร์มคำร้องขอสำเร็จการศึกษา
+        <span className="block text-3xl pl-4">
+          ระบบตรวจสอบการสำเร็จการศึกษา (Graduation Verification System)
         </span>
       </p>
       <p className="text-xl text-gray-400 mb-8">
-        ระบบกรอกเกรดเป็นระบบที่ช่วยให้การกรอกแบบฟอร์มร้องขอจบการศึกษาง่ายมากยิ่งขึ้นและลดข้อผิดพลาดในการกรอกข้อมูล!
+        เป็นระบบที่ช่วยตรวจสอบหน่วยกิตของนักศึกษาว่าผ่านเกณฑ์ที่หลักสูตรกำหนดไว้หรือไม่เพื่อความสะดวกสบายของนักศึกษา
       </p>
-
+      {/* <p className="text-xl text-gray-400 mb-8">
+        ระบบกรอกเกรดเป็นระบบที่ช่วยให้การกรอกแบบฟอร์มร้องขอจบการศึกษาง่ายมากยิ่งขึ้นและลดข้อผิดพลาดในการกรอกข้อมูล!
+      </p> */}
       {/* Grid Box */}
 
       <div className="md:col-span-2 border  h-auto ">

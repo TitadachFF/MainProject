@@ -191,94 +191,94 @@ const GraduateCheck = () => {
           <h2 className="text-2xl text-red font-bold mb-6 text-red-600">
             ตรวจสอบจบ
           </h2>
+
           <div className="grid grid-cols-1 gap-6">
             {studentData ? (
               <>
-                {/* ข้อมูลนักศึกษา */}
-                {studentData ? (
-                  <>
-                    <div className="flex space-x-4">
-                      <label className="flex text-gray-700">
-                        ชื่อ:{" "}
-                        <p className="font-bold ml-2">
-                          {studentData.firstname} {studentData.lastname}
-                        </p>
-                      </label>
-                      <label className="block text-gray-700">
-                        รหัสนักศึกษา:{" "}
-                        <span className="font-bold">
-                          {studentData.student_id}
+                <>
+                  <div className="flex space-x-4">
+                    <label className="flex text-gray-700">
+                      ชื่อ:{" "}
+                      <p className="font-bold ml-2">
+                        {studentData.firstname} {studentData.lastname}
+                      </p>
+                    </label>
+                    <label className="block text-gray-700">
+                      รหัสนักศึกษา:{" "}
+                      <span className="font-bold">
+                        {studentData.student_id}
+                      </span>
+                    </label>
+                  </div>
+                  <div className="flex space-x-4">
+                    <label className="block text-gray-700">
+                      สาขาวิชา:{" "}
+                      <span className="font-bold">{academicName}</span>
+                    </label>
+                    <label className="block text-gray-700">
+                      หน่วยกิตที่ต้องการ:{" "}
+                      {isLoading ? (
+                        <span className="font-bold text-gray-300">
+                          กำลังโหลด...
                         </span>
-                      </label>
-                    </div>
-                    <div className="flex space-x-4">
-                      <label className="block text-gray-700">
-                        สาขาวิชา:{" "}
-                        <span className="font-bold">{academicName}</span>
-                      </label>
-                      <label className="block text-gray-700">
-                        หน่วยกิตที่ต้องการ:{" "}
+                      ) : (
                         <span className="font-bold">{majorUnit} </span>
-                        หน่วยกิต
-                      </label>
-                      <label className="block text-gray-700">
-                        หน่วยกิตปัจจุบัน:{" "}
-                        {isLoading ? (
-                          <span className="font-bold text-gray-300">
-                            กำลังโหลด...
-                          </span>
-                        ) : (
-                          <span className="font-bold">
-                            {totalGPA ? totalGPA.toFixed(1) : "N/A"}{" "}
-                          </span>
-                        )}
-                        หน่วยกิต
-                      </label>
-                      <label className="flex text-gray-700 items-center">
-                        <p className="mr-1">ต้องการอีก: </p>
-
-                        {isLoading ? (
-                          <span className="font-bold text-gray-300">
-                            กำลังโหลด...
-                          </span>
-                        ) : totalGPA >= majorUnit ? (
-                          <span className="text-green-600 font-bold">
-                            หน่วยกิตครบแล้ว
-                          </span>
-                        ) : (
-                          <span className="flex font-bold text-red">
-                            {remainingCredits.toFixed(1)}{" "}
-                            <p className="ml-1 font-normal text-black">
-                              หน่วยกิต
-                            </p>
-                          </span>
-                        )}
-                      </label>
-                    </div>
-                    <div className="flex space-x-4">
-                      <label className=" text-gray-700 flex items-center">
-                        <p className="mr-2"> ผลการตรวจสอบ: </p>
-                        <span className="text-lg font-bold ">
-                          {isLoading ? (
-                            <span className="font-bold text-gray-300">
-                              กำลังโหลด...
-                            </span>
-                          ) : remainingCredits <= 0 ? (
-                            <p className="text-green-600">
-                              ผ่านการตรวจสอบหน่วยกิต
-                            </p>
-                          ) : (
-                            <p className="text-red">
-                              ไม่ผ่านการตรวจสอบหน่วยกิต
-                            </p>
-                          )}
+                      )}
+                      หน่วยกิต
+                    </label>
+                    <label className="block text-gray-700">
+                      หน่วยกิตปัจจุบัน:{" "}
+                      {isLoading ? (
+                        <span className="font-bold text-gray-300">
+                          กำลังโหลด...
                         </span>
-                      </label>
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-gray-300 font-bold">กำลังโหลด...</p>
-                )}
+                      ) : (
+                        <span className="font-bold">
+                          {totalGPA ? totalGPA.toFixed(1) : "N/A"}{" "}
+                        </span>
+                      )}
+                      หน่วยกิต
+                    </label>
+                    <label className="flex text-gray-700 items-center">
+                      <p className="mr-1">ต้องการอีก: </p>
+
+                      {isLoading ? (
+                        <span className="font-bold text-gray-300">
+                          กำลังโหลด...
+                        </span>
+                      ) : totalGPA >= majorUnit ? (
+                        <span className="text-green-600 font-bold">
+                          หน่วยกิตครบแล้ว
+                        </span>
+                      ) : (
+                        <span className="flex font-bold text-red">
+                          {remainingCredits.toFixed(1)}{" "}
+                          <p className="ml-1 font-normal text-black">
+                            หน่วยกิต
+                          </p>
+                        </span>
+                      )}
+                    </label>
+                  </div>
+                  <div className="flex space-x-4">
+                    <label className=" text-gray-700 flex items-center">
+                      <p className="mr-2"> ผลการตรวจสอบ: </p>
+                      <span className="text-lg font-bold ">
+                        {isLoading ? (
+                          <span className="font-bold text-gray-300">
+                            กำลังโหลด...
+                          </span>
+                        ) : remainingCredits <= 0 ? (
+                          <p className="text-green-600">
+                            ผ่านการตรวจสอบหน่วยกิต
+                          </p>
+                        ) : (
+                          <p className="text-red">ไม่ผ่านการตรวจสอบหน่วยกิต</p>
+                        )}
+                      </span>
+                    </label>
+                  </div>
+                </>
 
                 {/* ตารางหมวดหมู่วิชาต่าง ๆ */}
                 <div className="p-4">
@@ -364,7 +364,7 @@ const GraduateCheck = () => {
                       )
                     )
                   ) : (
-                    <p>ไม่มีข้อมูลการลงทะเบียน</p>
+                    <p>กำลังโหลดข้อมูล...</p>
                   )}
                 </div>
 
@@ -422,24 +422,44 @@ const GraduateCheck = () => {
                       </table>
                     </div>
                   ) : (
-                    <p>ไม่มีข้อมูลวิชาเสรี</p>
+                    <p>กำลังโหลดข้อมูล...</p>
                   )}
                 </div>
               </>
             ) : (
-              <p>กำลังโหลดข้อมูล...</p>
+              <div className="flex flex-col space-y-5">
+                <div className="flex gap-4">
+                  <div className="skeleton h-6 w-40"></div>
+                  <div className="skeleton h-6 w-40"></div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="skeleton h-6 w-52"></div>
+                  <div className="skeleton h-6 w-52"></div>
+                  <div className="skeleton h-6 w-52"></div>
+                  <div className="skeleton h-6 w-52"></div>
+                </div>
+                <div className="skeleton h-6 w-96"></div>
+                <div className="skeleton h-72"> </div>
+              </div>
             )}
           </div>
-          <div className="mt-6 flex justify-between">
-            <button className="px-8 py-2 bg-red border border-red text-white rounded" 
-            onClick={() => navigate("/DocumentPDF")}
+
+          
+          <button
+              type="button"
+              className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+              onClick={() => navigate("/student")}
             >
-              ดาวน์โหลด PDF
+              ย้อนกลับ
             </button>
-          </div>
+
+
         </div>
+        
       </div>
+ 
     </div>
+    
   );
 };
 

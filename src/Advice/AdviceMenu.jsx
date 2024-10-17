@@ -128,7 +128,7 @@ const AdviceMenu = () => {
         </div>
 
         {/* Card 5 */}
-        <div
+        {/* <div
           className="card w-80 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer"
           onClick={() => navigate("/documentstudent")}
         >
@@ -153,7 +153,7 @@ const AdviceMenu = () => {
             <p className="border-t py-2">ตรวจสอบเอกสารของนักศึกษา</p>
             <div className="card-actions justify-end"></div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

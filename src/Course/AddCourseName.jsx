@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 const AddCourseName = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isSuccess, setIsSuccess] = useState(false); 
+  const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState("");
   const apiUrl = import.meta.env.VITE_BASE_URL;
 
@@ -131,10 +131,10 @@ const AddCourseName = () => {
         </div>
 
         <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="flex flex-col">
-            <label className="mb-2">รหัสหลักสูตร</label>
+          <div className="flex  flex-col">
+            <label className="mb-2 flex">รหัสหลักสูตร </label>
             <input
-              id="input-majorcode"
+              id="input-majorcode"  
               type="text"
               name="major_code"
               className="border rounded-lg px-2 py-2"
@@ -173,7 +173,7 @@ const AddCourseName = () => {
             <p className="font-semibold">Inactive</p>
             <input
               type="checkbox"
-              className="toggle toggle-info text-red mr-2  ml-2"
+              className="toggle bg-red mr-2  ml-2"
               checked={formData.status === "ACTIVE"}
               onChange={handleToggle}
             />
