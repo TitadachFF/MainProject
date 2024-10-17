@@ -354,13 +354,13 @@ const Fillgrade = () => {
                 </tr>
               </thead>
               {isLoading ? (
-             <tbody>
-             <tr>
-               <td colSpan="7" className="h-20 text-center align-middle">
-                 กำลังโหลดข้อมูล...
-               </td>
-             </tr>
-           </tbody>
+                <tbody>
+                  <tr>
+                    <td colSpan="7" className="h-20 text-center align-middle">
+                      กำลังโหลดข้อมูล...
+                    </td>
+                  </tr>
+                </tbody>
               ) : (
                 <tbody>
                   {filteredCourses.map((register) =>
