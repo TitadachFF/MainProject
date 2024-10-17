@@ -1,0 +1,78 @@
+/* เอกสาร */
+/* ชื่อ */
+.text {
+  color: rgb(31, 22, 162);
+}
+.name {
+  margin-top: 392px;
+}
+.nameTh {
+  margin-left: 100px;
+}
+.nameEng {
+  margin-left: 60px;
+  margin-top: 9px;
+}
+/* วันเกิด */
+.birth-day {
+  margin-top: 454px;
+  margin-right: 570px;
+}
+.month-date {
+  margin-top: 454px;
+  margin-right: 350px;
+}
+.year-date {
+  margin-top: 454px;
+  margin-right: 40px;
+}
+/* เบอร์โทร */
+.phone-number {
+  margin-top: 454px;
+  margin-left: 270px;
+}
+.corp {
+  margin-top: 486px;
+  margin-left: 530px;
+  font-size: small;
+}
+.student-id {
+  margin-top: 513px;
+  margin-right: 420px;
+}
+.section {
+  margin-top: 513px;
+  margin-right: 140px;
+}
+.major {
+  margin-top: 513px;
+  margin-left: 200px;
+}
+.before-join {
+  margin-top: 541px;
+  margin-right: 190px;
+}
+.end-from {
+  margin-top: 541px;
+  margin-left: 200px;
+}
+.end-year {
+  margin-top: 541px;
+  margin-left: 600px;
+}
+.want-to-end {
+  margin-top: 568px;
+  margin-left: 150px;
+}
+.year-end {
+  margin-top: 568px;
+  margin-left: 470px;
+}
+.confirm-name {
+  margin-top: 680px;
+  margin-left: 200px;
+}
+.sub-confirm-name {
+  margin-top: 708px;
+  margin-left: 200px;
+}
