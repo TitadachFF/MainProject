@@ -11,7 +11,7 @@ import AddStudent from "../Advice/AddStudent";
 import AdviceInfo from "../Advice/AdviceInfo";
 import AllStudent from "../Advice/AllStudent";
 import RegistePlan from "../Student/RegistePlan";
-
+import Documents2 from "../Student/Documents2";
 import AddCourse from "../Course/AddCourse";
 import AddCourseCategory from "../Course/AddCourseCategory";
 import AddCourseGroup from "../Course/AddCourseGroup";
@@ -199,6 +199,10 @@ const Router = createBrowserRouter([
         path: "/DocumentPDF",
         element: <PDFview/>
       },
+      {
+        path: "/document2",
+        element: <Documents2/>
+      }
     ],
   },
 ]);

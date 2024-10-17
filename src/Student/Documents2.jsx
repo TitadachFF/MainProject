@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
-import "./Documents.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Documents = () => {
+const Documents2 = () => {
   const navigate = useNavigate();
   const [studentData, setStudentData] = useState({});
   const [sections, setSections] = useState({});
   const [academicName, setAcademicName] = useState("");
   const apiUrl = import.meta.env.VITE_BASE_URL;
-
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
@@ -48,7 +46,6 @@ const Documents = () => {
   const handlePrint = () => {
     window.print();
   };
-
   return (
     <div className="bg-gray-100">
       <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28 hidden-on-print">
@@ -64,7 +61,7 @@ const Documents = () => {
       </div>
       <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
         <h2 className="text-2xl text-red text-center font-bold mb- text-red-600 hidden-on-print">
-          คำร้องแจ้งความประสงค์
+          คู่คำร้องแจ้งความประสงค์
         </h2>
         <button
           className="hidden-on-print bg-red text-white px-4 mb-2 py-2 rounded hover:bg-gray-400"
@@ -74,71 +71,59 @@ const Documents = () => {
         </button>
         <div className="flex justify-center">
           <img
-            src="/public/PDF (1).jpg"
+            src="/public/PDF (2).jpg"
             alt="Description"
             className="max-w-3xl h-auto rounded-lg mb-6"
           />
           {/* Student Info */}
           {studentData && (
             <>
-              <div className="name text absolute z-0">
-                <p className="nameTh">
-                  {studentData.firstname} {studentData.lastname}
-                </p>
-                <p className="nameEng">
-                  {studentData.firstnameEng} {studentData.lastnameEng}
-                </p>
-              </div>
-              <p className="birth-day text absolute z-0">
-                {studentData.birthdate}
-              </p>
-              <p className="month-date text absolute z-0">
-                {studentData.monthdate}
-              </p>
-              <p className="year-date text absolute z-0">
-                {studentData.yeardate}
-              </p>
-              <p className="phone-number text absolute z-0">
-                {studentData.phone}
-              </p>
-              <p className="corp text absolute z-0">{studentData.corps}</p>
-              <p className="student-id text absolute z-0 ">
-                {studentData.student_id}
-              </p>
-              <p className="section text absolute z-0">{sections.sec_name}</p>
-              <p className="major text absolute z-0">{academicName}</p>
-              <p className="before-join text absolute z-0">
-                {studentData.pre_educational}
-              </p>
-              <p className="end-from text absolute z-0">
-                {studentData.graduated_from}
-              </p>
-              <p className="end-year text absolute z-0">
-                {studentData.pregraduatedyear}
-              </p>
-              <p className="want-to-end text absolute z-0">
-                {studentData.wanttoend}
-              </p>
-              <p className="year-end text absolute z-0">
-                {studentData.yeartoend}
-              </p>
-              <p className="confirm-name text absolute z-0">
+              <p className="full-name text absolute z-0">
                 {studentData.firstname} {studentData.lastname}
               </p>
-              <p className="sub-confirm-name text absolute z-0">
-                {studentData.titlenameTh} {studentData.firstname}{" "}
-                {studentData.lastname}
+              <p className="student-id-2 text absolute z-0">
+                {studentData.student_id}
               </p>
+              <p className="section-2 text absolute z-0">{sections.sec_name}</p>
+              <p className="corps-2 text absolute z-0">{academicName}</p>
+              <p className="afterendcontact text absolute z-0">
+                {studentData.afterendcontact}
+              </p>
+              <p className="homenumber text absolute z-0">
+                {studentData.homenumber}
+              </p>
+              <p className="road text absolute z-0">{studentData.road}</p>
+              <p className="alley text absolute z-0">{studentData.alley}</p>
+              <p className="district text absolute z-0">
+                {studentData.district}
+              </p>
+              <p className="subdistrict text absolute z-0">
+                {studentData.subdistrict}
+              </p>
+              <p className="province text absolute z-0">
+                {studentData.province}
+              </p>
+              <p className="zipcode text absolute z-0">{studentData.zipcode}</p>
+              <p className="phone-2 text absolute z-0">{studentData.phone}</p>
             </>
           )}
         </div>
-        <button
-          type="button"
-          className="hidden-on-print px-6 py-2 mb-6 text-white border bg-red  border-red text-red-600 rounded"
-          onClick={() => navigate("/document2")}
-        >
-          หน้าถัดไป
-        </button>
+        <div className="flex hidden-on-print space-x-10">
+          <button
+            type="button"
+            className="hidden-on-print px-6 py-2 mb-6 text-white border bg-red  border-red text-red-600 rounded"
+            onClick={() => navigate("/documents")}
+          >
+            ย้อนกลับ
+          </button>
+          <button
+            type="button"
+            className="hidden-on-print px-6 py-2 mb-6 text-white border bg-red  border-red text-red-600 rounded"
+            onClick={() => navigate("/documentpdf")}
+          >
+            หน้าถัดไป
+          </button>
+        </div>
       </div>
 
       {/* PDF Style */}
@@ -189,4 +174,4 @@ const Documents = () => {
   );
 };
 
-export default Documents;
+export default Documents2;

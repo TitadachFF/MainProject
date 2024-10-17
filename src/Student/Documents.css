@@ -2,6 +2,7 @@
 /* ชื่อ */
 .text {
   color: rgb(31, 22, 162);
+  font-family: "TH Sarabun PSK", sans-serif;
 }
 .name {
   margin-top: 392px;
@@ -75,4 +76,57 @@
 .sub-confirm-name {
   margin-top: 708px;
   margin-left: 200px;
+}
+/* คู่คำร้อง */
+.full-name {
+  margin-top: 78px;
+  margin-left: 40px;
+}
+.student-id-2 {
+  margin-top: 105px;
+  margin-right: 450px;
+}
+.section-2 {
+  margin-top: 105px;
+  margin-right: 130px;
+}
+.corps-2 {
+  margin-top: 105px;
+  margin-left: 180px;
+}
+.afterendcontact {
+  margin-top: 130px;
+  margin-right: 90px;
+}
+.homenumber {
+  margin-top: 157px;
+  margin-right: 540px;
+}
+.road {
+  margin-top: 157px;
+  margin-right: 300px;
+}
+.alley {
+  margin-top: 157px;
+  margin-left: 210px;
+}
+.district {
+  margin-top: 183px;
+  margin-right: 500px;
+}
+.subdistrict {
+  margin-top: 183px;
+  margin-left: 60px;
+}
+.province{
+  margin-top: 207px;
+  margin-right: 500px;
+}
+.zipcode{
+  margin-top: 207px;
+margin-left: 30px;
+}
+.phone-2{
+  margin-top: 207px;
+  margin-left: 400px;
 }
