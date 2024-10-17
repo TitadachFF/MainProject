@@ -67,7 +67,7 @@ const Documents = () => {
           คำร้องแจ้งความประสงค์
         </h2>
         <button
-          className="hidden-on-print bg-red text-white px-4 mb-2 py-2 rounded hover:bg-gray-400"
+          className="hidden-on-print bg-red text-white px-6 mb-2 py-2 rounded hover:bg-gray-400"
           onClick={handlePrint}
         >
           บันทึก PDF
@@ -132,13 +132,6 @@ const Documents = () => {
             </>
           )}
         </div>
-        <button
-          type="button"
-          className="hidden-on-print px-6 py-2 mb-6 text-white border bg-red  border-red text-red-600 rounded"
-          onClick={() => navigate("/document2")}
-        >
-          หน้าถัดไป
-        </button>
       </div>
 
       {/* PDF Style */}
@@ -185,6 +178,22 @@ const Documents = () => {
           }
         }
       `}</style>
+      <div className="hidden-on-print flex justify-around">
+        <button
+          type="button"
+          className="px-6 py-2 mb-6 bg-gray-200 border text-gray-700 rounded"
+          onClick={() => navigate("/student")}
+        >
+          ย้อนกลับ
+        </button>
+        <button
+          type="button"
+          className="px-6 py-2 mb-6 text-white border bg-red  border-red text-red-600 rounded"
+          onClick={() => navigate("/document2")}
+        >
+          หน้าถัดไป
+        </button>
+      </div>
     </div>
   );
 };

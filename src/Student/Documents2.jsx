@@ -108,22 +108,6 @@ const Documents2 = () => {
             </>
           )}
         </div>
-        <div className="flex hidden-on-print space-x-10">
-          <button
-            type="button"
-            className="hidden-on-print px-6 py-2 mb-6 text-white border bg-red  border-red text-red-600 rounded"
-            onClick={() => navigate("/documents")}
-          >
-            ย้อนกลับ
-          </button>
-          <button
-            type="button"
-            className="hidden-on-print px-6 py-2 mb-6 text-white border bg-red  border-red text-red-600 rounded"
-            onClick={() => navigate("/documentpdf")}
-          >
-            หน้าถัดไป
-          </button>
-        </div>
       </div>
 
       {/* PDF Style */}
@@ -170,6 +154,22 @@ const Documents2 = () => {
           }
         }
       `}</style>
+      <div className="hidden-on-print flex justify-around">
+        <button
+          type="button"
+          className="px-6 py-2 mb-6 bg-gray-200  border text-black rounded"
+          onClick={() => navigate("/documents")}
+        >
+          ย้อนกลับ
+        </button>
+        <button
+          type="button"
+          className="px-6 py-2 mb-6 text-white border bg-red  border-red text-red-600 rounded"
+          onClick={() => navigate("/documentpdf")}
+        >
+          หน้าถัดไป
+        </button>
+      </div>
     </div>
   );
 };

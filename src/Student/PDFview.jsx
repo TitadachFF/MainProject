@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Documents.css";
 
-
 const PDFview = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [studentData, setStudentData] = useState(null);
@@ -17,7 +16,6 @@ const PDFview = () => {
   const [canPrint, setCanPrint] = useState(false); // New state to manage print eligibility
   const [isDataComplete, setIsDataComplete] = useState(false);
   const totalPages = 1;
-
   const apiUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
@@ -184,9 +182,14 @@ const PDFview = () => {
 
   return (
     <div className="font-sarabun container mx-auto p-4 max-w-5xl text-sm py-40">
-      <div className="px-8 py-2 bg-red border border-red text-white rounded print:hidden w-36">
-        <button onClick={handlePrint}>โหลด PDF</button>
-      </div>
+<div className="flex justify-center mb-8">
+  <button
+    className="px-8 py-2 bg-red border border-red text-white rounded print:hidden"
+    onClick={handlePrint}
+  >
+    โหลด PDF
+  </button>
+</div>
 
       <div className="mb-4 text-center print:hidden">
         <div
@@ -195,9 +198,9 @@ const PDFview = () => {
           }`}
         >
           {canPrint ? (
-            <p>คุณกรอกข้อมูลครบแล้ว สามารถปริ้นใบจบได้</p>
+            <p>คุณกรอกข้อมูลครบแล้ว</p>
           ) : (
-            <p>คุณยังกรอกข้อมูลไม่ครบ กรุณากรอกข้อมูลให้ครบถ้วน</p>
+            <p>คุณยังกรอกข้อมูลไม่ครบ</p>
           )}
         </div>
       </div>
