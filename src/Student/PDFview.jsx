@@ -184,7 +184,7 @@ const PDFview = () => {
 
   return (
     <div>
-      <div className="py-4 px-2 text-gray-400 text-sm flex items-center pt-28">
+      <div className="dreak py-4 px-2 text-gray-400 text-sm flex items-center pt-28 print:hidden">
         <p className="cursor-pointer" onClick={() => navigate("/")}>
           หน้าแรก
         </p>
@@ -540,9 +540,9 @@ const PDFview = () => {
             td:nth-child(5) {
               width: 10%; /* เพิ่มความกว้างที่นี่ */
             }
-            // .category-row {
-            //   page-break-before: always;
-            // }
+            .category-row {
+              page-break-before: always;
+            }
             th:nth-child(6),
             td:nth-child(6) {
               width: 23%; /* เพิ่มความกว้างที่นี่ */
