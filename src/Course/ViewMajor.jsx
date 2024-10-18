@@ -11,7 +11,7 @@ const ViewMajor = () => {
   const [courses, setCourses] = useState({});
   const [totalUnits, setTotalUnits] = useState(0); // State สำหรับเก็บผลรวมของ category_unit
   const [openGroupId, setOpenGroupId] = useState(null); // State สำหรับเก็บกลุ่มที่เปิดอยู่
-
+const [isLoading , setIsLoading] = useState(true)
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -24,13 +24,15 @@ const ViewMajor = () => {
   const handleEdit = (id) => {
     navigate(`/editmajor?editMajor=${id}`);
   };
+  const apiUrl = import.meta.env.VITE_BASE_URL;
+
 
   useEffect(() => {
     const fetchMajor = async () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/api/getMajorByCode/${major_code}`,
+          `${apiUrl}api/getMajorByCode/${major_code}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -43,6 +45,8 @@ const ViewMajor = () => {
         const data = await response.json();
         console.log("Fetched Major data:", data);
         setMajor(data);
+        setIsLoading(false);
+
       } catch (error) {
         console.error("Error fetching Major data:", error);
       }
@@ -52,7 +56,7 @@ const ViewMajor = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/api/getCategoriesByMajorCode/${major_code}`,
+          `${apiUrl}api/getCategoriesByMajorCode/${major_code}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -87,7 +91,7 @@ const ViewMajor = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/getGroupsByCategoryId/${category_id}`,
+        `${apiUrl}api/getGroupsByCategoryId/${category_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -110,7 +114,7 @@ const ViewMajor = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/getCoursesByGroupId/${group_id}`,
+        `${apiUrl}api/getCoursesByGroupId/${group_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -175,7 +179,23 @@ const ViewMajor = () => {
         <p>แก้ไขหลักสูตร</p>
       </div>
       <div className="flex justify-center p-6 bg-gray-100">
-        <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
+        {isLoading?(
+
+<div className="flex flex-col space-y-5">
+<div className="flex space-x-6">
+  <div className="skeleton h-6 w-36"></div>
+  <div className="skeleton h-6 w-36"></div>
+  <div className="skeleton h-6 w-36"></div>
+</div>
+<div className="flex gap-4">
+  <div className="skeleton h-6 w-52"></div>
+  <div className="skeleton h-6 w-28"></div>
+  <div className="skeleton h-6 w-60"></div>
+</div>
+<div className="skeleton h-6 w-52"></div>
+</div>
+        ):(
+<div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl text-red font-bold">รายละเอียดหลักสูตร</h2>
             <div className="flex items-center">
@@ -321,6 +341,8 @@ const ViewMajor = () => {
             </div>
           </form>
         </div>
+        )}
+        
       </div>
     </div>
   );
