@@ -397,7 +397,7 @@ const PDFview = () => {
                                       {course.teacher ? (
                                         `${course.teacher.titlename} ${course.teacher.firstname} ${course.teacher.lastname}`
                                       ) : (
-                                        <p className="text-red">ไม่พบอาจารย์</p>
+                                        <p className="text-red"></p>
                                       )}
                                     </td>
                                     <td className="border border-black p-2 text-center">
