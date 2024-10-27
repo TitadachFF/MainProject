@@ -5,7 +5,7 @@
   font-family: "TH Sarabun PSK", sans-serif;
 }
 .name {
-  margin-top: 392px;
+  margin-top: 395px;
 }
 .nameTh {
   margin-left: 100px;
@@ -35,7 +35,7 @@
 .corp {
   margin-top: 486px;
   margin-left: 530px;
-  font-size: small;
+  
 }
 .student-id {
   margin-top: 513px;
@@ -118,15 +118,15 @@
   margin-top: 183px;
   margin-left: 60px;
 }
-.province{
+.province {
   margin-top: 207px;
   margin-right: 500px;
 }
-.zipcode{
+.zipcode {
   margin-top: 207px;
-margin-left: 30px;
+  margin-left: 30px;
 }
-.phone-2{
+.phone-2 {
   margin-top: 207px;
   margin-left: 400px;
 }

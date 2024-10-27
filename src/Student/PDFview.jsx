@@ -445,7 +445,7 @@ const PDFview = () => {
                         {course.coursePractice} - {course.categoryResearch})
                       </td>
                       <td className="border border-black p-2 text-center">
-                        {course.semester} {/* แสดง semester ที่นี่ */}
+                        {course.year} {"/"}{course.semester} 
                       </td>
                       <td className="border border-black p-2 text-center">
                         {course.teacher ? (
