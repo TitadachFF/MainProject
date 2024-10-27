@@ -8,6 +8,7 @@ const GraduateCheck = () => {
   const [academicName, setAcademicName] = useState("");
   const [majorUnit, setMajorUnit] = useState(null);
   const [totalGPA, setTotalGPA] = useState(0);
+  const [groupGPA, setGroupGPA] = useState(0);
   const [registerData, setRegisterData] = useState([]);
   const [courseGroupedData, setCourseGroupedData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -30,6 +31,8 @@ const GraduateCheck = () => {
         return 1.5;
       case "D":
         return 1.0;
+      case "PASS":
+        return 0;
       default:
         return 0;
     }
@@ -75,6 +78,44 @@ const GraduateCheck = () => {
 
           const registerData = registerResponse.data;
           setRegisterData(registerData);
+
+          // GPA Calculate
+          const groupMajorMap = groupsResponse.data.reduce((acc, group) => {
+            acc[group.group_id] = group.group_name;
+            return acc;
+          }, {});
+          // กรองเฉพาะวิชาที่อยู่ใน "กลุ่มวิชาเฉพาะด้านบังคับ"
+          const specificCourses = registerData.flatMap((register) =>
+            register.listcourseregister.filter((courseRegister) => {
+              const groupName =
+                groupMajorMap[courseRegister.course.group_id] || "";
+              return groupName === "กลุ่มวิชาเฉพาะด้านบังคับ";
+            })
+          );
+
+          // คำนวณ GPA เฉพาะกลุ่มวิชาเฉพาะด้านบังคับ
+          let totalCredits = 0;
+          let totalGradePoints = 0;
+
+          specificCourses.forEach((courseRegister) => {
+            const gradeValue = gradeToValue(courseRegister.grade);
+            const courseCredits = courseRegister.course.courseUnit;
+
+            totalGradePoints += gradeValue * courseCredits;
+            totalCredits += courseCredits;
+          });
+          // หาเกรดทั้งหมด
+          //           let totalCredits = 0;
+          //           let totalGradeSum = 0; // ผลรวมเกรดทั้งหมด
+
+          // specificCourses.forEach((courseRegister) => {
+          //   const gradeValue = gradeToValue(courseRegister.grade); // แปลงเกรดเป็นคะแนน
+          //   totalGradeSum += gradeValue; // บวกคะแนนเกรดทั้งหมดเข้าด้วยกัน
+          // });
+
+          const gpa = totalCredits > 0 ? totalGradePoints / totalCredits : 0;
+          setGroupGPA(gpa);
+          // setGroupGPA(totalGradeSum);
 
           // Calculate total GPA (หน่วยกิตปัจจุบัน)
           let totalSum = 0;
@@ -198,49 +239,50 @@ const GraduateCheck = () => {
                 <>
                   <div className="flex space-x-4">
                     <label className="flex text-gray-700">
-                      ชื่อ:{" "}
-                      <p className="font-bold ml-2">
+                      <p className="font-bold">ชื่อ: </p>
+                      <p className="ml-2 ">
                         {studentData.firstname} {studentData.lastname}
                       </p>
                     </label>
-                    <label className="block text-gray-700">
-                      รหัสนักศึกษา:{" "}
-                      <span className="font-bold">
-                        {studentData.student_id}
-                      </span>
+                    <label className="flex text-gray-700">
+                      <p className="font-bold">รหัสนักศึกษา: </p>
+                      <p className="ml-2 ">{studentData.student_id}</p>
                     </label>
                   </div>
                   <div className="flex space-x-4">
-                    <label className="block text-gray-700">
-                      สาขาวิชา:{" "}
-                      <span className="font-bold">{academicName}</span>
+                    <label className="flex text-gray-700">
+                      <p className="font-bold">สาขาวิชา: </p>
+                      <p className="ml-2">{academicName}</p>
                     </label>
-                    <label className="block text-gray-700">
-                      หน่วยกิตที่ต้องการ:{" "}
+                    <label className="flex text-gray-700">
+                      <p className="font-bold"> หน่วยกิตที่ต้องการ: </p>
                       {isLoading ? (
                         <span className="font-bold text-gray-300">
                           กำลังโหลด...
                         </span>
                       ) : (
-                        <span className="font-bold">{majorUnit} </span>
+                        <p className="ml-2 flex">
+                          {majorUnit} <p className="font-bold ml-2">หน่วยกิต</p>
+                        </p>
                       )}
-                      หน่วยกิต
                     </label>
-                    <label className="block text-gray-700">
-                      หน่วยกิตปัจจุบัน:{" "}
+                    <label className="flex text-gray-700">
+                      <p className="font-bold">หน่วยกิตปัจจุบัน: </p>
                       {isLoading ? (
                         <span className="font-bold text-gray-300">
                           กำลังโหลด...
                         </span>
                       ) : (
-                        <span className="font-bold">
-                          {totalGPA ? totalGPA.toFixed(1) : "N/A"}{" "}
-                        </span>
+                        <div className="flex">
+                          <p className="font-bold ml-2 text-blue-500 ">
+                            {totalGPA ? totalGPA.toFixed(1) : "N/A"}
+                          </p>
+                          <p className="ml-2 font-bold">หน่วยกิต</p>{" "}
+                        </div>
                       )}
-                      หน่วยกิต
                     </label>
                     <label className="flex text-gray-700 items-center">
-                      <p className="mr-1">ต้องการอีก: </p>
+                      <p className="font-bold ">ต้องการอีก: </p>
 
                       {isLoading ? (
                         <span className="font-bold text-gray-300">
@@ -251,15 +293,25 @@ const GraduateCheck = () => {
                           หน่วยกิตครบแล้ว
                         </span>
                       ) : (
-                        <span className="flex font-bold text-red">
+                        <span className="flex ml-2 font-bold text-red">
                           {remainingCredits.toFixed(1)}{" "}
-                          <p className="ml-1 font-normal text-black">
+                          <p className="ml-1 font-bold   text-black">
                             หน่วยกิต
                           </p>
                         </span>
                       )}
                     </label>
-                  </div>
+                  </div>{" "}
+                  <label className="flex text-gray">
+                    <p className="font-bold text-base text-red">GPA:</p>
+                    <p className="pl-2 ">คะแนนต่ำสุด 2.00</p>
+                    <p className="pl-2 flex font-bold ">
+                      GPA ของนักศึกษา:
+                      <p className="pl-2">
+                        {groupGPA ? groupGPA.toFixed(2) : "N/A"}{" "}
+                      </p>
+                    </p>
+                  </label>
                   <div className="flex space-x-4">
                     <label className=" text-gray-700 flex items-center">
                       <p className="mr-2"> ผลการตรวจสอบ: </p>
@@ -422,7 +474,7 @@ const GraduateCheck = () => {
                       </table>
                     </div>
                   ) : (
-                    <p>กำลังโหลดข้อมูล...</p>
+                    <p>ไม่พบข้อมูล</p>
                   )}
                 </div>
               </>
@@ -444,22 +496,16 @@ const GraduateCheck = () => {
             )}
           </div>
 
-          
           <button
-              type="button"
-              className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
-              onClick={() => navigate("/student")}
-            >
-              ย้อนกลับ
-            </button>
-
-
+            type="button"
+            className="px-6 py-2 bg-gray-100 border border-red-600 text-red-600 rounded"
+            onClick={() => navigate("/student")}
+          >
+            ย้อนกลับ
+          </button>
         </div>
-        
       </div>
- 
     </div>
-    
   );
 };
 

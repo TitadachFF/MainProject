@@ -446,6 +446,7 @@ const Fillgrade = () => {
                             <option value="C">C</option>
                             <option value="D_plus">D+</option>
                             <option value="D">D</option>
+                            <option value="PASS">P</option>
                           </select>
                         </td>
 
