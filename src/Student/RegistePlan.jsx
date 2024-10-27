@@ -40,7 +40,6 @@ const RegistePlan = () => {
           setStudentData(response.data);
           setAcademicName(academicNameFromToken);
 
-          // Fetch student plans based on academic name
           const studentPlansResponse = await axios.get(
             `${apiUrl}api/getStudentplanByAcademic?academicName=${academicNameFromToken}`,
             {
@@ -142,7 +141,6 @@ const RegistePlan = () => {
             ลงทะเบียนแผนการเรียน
           </button>
 
-       
           <div className="mt-6 flex justify-between">
             <button
               type="button"
@@ -152,9 +150,7 @@ const RegistePlan = () => {
               ย้อนกลับ
             </button>
 
-            <div className="flex space-x-4">
-
-            </div>
+            <div className="flex space-x-4"></div>
           </div>
         </div>
       </div>

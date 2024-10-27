@@ -569,6 +569,7 @@ const PDFview = () => {
                         {freeSubjectData.map((course, index) => {
                           totalFreeCredits += course.courseUnit;
 
+
                           return (
                             <tr key={index}>
                               <td className="border border-black p-2"></td>
