@@ -130,21 +130,21 @@ const AddStudent = () => {
         }, 1000);
       } else {
         const errorData = await response.json();
-        setMessage("โปรดกรอกข้อมูลให้ครบถ้วน");
-        setMessage2("*โปรดตรวจสอบว่ากรอกข้อมูลครบแล้ว");
+        if (response.status === 409) {
+          setMessage(
+            "มีข้อผิดพลาดในการเพิ่มนักศึกษาเนื่องจากมีคนใช้ขื่อผู้ใช้นี้แล้ว"
+          );
+          setMessage2("*มีคนใช้ชื่อผู้ใช้นี้แล้ว");
+        } else {
+          setMessage("โปรดกรอกข้อมูลให้ครบถ้วน");
+          setMessage2("*โปรดตรวจสอบว่ากรอกข้อมูลครบแล้ว");
+        }
         setShowModal(true);
         setTimeout(() => {
           setShowModal(false);
         }, 3000);
       }
-    } catch (error) {
-      setMessage("มีข้อผิดพลาดในการเพิ่มนักศึกษา !");
-      setMessage2("*มีคนใช้ชื่อผู้ใช้นี้แล้ว");
-      setShowModal(true);
-      setTimeout(() => {
-        setShowModal(false);
-      }, 2000);
-    }
+    } catch (error) {}
   };
 
   return (
@@ -170,22 +170,20 @@ const AddStudent = () => {
               <div className="flex gap-6">
                 <div className="w-1/2">
                   <label className="block text-gray-700">คำนำหน้า</label>
-                  <select
+                  <input
+                    id="input-titlename"
+                    type="text"
                     name="titlenameTh"
                     className="w-full mt-1 border border-gray-300 rounded p-2"
+                    placeholder="กรุณากรอกคำนำหน้า"
                     value={formData.titlenameTh}
                     onChange={handleChange}
-                  >
-                    {titles.map((title) => (
-                      <option key={title.value} value={title.value}>
-                        {title.label}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
                 <div className="w-1/2">
                   <label className="block text-gray-700">ชื่อ</label>
                   <input
+                    id="input-firstname"
                     type="text"
                     name="firstname"
                     className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -197,6 +195,7 @@ const AddStudent = () => {
                 <div className="w-1/2">
                   <label className="block text-gray-700">นามสกุล</label>
                   <input
+                    id="input-lastname"
                     type="text"
                     name="lastname"
                     className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -209,6 +208,7 @@ const AddStudent = () => {
               <div>
                 <label className="block text-gray-700">รหัสนักศึกษา</label>
                 <input
+                  id="input-studentid"
                   type="text"
                   name="student_id"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -220,6 +220,7 @@ const AddStudent = () => {
               <div>
                 <label className="block text-gray-700">ห้องเรียน</label>
                 <select
+                  id="section"
                   name="sec_id"
                   className="w-full max-w-xs mt-1 border border-gray-300 rounded p-2"
                   value={formData.sec_id}
@@ -229,7 +230,11 @@ const AddStudent = () => {
                     เลือกห้องเรียน
                   </option>
                   {sections.map((section) => (
-                    <option key={section.sec_id} value={section.sec_id}>
+                    <option
+                      key={section.sec_id}
+                      value={section.sec_id}
+                      id="room-name"
+                    >
                       {section.sec_name}
                     </option>
                   ))}
@@ -242,12 +247,17 @@ const AddStudent = () => {
                   className="w-full max-w-xs mt-1 border border-gray-300 rounded p-2"
                   value={formData.major_id}
                   onChange={handleChange}
+                  id="major"
                 >
                   <option value="" disabled>
                     เลือกสาขาวิชา
                   </option>
                   {majors.map((major) => (
-                    <option key={major.major_id} value={major.major_id}>
+                    <option
+                      key={major.major_id}
+                      value={major.major_id}
+                      id="major-name"
+                    >
                       {major.majorNameTH}
                     </option>
                   ))}
@@ -278,6 +288,7 @@ const AddStudent = () => {
               <div>
                 <label className="block text-gray-700">ชื่อผู้ใช้</label>
                 <input
+                  id="input-studentusername"
                   type="text"
                   name="username"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -289,6 +300,7 @@ const AddStudent = () => {
               <div>
                 <label className="block text-gray-700">รหัสผ่าน</label>
                 <input
+                  id="input-studentpassword"
                   type="password"
                   name="password"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -300,6 +312,7 @@ const AddStudent = () => {
               <div>
                 <label className="block text-gray-700">ยืนยันรหัสผ่าน</label>
                 <input
+                  id="input-confirmPassword"
                   type="password"
                   name="confirmPassword"
                   className="w-full mt-1 border border-gray-300 rounded p-2"
@@ -322,6 +335,7 @@ const AddStudent = () => {
                 type="button"
                 className="px-8 py-2 bg-red text-white rounded"
                 onClick={handleSubmit}
+                id="save-student"
               >
                 บันทึก
               </button>
@@ -332,8 +346,10 @@ const AddStudent = () => {
 
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg modal-box">
-            <h3 className="font-bold text-red text-xl pb-4">{message}</h3>
+          <div className="bg-white rounded-lg modal-box" id="my_modal">
+            <h3 className="font-bold text-red text-xl pb-4" id="alertmodal">
+              {message}
+            </h3>
             <p className="text-lg py-4 text-gray-500">{message2}</p>
           </div>
         </div>
