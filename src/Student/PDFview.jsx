@@ -19,6 +19,7 @@ const PDFview = () => {
   const [isDataComplete, setIsDataComplete] = useState(false);
   const totalPages = 1;
   const apiUrl = import.meta.env.VITE_BASE_URL;
+  const ROWS_PER_PAGE = 20;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -182,6 +183,50 @@ const PDFview = () => {
     }
   };
 
+  const calculateCredits = () => {
+    const categoryCredits = {};
+    let totalGeneralCredits = 0; // รวมหน่วยกิตของหมวดวิชาศึกษาทั่วไป
+    const totalSpecificCredits = {}; // รวมหน่วยกิตของหมวดวิชาเฉพาะ
+
+    Object.keys(courseGroupedData).forEach((category) => {
+      const categoryData = courseGroupedData[category];
+
+      if (category === "generalSubjects") {
+        // ถ้าหมวดวิชาศึกษาทั่วไป
+        let categoryTotal = 0;
+        Object.keys(categoryData.groups).forEach((groupId) => {
+          const group = categoryData.groups[groupId];
+          let groupTotal = 0;
+
+          group.courses.forEach((course) => {
+            groupTotal += course.courseUnit; // สรุปหน่วยกิตของกลุ่ม
+          });
+
+          categoryTotal += groupTotal; // สรุปหน่วยกิตของหมวด
+          totalGeneralCredits += groupTotal; // สรุปหน่วยกิตของหมวดศึกษาทั่วไป
+        });
+
+        categoryCredits[categoryData.categoryName] = categoryTotal; // เก็บหน่วยกิตของหมวด
+      } else {
+        // สำหรับหมวดวิชาเฉพาะ
+        Object.keys(categoryData.groups).forEach((groupId) => {
+          const group = categoryData.groups[groupId];
+          let groupTotal = 0;
+
+          group.courses.forEach((course) => {
+            groupTotal += course.courseUnit; // สรุปหน่วยกิตของกลุ่ม
+          });
+
+          totalSpecificCredits[group.groupName] = groupTotal; // เก็บหน่วยกิตของกลุ่ม
+        });
+      }
+    });
+
+    return { totalGeneralCredits, totalSpecificCredits };
+  };
+
+  const { totalGeneralCredits, totalSpecificCredits } = calculateCredits();
+
   return (
     <div>
       <div className="dreak py-4 px-2 text-gray-400 text-sm flex items-center pt-28 print:hidden">
@@ -218,7 +263,7 @@ const PDFview = () => {
           </button>
         </div>
         {currentPage === 1 && (
-          <div className="mb-8 border-black p-4 ">
+          <div className="mb-8 border-black p-0 ">
             <div className="mb-8 border-black p-0 ">
               <h2 className="text-xl mb-4 text-center">
                 แบบบันทึกผลการเรียนรายวิชา ระดับปริญญาตรี
@@ -317,158 +362,275 @@ const PDFview = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.keys(courseGroupedData).map((category, index) => {
+                  {(() => {
+                    let totalCourses = 0;
+                    let totalFreeCredits = 0;
+
                     return (
-                      <React.Fragment key={index}>
-                        {/* Category Row */}
-                        <tr className="category-row">
-                          <td colSpan={8} className="border border-black p-2">
-                            {index + 1}.{" "}
-                            {courseGroupedData[category].categoryName}{" "}
-                            ไม่ต่ำกว่า{" "}
-                            {courseGroupedData[category].categoryUnit} หน่วยกิต
-                            {/* เปลี่ยนจาก category.categoryUnit */}
-                          </td>
-                        </tr>
+                      <>
+                        {Object.keys(courseGroupedData).map(
+                          (category, index) => {
+                            let totalCategoryCredits = 0;
 
-                        {/* Iterate through groups in the category */}
-                        {Object.keys(courseGroupedData[category].groups).map(
-                          (groupId, groupIndex) => {
-                            const group =
-                              courseGroupedData[category].groups[groupId];
-
-                            // Group Name Row with sub-indexing
                             return (
-                              <React.Fragment key={groupId}>
-                                <tr>
+                              <React.Fragment key={index}>
+                                <tr className="category-row">
                                   <td
                                     colSpan={8}
-                                    className="border border-black p-2 pl-10"
+                                    className="border border-black p-2"
                                   >
-                                    {index + 1}.{groupIndex + 1}{" "}
-                                    {group.groupName} ไม่ต่ำกว่า{" "}
-                                    {group.groupUnit} หน่วยกิต
+                                    {index + 1}.{" "}
+                                    {courseGroupedData[category].categoryName}{" "}
+                                    ไม่ต่ำกว่า{" "}
+                                    {courseGroupedData[category].categoryUnit}{" "}
+                                    หน่วยกิต
                                   </td>
                                 </tr>
 
-                                {/* <tr>
-                                <td
-                                  colSpan={8}
-                                  className="border border-black p-2 pl-14"
-                                >
-                                  <div>
-                                    {(() => {
-                                      switch (group.groupName) {
-                                        case "กลุ่มวิชาภาษาและการสื่อสาร":
-                                          return "รายวิชาบังคับ 9 หน่วยกิต";
-                                        case "กลุ่มวิชาสังคมศาสตร์":
-                                          return "รายวิชาบังคับ(บังคับ 2 รายวิชา จาก 3 รายวิชา)";
-                                        case "กลุ่มวิชามนุษย์ศาสตร์":
-                                          return "รายวิชาบังคับ 6 หน่วยกิต";
-                                        case "กลุ่มวิชาวิทยาศาสตร์ คณิตศาสตร์และเทคโนโลยี":
-                                          return "รายวิชาบังคับ (บังคับ 2 รายวิชา จาก 3 รายวิชา)";
-                                        default:
-                                          return null;
-                                      }
-                                    })()}
-                                  </div>
-                                </td>
-                              </tr> */}
+                                {Object.keys(
+                                  courseGroupedData[category].groups
+                                ).map((groupId, groupIndex) => {
+                                  const group =
+                                    courseGroupedData[category].groups[groupId];
+                                  let groupTotalCredits = 0;
 
-                                {/* Courses in the group */}
-                                {group.courses.map((course, courseIndex) => (
-                                  <tr key={courseIndex}>
-                                    <td className="border border-black p-2"></td>
-                                    <td className="border border-black p-2">
-                                      {course.course_id}
-                                    </td>
-                                    <td className="border border-black p-2">
-                                      {course.courseNameTH}
-                                    </td>
-                                    <td className="border border-black p-2">
-                                      {course.courseUnit} ({course.courseTheory}{" "}
-                                      - {course.coursePractice} -{" "}
-                                      {course.categoryResearch})
-                                    </td>
-                                    <td className="border border-black p-2 text-center">
-                                      {course.semester}
-                                    </td>
-                                    <td className="border border-black p-2 text-center">
-                                      {course.teacher ? (
-                                        `${course.teacher.titlename} ${course.teacher.firstname} ${course.teacher.lastname}`
-                                      ) : (
-                                        <p className="text-red"></p>
+                                  return (
+                                    <React.Fragment key={groupId}>
+                                      <tr>
+                                        <td
+                                          colSpan={8}
+                                          className="border border-black p-2 pl-10"
+                                        >
+                                          {index + 1}.{groupIndex + 1}{" "}
+                                          {group.groupName} ไม่ต่ำกว่า{" "}
+                                          {group.groupUnit} หน่วยกิต
+                                        </td>
+                                      </tr>
+
+                                      {/* Additional remarks for specific groups, placed immediately below the group */}
+                                      {group.groupName ===
+                                        "กลุ่มวิชาภาษาและการสื่อสาร" && (
+                                        <tr>
+                                          <td
+                                            colSpan={2}
+                                            className="border border-black p-2 border-r-0"
+                                          ></td>
+                                          <td
+                                            colSpan={6}
+                                            className="border border-black border-l-0 p-2  "
+                                          >
+                                            <strong>
+                                              รายวิชาบังคับ 9 หน่วยกิต
+                                            </strong>
+                                          </td>
+                                        </tr>
                                       )}
-                                    </td>
-                                    <td className="border border-black p-2 text-center">
-                                      {course.grade === "D_plus"
-                                        ? "D+"
-                                        : course.grade === "C_plus"
-                                        ? "C+"
-                                        : course.grade === "B_plus"
-                                        ? "B+"
-                                        : course.grade}
-                                    </td>
-                                    <td className="border border-black p-2">
-                                      {course.notes}
-                                    </td>
-                                  </tr>
-                                ))}
+                                      {group.groupName ===
+                                        "กลุ่มวิชาสังคมศาสตร์" && (
+                                        <tr>
+                                          <td
+                                            colSpan={2}
+                                            className="border border-black p-2 border-r-0"
+                                          ></td>
+                                          <td
+                                            colSpan={6}
+                                            className="border border-black border-l-0 p-2"
+                                          >
+                                            <strong>
+                                              รายวิชาบังคับ (บังคับ 2 รายวิชา
+                                              จาก 3 รายวิชา)
+                                            </strong>
+                                          </td>
+                                        </tr>
+                                      )}
+                                      {group.groupName ===
+                                        "กลุ่มวิชามนุษย์ศาสตร์" && (
+                                        <tr>
+                                          <td
+                                            colSpan={2}
+                                            className="border border-black p-2 border-r-0"
+                                          ></td>
+                                          <td
+                                            colSpan={6}
+                                            className="border border-black border-l-0 p-2"
+                                          >
+                                            <strong>
+                                              รายวิชาบังคับ 6 หน่วยกิต
+                                            </strong>
+                                          </td>
+                                        </tr>
+                                      )}
+                                      {group.groupName ===
+                                        "กลุ่มวิชาวิทยาศาสตร์ คณิตศาสตร์และเทคโนโลยี" && (
+                                        <tr>
+                                          <td
+                                            colSpan={2}
+                                            className="border border-black p-2 border-r-0"
+                                          ></td>
+                                          <td
+                                            colSpan={6}
+                                            className="border border-black border-l-0 p-2"
+                                          >
+                                            <strong>
+                                              รายวิชาบังคับ (บังคับ 2 รายวิชา
+                                              จาก 3 รายวิชา)
+                                            </strong>
+                                          </td>
+                                        </tr>
+                                      )}
+
+                                      {group.courses.map(
+                                        (course, courseIndex) => {
+                                          groupTotalCredits +=
+                                            course.courseUnit;
+                                          totalCategoryCredits +=
+                                            course.courseUnit;
+
+                                          return (
+                                            <tr key={courseIndex}>
+                                              <td className="border border-black p-2"></td>
+                                              <td className="border border-black p-2">
+                                                {course.course_id}
+                                              </td>
+                                              <td className="border border-black p-2">
+                                                {course.courseNameTH}
+                                              </td>
+                                              <td className="border border-black p-2">
+                                                {course.courseUnit} (
+                                                {course.courseTheory}-
+                                                {course.coursePractice}-
+                                                {course.categoryResearch})
+                                              </td>
+                                              <td className="border border-black p-2 text-center">
+                                                {course.semester}
+                                              </td>
+                                              <td className="border border-black p-2 text-center">
+                                                {course.teacher ? (
+                                                  `${course.teacher.titlename} ${course.teacher.firstname} ${course.teacher.lastname}`
+                                                ) : (
+                                                  <p className="text-red"></p>
+                                                )}
+                                              </td>
+                                              <td className="border border-black p-2 text-center">
+                                                {course.grade}
+                                              </td>
+                                              <td className="border border-black p-2">
+                                                {course.notes}
+                                              </td>
+                                            </tr>
+                                          );
+                                        }
+                                      )}
+
+                                      {/* Check if the group name is one of the four specific groups */}
+                                      {[
+                                        "กลุ่มวิชาแกน",
+                                        "กลุ่มวิชาเฉพาะด้านบังคับ",
+                                        "กลุ่มวิชาเฉพาะด้านเลือก",
+                                        "กลุ่มวิชาพื้นฐานวิชาชีพและวิชาชีพ",
+                                      ].includes(group.groupName) && (
+                                        <tr>
+                                          <td
+                                            colSpan={8}
+                                            className="border border-black p-2 text-right"
+                                          >
+                                            <strong>
+                                              รวม {groupTotalCredits} หน่วยกิต
+                                            </strong>
+                                          </td>
+                                        </tr>
+                                      )}
+                                    </React.Fragment>
+                                  );
+                                })}
+
+                                <tr>
+                                  <td
+                                    colSpan={8}
+                                    className="border border-black p-2 text-right"
+                                  >
+                                    <strong>
+                                      รวม {totalCategoryCredits} หน่วยกิต
+                                    </strong>
+                                  </td>
+                                </tr>
                               </React.Fragment>
                             );
                           }
                         )}
-                      </React.Fragment>
+
+                        {/* Free Subjects Section */}
+                        <tr>
+                          <td colSpan={8} className="border border-black p-2">
+                            {Object.keys(courseGroupedData).length + 1}.
+                            หมวดวิชาเลือกเสรี
+                          </td>
+                        </tr>
+                        {freeSubjectData.map((course, index) => {
+                          totalFreeCredits += course.courseUnit;
+
+                          return (
+                            <tr key={index}>
+                              <td className="border border-black p-2"></td>
+                              <td className="border border-black p-2">
+                                {course.course_id}
+                              </td>
+                              <td className="border border-black p-2">
+                                {course.courseNameTH}
+                              </td>
+                              <td className="border border-black p-2">
+                                {course.courseUnit} ({course.courseTheory}-
+                                {course.coursePractice}-
+                                {course.categoryResearch})
+                              </td>
+                              <td className="border border-black p-2 text-center">
+                                {course.semester}
+                              </td>
+                              <td className="border border-black p-2 text-center">
+                                {course.teacher ? (
+                                  `${course.teacher.titlename} ${course.teacher.firstname} ${course.teacher.lastname}`
+                                ) : (
+                                  <p className="text-red"></p>
+                                )}
+                              </td>
+                              <td className="border border-black p-2 text-center">
+                                {course.grade}
+                              </td>
+                              <td className="border border-black p-2">
+                                {course.notes}
+                              </td>
+                            </tr>
+                          );
+                        })}
+
+                        <tr>
+                          <td
+                            colSpan={8}
+                            className="border border-black p-2 text-right"
+                          >
+                            <strong>รวมหน่วยกิตของหมวดวิชาเลือกเสรี:</strong>{" "}
+                            {totalFreeCredits}
+                          </td>
+                        </tr>
+
+                        {/* Adding empty rows if less than 50 rows */}
+                        {Array.from({
+                          length: Math.max(0, 7 - totalCourses),
+                        }).map((_, index) => (
+                          <tr key={index} style={{ visibility: "hidden" }}>
+                            <td className="border border-black p-2">.</td>
+                            <td className="border border-black p-2"></td>
+                            <td className="border border-black p-2"></td>
+                            <td className="border border-black p-2"></td>
+                            <td className="border border-black p-2"></td>
+                            <td className="border border-black p-2"></td>
+                            <td className="border border-black p-2"></td>
+                            <td className="border border-black p-2"></td>
+                          </tr>
+                        ))}
+                      </>
                     );
-                  })}
-
-                  {/* Display Free Subjects as a separate category */}
-                  <tr>
-                    <td colSpan={8} className="border border-black p-2">
-                      {Object.keys(courseGroupedData).length + 1}
-                      .หมวดวิชาเลือกเสรี
-                    </td>
-                  </tr>
-                  {freeSubjectData.map((course, index) => (
-                    <tr key={index}>
-                      <td className="border border-black p-2">
-                        {/* Blank space for course numbering */}
-                      </td>
-                      <td className="border border-black p-2">
-                        {course.course_id}
-                      </td>
-                      <td className="border border-black p-2">
-                        {course.courseNameTH}
-                      </td>
-                      <td className="border border-black p-2">
-                        {course.courseUnit} ({course.courseTheory} -{" "}
-                        {course.coursePractice} - {course.categoryResearch})
-                      </td>
-                      <td className="border border-black p-2 text-center">
-                        {course.semester} {/* แสดง semester ที่นี่ */}
-                      </td>
-                      <td className="border border-black p-2 text-center">
-                        {course.teacher ? (
-                          `${course.teacher.titlename} ${course.teacher.firstname} ${course.teacher.lastname}`
-                        ) : (
-                          <p className="text-red">ไม่พบอาจารย์</p>
-                        )}
-                      </td>
-                      <td className="border border-black p-2 text-center">
-                        {course.grade === "D_plus"
-                          ? "D+"
-                          : course.grade === "C_plus"
-                          ? "C+"
-                          : course.grade === "B_plus"
-                          ? "B+"
-                          : course.grade}
-                      </td>
-
-                      <td className="border border-black p-2">
-                        {course.notes}
-                      </td>
-                    </tr>
-                  ))}
+                  })()}
                 </tbody>
               </table>
             </div>
@@ -522,19 +684,14 @@ const PDFview = () => {
             .footer {
               display: none !important;
             }
-
-            th:nth-child(2),
-            td:nth-child(2) {
-              width: 5%; /* เพิ่มความกว้างที่นี่ */
-            }
             th:nth-child(3),
             td:nth-child(3) {
-              width: 31%; /* เพิ่มความกว้างที่นี่ */
+              width: 38%; /* เพิ่มความกว้างที่นี่ */
             }
             /* ปรับขนาดช่อง นก./ชม. */
             th:nth-child(4),
             td:nth-child(4) {
-              width: 11%; /* เพิ่มความกว้างที่นี่ */
+              width: 10%; /* เพิ่มความกว้างที่นี่ */
             }
             th:nth-child(5),
             td:nth-child(5) {
@@ -545,7 +702,7 @@ const PDFview = () => {
             }
             th:nth-child(6),
             td:nth-child(6) {
-              width: 23%; /* เพิ่มความกว้างที่นี่ */
+              width: 25%; /* เพิ่มความกว้างที่นี่ */
             }
             th:nth-child(7),
             td:nth-child(7) {
