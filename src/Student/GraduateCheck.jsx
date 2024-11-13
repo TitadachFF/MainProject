@@ -275,7 +275,7 @@ const GraduateCheck = () => {
                       ) : (
                         <div className="flex">
                           <p className="font-bold ml-2 text-blue-500 ">
-                            {totalGPA ? totalGPA.toFixed(1) : "N/A"}
+                            {totalGPA ? totalGPA.toFixed(1) : "ไม่พบ"}
                           </p>
                           <p className="ml-2 font-bold">หน่วยกิต</p>{" "}
                         </div>
@@ -308,7 +308,7 @@ const GraduateCheck = () => {
                     <p className="pl-2 flex font-bold ">
                       GPA ของนักศึกษา:
                       <p className="pl-2">
-                        {groupGPA ? groupGPA.toFixed(2) : "N/A"}{" "}
+                        {groupGPA ? groupGPA.toFixed(2) : "ไม่พบ"}{" "}
                       </p>
                     </p>
                   </label>
@@ -398,7 +398,7 @@ const GraduateCheck = () => {
                                         <td className="text-center border">
                                           {" "}
                                           {course.teacher ? (
-                                            `${course.teacher.titlename} ${course.teacher.firstname} ${course.teacher.lastname}`
+                                            ` ${course.teacher.firstname} ${course.teacher.lastname}`
                                           ) : (
                                             <p className="text-red">
                                               ไม่พบอาจารย์

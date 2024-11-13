@@ -24,10 +24,14 @@ const PDFview = () => {
 
   const formatGrade = (grade) => {
     if (grade) {
+      if (grade === "PASS") {
+        return "P";
+      }
       return grade.replace("_plus", "+");
     }
     return grade;
   };
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -536,7 +540,7 @@ const PDFview = () => {
                                               </td>
                                               <td className="border border-black p-2 text-center">
                                                 {course.teacher ? (
-                                                  `${course.teacher.titlename} ${course.teacher.firstname} ${course.teacher.lastname}`
+                                                  ` ${course.teacher.firstname} ${course.teacher.lastname}`
                                                 ) : (
                                                   <p className="text-red"></p>
                                                 )}
@@ -621,7 +625,7 @@ const PDFview = () => {
                               </td>
                               <td className="border border-black p-2 text-center">
                                 {course.teacher ? (
-                                  `${course.teacher.titlename} ${course.teacher.firstname} ${course.teacher.lastname}`
+                                  `${course.teacher.firstname} ${course.teacher.lastname}`
                                 ) : (
                                   <p className="text-red"></p>
                                 )}
