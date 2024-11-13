@@ -9,15 +9,18 @@ const AddStudentplan = () => {
   const [currentForm, setCurrentForm] = useState("");
   const [selectedTerm, setSelectedTerm] = useState("");
   const [year, setYear] = useState("");
-  const [majors, setMajors] = useState([]); // State for storing majors
-  const [selectedMajor, setSelectedMajor] = useState(""); // State for selected major
+  const [majors, setMajors] = useState([]);
+  const [selectedMajor, setSelectedMajor] = useState("");
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const form = query.get("form") || "addCourse";
     setCurrentForm(form);
-
-    // Fetch majors when the component is mounted
     fetchMajors();
   }, [location.search]);
 
@@ -30,7 +33,7 @@ const AddStudentplan = () => {
         },
       });
       const data = await response.json();
-      setMajors(data); 
+      setMajors(data);
     } catch (error) {
       console.error("Error fetching majors:", error);
     }
@@ -56,40 +59,58 @@ const AddStudentplan = () => {
     try {
       const token = localStorage.getItem("token");
 
+      // Check for incomplete form
       if (!year || !selectedTerm || !selectedMajor) {
-        throw new Error("กรุณากรอกข้อมูลให้ครบถ้วน");
+        setMessage("กรุณากรอกข้อมูลให้ครบถ้วน");
+        setIsSuccess(false);
+        setIsModalOpen(true);
+        return;
       }
 
-      const response = await fetch(
-        `${apiUrl}api/createStudentPlan`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            year: year,
-            semester: parseInt(selectedTerm, 10),
-            major_id: parseInt(selectedMajor, 10),
-          }),
-        }
-      );
+      const response = await fetch(`${apiUrl}api/createStudentPlan`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          year: year,
+          semester: parseInt(selectedTerm, 10),
+          major_id: parseInt(selectedMajor, 10),
+        }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Server response:", errorData);
-        throw new Error("Failed to create student plan");
+
+        // Check for duplicate entry
+        if (errorData.message === "Duplicate entry") {
+          setMessage("รหัสหลักสูตรนี้มีอยู่แล้ว");
+        } else {
+          setMessage("เกิดข้อผิดพลาดในการบันทึกแผนการเรียน");
+        }
+        setIsSuccess(false);
+        setIsModalOpen(true);
+      } else {
+        const data = await response.json();
+        console.log("Student plan created:", data);
+        setMessage("แผนการเรียนถูกบันทึกเรียบร้อยแล้ว");
+        setIsSuccess(true);
+        setIsModalOpen(true); // Show success modal
+
+        // Use a timeout to navigate after showing the modal
+        setTimeout(() => {
+          navigate("/studentplan");
+        }, 2000); // Wait 2 seconds before navigating
       }
-
-      const data = await response.json();
-      console.log("Student plan created:", data);
-
-      navigate("/studentplan");
     } catch (error) {
       console.error("Error creating student plan:", error);
+      setMessage("เกิดข้อผิดพลาดในการบันทึกแผนการเรียน");
+      setIsSuccess(false);
+      setIsModalOpen(true);
     }
   };
+
 
   return (
     <div className="bg-gray-100">
@@ -143,6 +164,7 @@ const AddStudentplan = () => {
                 <div className="flex flex-col w-1/3">
                   <label className="mb-2">ปีการศึกษา</label>
                   <input
+                    id="add-planyear"
                     type="text"
                     className="border rounded-full px-2 py-2"
                     placeholder="ปีการศึกษา"
@@ -153,25 +175,35 @@ const AddStudentplan = () => {
                 <div className="flex flex-col w-1/3">
                   <label className="mb-2">เทอม</label>
                   <select
+                    id="semester-select"
                     className="border rounded-full px-2 py-2 text-sm"
                     value={selectedTerm}
                     onChange={handleTermChange}
                   >
                     <option value="">เลือกเทอม</option>
-                    <option value="1">เทอม 1</option>
-                    <option value="2">เทอม 2</option>
+                    <option value="1" id="semester1">
+                      เทอม 1
+                    </option>
+                    <option value="2" id="semester2">
+                      เทอม 2
+                    </option>
                   </select>
                 </div>
                 <div className="flex flex-col w-1/3">
                   <label className="mb-2">สาขาวิชา</label>
                   <select
+                    id="major"
                     className="border rounded-full px-2 py-2 text-sm"
                     value={selectedMajor}
                     onChange={handleMajorChange}
                   >
                     <option value="">เลือกสาขาวิชา</option>
                     {majors.map((major) => (
-                      <option key={major.major_id} value={major.major_id}>
+                      <option
+                        key={major.major_id}
+                        value={major.major_id}
+                        id="major-name"
+                      >
                         {major.majorNameTH}
                       </option>
                     ))}
@@ -188,6 +220,7 @@ const AddStudentplan = () => {
                   ย้อนกลับ
                 </button>
                 <button
+                  id="save-studentplan"
                   type="button"
                   className="px-8 py-2 bg-red text-white rounded"
                   onClick={handleSubmit}
@@ -201,6 +234,29 @@ const AddStudentplan = () => {
           {currentForm === "addlistplan" && <AddListplan />}
         </div>
       </div>
+
+      {isModalOpen && (
+        <dialog id="my_modal_1" className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">{message}</h3>
+            <p className="py-4 text-gray-500">
+              กดปุ่ม ESC หรือ กดปุ่มปิดด้านล่างเพื่อปิด
+            </p>
+            <div className="modal-action flex justify-between">
+              <form method="dialog" className="w-full flex justify-between">
+                <button
+                  id="close-alertmodal"
+                  type="button"
+                  className="px-10 py-2 bg-white text-red border font-semibold border-red rounded"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  ปิด
+                </button>
+              </form>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };
