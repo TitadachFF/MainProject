@@ -674,7 +674,7 @@ const PDFview = () => {
           @media print {
             @page {
               size: A4;
-              margin: 5mm 0mm 5mm 0mm; /* เพิ่มระยะข้างล่าง */
+              margin: 5mm 5mm 5mm 5mm; /* เพิ่มระยะข้างล่าง */
             }
             body {
               print-color-adjust: exact;
