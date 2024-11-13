@@ -17,6 +17,7 @@ const AdviceMenu = () => {
         <div
           className="card w-80 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
           onClick={() => navigate("/addstudent")}
+          id="add-student-button"
         >
           <figure>
             <svg
@@ -35,7 +36,7 @@ const AdviceMenu = () => {
             </svg>
           </figure>
           <div className="card-body text-center">
-            <h2 className="font-semibold">เพิ่มนักศึกษา</h2>
+            <h2 className="font-semibold" id="addstudent-Text">เพิ่มนักศึกษา</h2>
             <p className="border-t py-2">เพิ่มนักศึกษา เข้ามาในระบบ</p>
             <div className="card-actions justify-end"></div>
           </div>
@@ -73,6 +74,7 @@ const AdviceMenu = () => {
         <div
           className="card w-80 bg-base-100 shadow-xl border hover:bg-gray-50 cursor-pointer "
           onClick={() => navigate("/studentplan")}
+          id="view-studentplan"
         >
           <figure>
             <svg
@@ -91,7 +93,7 @@ const AdviceMenu = () => {
             </svg>
           </figure>
           <div className="card-body text-center">
-            <h2 className="font-semibold">แผนการเรียน</h2>
+            <h2 className="font-semibold" id="studentplan-text">แผนการเรียน</h2>
             <p className="border-t py-2">สร้างและแก้ไข แผนการเรียน</p>
             <div className="card-actions justify-end"></div>
           </div>

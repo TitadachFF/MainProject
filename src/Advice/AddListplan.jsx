@@ -176,16 +176,37 @@ const AddListplan = () => {
       if (!studentplanId || courses.length === 0) {
         setErrorMessage("กรุณากรอกข้อมูลให้ครบถ้วน");
         setShowErrorModal(true);
-
         setTimeout(() => {
           setShowErrorModal(false);
           setErrorMessage("");
         }, 2000);
-
         return;
       }
 
       for (const courseId of courses) {
+        // Check if the course is already in the selected student plan
+        const isCourseAlreadyInPlan = studentPlans.some(
+          (plan) =>
+            plan.studentplan_id === studentplanId &&
+            plan.courses.some((course) => course.course_id === courseId)
+        );
+
+        if (isCourseAlreadyInPlan) {
+          const duplicateCourse = selectedCourses.find(
+            (course) => course.courseId === courseId
+          );
+
+          setErrorMessage(
+            `ไม่สามารถเพิ่มวิชา ${duplicateCourse.courseName} เนื่องจากมีในแผนการเรียนที่เลือกแล้ว`
+          );
+          setShowErrorModal(true);
+          setTimeout(() => {
+            setShowErrorModal(false);
+            setErrorMessage("");
+          }, 2000);
+          return;
+        }
+
         const response = await fetch(
           `${apiUrl}api/createListStudentplan/${studentplanId}`,
           {
@@ -210,12 +231,10 @@ const AddListplan = () => {
             `ไม่สามารถเพิ่มวิชา ${duplicateCourse.courseName} เนื่องจากมีในแผนการเรียนแล้ว`
           );
           setShowErrorModal(true);
-
           setTimeout(() => {
             setShowErrorModal(false);
             setErrorMessage("");
           }, 2000);
-
           return;
         }
       }
@@ -225,6 +244,7 @@ const AddListplan = () => {
       console.error("Error creating student plan:", error);
     }
   };
+
 
   const handleCloseErrorModal = () => {
     setShowErrorModal(false);

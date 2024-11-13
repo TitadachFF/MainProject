@@ -209,6 +209,7 @@ const StudentPlan = () => {
             หน้าแรก
           </button>
           <button
+            id="add-studentplan"
             type="button"
             className="px-8 py-2 bg-red border border-red-600 text-white rounded"
             onClick={() => navigate("/addstudentplan")}
