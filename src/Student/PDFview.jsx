@@ -20,6 +20,14 @@ const PDFview = () => {
   const totalPages = 1;
   const apiUrl = import.meta.env.VITE_BASE_URL;
   const ROWS_PER_PAGE = 20;
+  const [totalCredits, setTotalCredits] = useState(0);
+
+  const formatGrade = (grade) => {
+    if (grade) {
+      return grade.replace("_plus", "+");
+    }
+    return grade;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -226,6 +234,28 @@ const PDFview = () => {
   };
 
   const { totalGeneralCredits, totalSpecificCredits } = calculateCredits();
+
+  useEffect(() => {
+    let total = 0;
+
+    // คำนวณหน่วยกิตจาก courseGroupedData
+    Object.keys(courseGroupedData).forEach((category) => {
+      Object.keys(courseGroupedData[category].groups).forEach((groupId) => {
+        courseGroupedData[category].groups[groupId].courses.forEach(
+          (course) => {
+            total += course.courseUnit; // คำนวณรวมหน่วยกิต
+          }
+        );
+      });
+    });
+
+    // คำนวณหน่วยกิตจาก freeSubjectData
+    freeSubjectData.forEach((course) => {
+      total += course.courseUnit; // รวมหน่วยกิตจากวิชาเลือกเสรี
+    });
+
+    setTotalCredits(total); // อัพเดท state totalCredits
+  }, [courseGroupedData, freeSubjectData]); // คำนวณใหม่เมื่อข้อมูลเปลี่ยนแปลง
 
   return (
     <div>
@@ -512,7 +542,7 @@ const PDFview = () => {
                                                 )}
                                               </td>
                                               <td className="border border-black p-2 text-center">
-                                                {course.grade}
+                                                {formatGrade(course.grade)}
                                               </td>
                                               <td className="border border-black p-2">
                                                 {course.notes}
@@ -544,16 +574,19 @@ const PDFview = () => {
                                   );
                                 })}
 
-                                <tr>
-                                  <td
-                                    colSpan={8}
-                                    className="border border-black p-2 text-right"
-                                  >
-                                    <strong>
-                                      รวม {totalCategoryCredits} หน่วยกิต
-                                    </strong>
-                                  </td>
-                                </tr>
+                                {courseGroupedData[category].categoryName !==
+                                  "หมวดวิชาเฉพาะ" && (
+                                  <tr>
+                                    <td
+                                      colSpan={8}
+                                      className="border border-black p-2 text-right"
+                                    >
+                                      <strong>
+                                        รวม {totalCategoryCredits} หน่วยกิต
+                                      </strong>
+                                    </td>
+                                  </tr>
+                                )}
                               </React.Fragment>
                             );
                           }
@@ -568,7 +601,6 @@ const PDFview = () => {
                         </tr>
                         {freeSubjectData.map((course, index) => {
                           totalFreeCredits += course.courseUnit;
-
 
                           return (
                             <tr key={index}>
@@ -595,7 +627,7 @@ const PDFview = () => {
                                 )}
                               </td>
                               <td className="border border-black p-2 text-center">
-                                {course.grade}
+                                {formatGrade(course.grade)}
                               </td>
                               <td className="border border-black p-2">
                                 {course.notes}
@@ -607,28 +639,23 @@ const PDFview = () => {
                         <tr>
                           <td
                             colSpan={8}
-                            className="border border-black p-2 text-right"
+                            className="border border-black p-2 text-right font-bold"
                           >
-                            <strong>รวมหน่วยกิตของหมวดวิชาเลือกเสรี:</strong>{" "}
-                            {totalFreeCredits}
+                            รวม {totalFreeCredits} หน่วยกิต
                           </td>
                         </tr>
 
-                        {/* Adding empty rows if less than 50 rows */}
-                        {Array.from({
-                          length: Math.max(0, 7 - totalCourses),
-                        }).map((_, index) => (
-                          <tr key={index} style={{ visibility: "hidden" }}>
-                            <td className="border border-black p-2">.</td>
-                            <td className="border border-black p-2"></td>
-                            <td className="border border-black p-2"></td>
-                            <td className="border border-black p-2"></td>
-                            <td className="border border-black p-2"></td>
-                            <td className="border border-black p-2"></td>
-                            <td className="border border-black p-2"></td>
-                            <td className="border border-black p-2"></td>
-                          </tr>
-                        ))}
+                        <tr>
+                          <td
+                            colSpan={8}
+                            className="border border-black p-2 text-right font-bold"
+                          >
+                            รวมจำนวนหน่วยกิต ตลอดหลักสูตร {totalCredits}{" "}
+                            หน่วยกิต
+                          </td>
+                        </tr>
+
+                        
                       </>
                     );
                   })()}
@@ -663,6 +690,8 @@ const PDFview = () => {
             .container {
               padding: 20px;
               border: none;
+              padding: 4px 6px; /* ลดความสูงของช่องตาราง */
+              line-height: 1.6;
             }
             table {
               border-collapse: collapse;
@@ -695,8 +724,8 @@ const PDFview = () => {
               width: 10%; /* เพิ่มความกว้างที่นี่ */
             }
             th:nth-child(5),
-            td:nth-child(5) {
-              width: 10%; /* เพิ่มความกว้างที่นี่ */
+            เพิ่มความกว้างที่นี่ td:nth-child(5) {
+              width: 10%; /*  */
             }
             .category-row {
               page-break-before: always;
